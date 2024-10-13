@@ -17,10 +17,10 @@ const Home = () => {
                 <li><a href="/api/spaces/:id">DELETE /api/spaces/:id</a> - Eliminar espacio</li>
             </ul>
             <footer>
-                <p>Nombre Apellido</p>
-                <p>Nombre de la materia</p>
-                <p>Nombre del docente</p>
-                <p>Comisión</p>
+                <p><strong>Alumna:</strong> Silvana Gurlekian</p>
+                <p><strong>Materia:</strong> Aplicaciones Híbridas</p>
+                <p><strong>Profesora:</strong> Camila Marcos Galban</p>
+                <p><strong>Comisión:</strong> DWN4AV</p>
             </footer>
         </div>
     );
