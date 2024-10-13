@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>API de Coworkings</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        footer { position: fixed; bottom: 0; width: 100%; background-color: #f1f1f1; text-align: center; padding: 10px; }
+        h1 { color: #333; }
+        ul { list-style-type: none; padding: 0; }
+        li { margin: 5px 0; }
+        a { text-decoration: none; color: #007BFF; }
+    </style>
+</head>
+<body>
+    <h1>Bienvenido a la API de Coworkings</h1>
+    <p>Esta API permite centralizar y gestionar todos los espacios de coworking de la ciudad.</p>
+    <h2>Endpoints Disponibles:</h2>
+    <ul>
+        <li><a href="/api/auth/register">POST /api/auth/register</a> - Registrar un nuevo usuario</li>
+        <li><a href="/api/auth/login">POST /api/auth/login</a> - Iniciar sesión</li>
+        <li><a href="/api/coworkings">GET /api/coworkings</a> - Obtener todos los coworkings</li>
+        <li><a href="/api/coworkings/:id">GET /api/coworkings/:id</a> - Obtener un coworking por ID</li>
+        <li><a href="/api/coworkings">POST /api/coworkings</a> - Crear un nuevo coworking</li>
+        <li><a href="/api/coworkings/:id">PUT /api/coworkings/:id</a> - Actualizar un coworking</li>
+        <li><a href="/api/coworkings/:id">DELETE /api/coworkings/:id</a> - Eliminar un coworking</li>
+    </ul>
+
+    <footer>
+        <p>Nombre y Apellido: [Tu Nombre]</p>
+        <p>Materia: [Nombre de la Materia]</p>
+        <p>Docente: [Nombre del Docente]</p>
+        <p>Comisión: [Número de Comisión]</p>
+    </footer>
+</body>
+</html>
