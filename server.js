@@ -1,23 +1,42 @@
-import app from './app.js';
+import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
+import cors from 'cors';
+import authRoutes from './routes/authRoutes.js';
+import coworkingRoutes from './routes/coworkingRoutes.js';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 dotenv.config();
 
-const PORT = process.env.PORT || 3000;
+const app = express();
 
-// Conectar a MongoDB
+// Middleware
+app.use(cors());
+app.use(express.json());
+
+// Rutas de la API
+app.use('/api/auth', authRoutes);
+app.use('/api/coworkings', coworkingRoutes);
+
+// Ruta de la página principal
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+app.use(express.static(path.join(__dirname, 'views')));
+
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'views', 'index.html'));
+});
+
+// Conexión a MongoDB y inicio del servidor
 mongoose.connect(process.env.MONGODB_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
-})
-.then(() => {
+}).then(() => {
     console.log('Conectado a MongoDB');
-    // Iniciar el servidor
-    app.listen(PORT, () => {
-        console.log(`Servidor corriendo en el puerto ${PORT}`);
+    app.listen(process.env.PORT, () => {
+        console.log(`Servidor corriendo en el puerto ${process.env.PORT}`);
     });
-})
-.catch(err => {
-    console.error('Error conectando a MongoDB:', err.message);
+}).catch((error) => {
+    console.error('Error al conectar a MongoDB:', error);
 });
