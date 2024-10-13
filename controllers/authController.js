@@ -1,5 +1,6 @@
 import User from '../models/User.js';
 import jwt from 'jsonwebtoken';
+import { validationResult } from 'express-validator';
 
 // Generar Token
 const generarToken = (id) => {
@@ -10,6 +11,12 @@ const generarToken = (id) => {
 
 // Registrar Usuario
 export const registerUser = async (req, res) => {
+    const errores = validationResult(req);
+
+    if (!errores.isEmpty()) {
+        return res.status(400).json({ errores: errores.array() });
+    }
+
     const { nombre, email, password } = req.body;
     try {
         const existeUsuario = await User.findOne({ email });
@@ -31,6 +38,12 @@ export const registerUser = async (req, res) => {
 
 // Login de Usuario
 export const loginUser = async (req, res) => {
+    const errores = validationResult(req);
+    
+    if (!errores.isEmpty()) {
+        return res.status(400).json({ errores: errores.array() });
+    }
+
     const { email, password } = req.body;
     try {
         const usuario = await User.findOne({ email });
