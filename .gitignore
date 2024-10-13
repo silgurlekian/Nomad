@@ -139,4 +139,5 @@ dist
 /frontend/build
 
 # IDEs
-.vscode/
+.vscode/node_modules/
+.env
