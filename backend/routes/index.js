@@ -4,7 +4,7 @@ import spaceRoutes from './space.js';
 
 const router = express.Router();
 
-router.use('/api/auth', authRoutes);
-router.use('/api/spaces', spaceRoutes);
+router.use('/auth', authRoutes);
+router.use('/spaces', spaceRoutes);
 
 export default router;

@@ -1,7 +1,6 @@
 import express from 'express';
-import mongoose from 'mongoose';
-import dotenv from 'dotenv';
 import cors from 'cors';
+import dotenv from 'dotenv';
 import routes from './routes/index.js';
 
 dotenv.config();
@@ -12,8 +11,8 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Routes
-app.use('/', routes);
+// Rutas
+app.use('/api', routes);
 
 // Página Principal
 app.get('/', (req, res) => {
