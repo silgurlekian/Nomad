@@ -33,10 +33,7 @@ app.get("/", (req, res) => {
 
 // Conexión a MongoDB y inicio del servidor
 mongoose
-  .connect(process.env.MONGODB_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
+  .connect(process.env.MONGODB_URI)
   .then(() => {
     console.log("Conectado a MongoDB");
     app.listen(process.env.PORT, () => {
