@@ -81,15 +81,19 @@ export const updateCoworking = async (req, res) => {
 
 // Eliminar un coworking
 export const deleteCoworking = async (req, res) => {
+    const { id } = req.params;
+    
     try {
-        const coworking = await Coworking.findById(req.params.id);
-        if (coworking) {
-            await coworking.remove();
-            res.json({ message: 'Coworking eliminado' });
-        } else {
-            res.status(404).json({ message: 'Coworking no encontrado' });
+        const coworking = await Coworking.findById(id);
+        
+        if (!coworking) {
+            return res.status(404).json({ message: "Coworking no encontrado" });
         }
+        
+        await Coworking.deleteOne({ _id: id });
+        res.status(200).json({ message: "Coworking eliminado correctamente" });
     } catch (error) {
-        res.status(500).json({ message: 'Error al eliminar el coworking', error });
+        console.error(error);
+        res.status(500).json({ message: "Error al eliminar el coworking", error });
     }
 };

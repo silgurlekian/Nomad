@@ -11,7 +11,7 @@
 <body>
     <header>
         <h1>API de Coworkings Nomad</h1>
-        <p>Centraliza y gestiona todos los espacios de coworking de la ciudad.</p>
+        <p>Centraliza y gestiona todos los espacios de coworking y cafeterías de la ciudad.</p>
     </header>
 
     <main>
@@ -23,10 +23,16 @@
             <li><span class="tag get">GET /api/coworkings/:id</span> - Obtener un coworking por ID</li>
             <li><span class="tag get">GET /api/coworkings?ciudad=CABA</span> - Filtrar coworkings por ciudad</li>
             <li><span class="tag get">GET /api/coworkings?nombre=Central</span> - Filtrar coworkings por nombre</li>
-            <li><span class="tag get">GET /api/coworkings?ordenarPor=nombre&orden=desc</span> - Ordenar coworkings por nombre</li>
+            <li><span class="tag get">GET /api/coworkings?ordenarPor=nombre&orden=desc</span> - Ordenar coworkings por
+                nombre</li>
             <li><span class="tag post">POST /api/coworkings</span> - Crear un nuevo coworking</li>
             <li><span class="tag put">PUT /api/coworkings/:id</span> - Actualizar un coworking</li>
             <li><span class="tag delete">DELETE /api/coworkings/:id</span> - Eliminar un coworking</li>
+            <li><span class="tag get">GET /api/cafeterias</span> - Obtener todas las cafeterías</li>
+            <li><span class="tag get">GET /api/cafeterias/:id</span> - Obtener una cafetería por ID</li>
+            <li><span class="tag post">POST /api/cafeterias</span> - Crear una nueva cafetería</li>
+            <li><span class="tag put">PUT /api/cafeterias/:id</span> - Actualizar una cafetería</li>
+            <li><span class="tag delete">DELETE /api/cafeterias/:id</span> - Eliminar una cafetería</li>
         </ul>
     </main>
 

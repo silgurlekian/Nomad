@@ -69,7 +69,7 @@ A continuación, se describen los pasos básicos para realizar las pruebas:
         {
             "nombre": "Juan Pérez",
             "email": "juan.perez@mail.com",
-            "password": "password123"
+            "password": "123456"
         }
         ```
 
@@ -81,7 +81,7 @@ A continuación, se describen los pasos básicos para realizar las pruebas:
         ```json
         {
             "email": "juan.perez@example.com",
-            "password": "password123"
+            "password": "123456"
         }
         ```
 
