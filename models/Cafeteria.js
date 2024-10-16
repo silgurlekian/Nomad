@@ -8,9 +8,9 @@ const cafeteriaSchema = new mongoose.Schema({
     email: { type: String },
     website: { type: String },
     descripcion: { type: String },
-    servicios: [{ type: String }],  // Servicios que ofrece la cafetería
-    horarioApertura: { type: String }, // Horario de apertura de la cafetería
-    horarioCierre: { type: String },   // Horario de cierre de la cafetería
+    servicios: [{ type: String }], 
+    horarioApertura: { type: String }, 
+    horarioCierre: { type: String },
 }, { timestamps: true });
 
 const Cafeteria = mongoose.model('Cafeteria', cafeteriaSchema);

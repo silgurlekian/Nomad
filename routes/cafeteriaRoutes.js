@@ -1,10 +1,10 @@
 import express from 'express';
 import {
     getCafeterias,
-    getCafeteriaById,  // Cambiar a singular
-    createCafeteria,   // Cambiar a singular
-    updateCafeteria,   // Cambiar a singular
-    deleteCafeteria,   // Cambiar a singular
+    getCafeteriaById,
+    createCafeteria,
+    updateCafeteria,
+    deleteCafeteria, 
 } from '../controllers/cafeteriasController.js';
 import { protect } from '../middleware/authMiddleware.js';
 
