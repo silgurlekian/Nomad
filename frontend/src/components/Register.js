@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // Importar useNavigate
 import { registerUser } from '../services/AuthService';
 import '../styles/Register.css'; // Para cualquier estilo adicional si es necesario
 
@@ -7,14 +8,21 @@ const Register = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState(null);
-    const [successMessage, setSuccessMessage] = useState(null); // Nuevo estado para el mensaje de éxito
+    const [successMessage, setSuccessMessage] = useState(null);
+    const navigate = useNavigate(); // Crear la instancia de navigate
 
     const handleRegister = async (e) => {
         e.preventDefault();
         try {
             const data = await registerUser({ nombre, email, password });
             console.log('Registro exitoso', data);
-            setSuccessMessage('¡Registro exitoso! Ya puedes iniciar sesión.'); // Mensaje de éxito
+            setSuccessMessage('¡Registro exitoso! Ya puedes iniciar sesión.');
+
+            // Redirigir a la página de login después del registro exitoso
+            setTimeout(() => {
+                navigate('/login'); // Suponiendo que la ruta para login es '/login'
+            }, 2000); // Redirige después de 2 segundos
+
             setError(null); // Limpiar cualquier mensaje de error previo
         } catch (err) {
             setError(err.message);
