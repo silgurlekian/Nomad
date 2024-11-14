@@ -41,8 +41,9 @@ const AddService = () => {
                 name,
             };
 
-            await axios.post('http://localhost:3000/api/services/create', newService, config); // Cambia a `/create`
-            navigate('/ServiceList');
+            await axios.post('http://localhost:3000/api/services', newService, config); 
+
+            navigate('/ServiceList'); 
         } catch (error) {
             setError('Error al agregar el servicio: ' + error.message);
         }

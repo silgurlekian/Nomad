@@ -4,7 +4,6 @@ import dotenv from "dotenv";
 import cors from "cors";
 import authRoutes from "./routes/authRoutes.js";
 import coworkingRoutes from "./routes/coworkingRoutes.js";
-import cafeteriaRoutes from "./routes/cafeteriaRoutes.js";
 import serviceRoutes from "./routes/serviceRoutes.js";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -20,8 +19,7 @@ app.use(express.json());
 // Rutas de la API
 app.use("/api/auth", authRoutes);
 app.use("/api/coworkings", coworkingRoutes);
-app.use("/api/cafeterias", cafeteriaRoutes);
-app.use("/api/services", serviceRoutes);
+app.use("/api/services", serviceRoutes); // Asegúrate de que la ruta esté bien configurada
 
 // Ruta de archivos estáticos (CSS, imágenes, etc.)
 const __filename = fileURLToPath(import.meta.url);

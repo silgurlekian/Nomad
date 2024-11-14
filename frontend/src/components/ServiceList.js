@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import DeleteService from "./DeleteService";
 
 const ServiceList = () => {
   const [services, setServices] = useState([]);
@@ -20,14 +21,8 @@ const ServiceList = () => {
     fetchServices();
   }, []);
 
-  const handleDelete = async (id) => {
-    try {
-      await axios.delete(`http://localhost:3000/api/services/${id}`);
-      setServices(services.filter((service) => service._id !== id));
-    } catch (error) {
-      console.error("Error al eliminar el servicio", error);
-      setError("Error al eliminar el servicio: " + error.message);
-    }
+  const handleServiceDeleted = (serviceId) => {
+    setServices(services.filter((service) => service._id !== serviceId));
   };
 
   return (
@@ -51,19 +46,17 @@ const ServiceList = () => {
           {services.map((service) => (
             <tr key={service._id}>
               <td>{service.name}</td>
-              <td className="text-end">
+              <td className="d-flex justify-content-end">
                 <button
                   className="btn btn-warning me-2 mt-0"
                   onClick={() => navigate(`/EditService/${service._id}`)}
                 >
                   Editar
                 </button>
-                <button
-                  className="btn btn-danger mt-0"
-                  onClick={() => handleDelete(service._id)}
-                >
-                  Eliminar
-                </button>
+                <DeleteService
+                  serviceId={service._id}
+                  onServiceDeleted={handleServiceDeleted}
+                />
               </td>
             </tr>
           ))}

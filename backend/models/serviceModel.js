@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-// Define el esquema del servicio
+// Esquema del servicio
 const serviceSchema = new mongoose.Schema(
   {
     name: {
