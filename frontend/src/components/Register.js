@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Importar useNavigate
+import { useNavigate } from 'react-router-dom'; 
 import { registerUser } from '../services/AuthService';
-import '../styles/Register.css'; // Para cualquier estilo adicional si es necesario
 
 const Register = () => {
     const [nombre, setNombre] = useState('');
@@ -9,7 +8,7 @@ const Register = () => {
     const [password, setPassword] = useState('');
     const [error, setError] = useState(null);
     const [successMessage, setSuccessMessage] = useState(null);
-    const navigate = useNavigate(); // Crear la instancia de navigate
+    const navigate = useNavigate(); 
 
     const handleRegister = async (e) => {
         e.preventDefault();
@@ -20,8 +19,8 @@ const Register = () => {
 
             // Redirigir a la página de login después del registro exitoso
             setTimeout(() => {
-                navigate('/login'); // Suponiendo que la ruta para login es '/login'
-            }, 2000); // Redirige después de 2 segundos
+                navigate('/login'); 
+            }, 2000); 
 
             setError(null); // Limpiar cualquier mensaje de error previo
         } catch (err) {

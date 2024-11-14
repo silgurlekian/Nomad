@@ -35,7 +35,7 @@ const Login = () => {
       formIsValid = false;
     }
 
-    // Si alguna validación falla, no enviamos el formulario
+    // Si alguna validación falla, no envia el formulario
     if (!formIsValid) return;
 
     try {
@@ -44,7 +44,7 @@ const Login = () => {
 
       // Guardar el token y los datos del usuario en localStorage
       localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data)); // Guarda el objeto de usuario completo
+      localStorage.setItem("user", JSON.stringify(data)); 
 
       setSuccessMessage("Inicio de sesión exitoso. Bienvenido!");
 

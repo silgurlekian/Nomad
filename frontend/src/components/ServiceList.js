@@ -1,16 +1,23 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const ServiceList = () => {
   const [services, setServices] = useState([]);
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // Obtener todos los servicios
-    axios
-      .get("http://localhost:3000/api/services")
-      .then((response) => setServices(response.data))
-      .catch((error) => console.error(error));
+    const fetchServices = async () => {
+      try {
+        const response = await axios.get("http://localhost:3000/api/services");
+        setServices(response.data);
+      } catch (error) {
+        setError("Error al obtener los servicios: " + error.message);
+      }
+    };
+
+    fetchServices();
   }, []);
 
   const handleDelete = async (id) => {
@@ -19,24 +26,49 @@ const ServiceList = () => {
       setServices(services.filter((service) => service._id !== id));
     } catch (error) {
       console.error("Error al eliminar el servicio", error);
+      setError("Error al eliminar el servicio: " + error.message);
     }
   };
 
   return (
-    <div className="container">
+    <div className="container mt-4">
       <h2>Lista de Servicios</h2>
-      <ul>
-        {services.map((service) => (
-          <li key={service._id}>
-            <span>{service.name}</span>
-            <Link to={`/services/edit/${service._id}`}>Editar</Link>
-            <button onClick={() => handleDelete(service._id)}>Eliminar</button>
-          </li>
-        ))}
-      </ul>
-      <Link to="/addService" className="btn btn-primary">
+      {error && <div className="alert alert-danger">{error}</div>}
+      <button
+        className="btn btn-primary mb-3"
+        onClick={() => navigate("/addService")}
+      >
         Crear Servicio
-      </Link>
+      </button>
+      <table className="table table-striped mt-4">
+        <thead>
+          <tr>
+            <th className="w-80">Nombre</th>
+            <th className="text-end">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {services.map((service) => (
+            <tr key={service._id}>
+              <td>{service.name}</td>
+              <td className="text-end">
+                <button
+                  className="btn btn-warning me-2 mt-0"
+                  onClick={() => navigate(`/EditService/${service._id}`)}
+                >
+                  Editar
+                </button>
+                <button
+                  className="btn btn-danger mt-0"
+                  onClick={() => handleDelete(service._id)}
+                >
+                  Eliminar
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 };

@@ -21,7 +21,7 @@ const loginUser = async ({ email, password }) => {
       email,
       password,
     });
-    return response.data; // Asegúrate de que tu API devuelva el token u otra respuesta relevante
+    return response.data;
   } catch (error) {
     throw new Error("Error al iniciar sesión. Verifica tus credenciales.");
   }

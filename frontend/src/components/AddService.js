@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 const AddService = () => {
-    const [name, setName] = useState(''); // Cambiado a `name`
+    const [name, setName] = useState(''); 
     const [error, setError] = useState(null);
     const [formErrors, setFormErrors] = useState({});
     const navigate = useNavigate();
@@ -19,7 +19,6 @@ const AddService = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // Validación de los campos
         const errors = validateForm();
         setFormErrors(errors);
 
