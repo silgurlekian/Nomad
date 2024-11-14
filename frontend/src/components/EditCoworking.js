@@ -10,13 +10,14 @@ const EditCoworking = () => {
     const [ciudad, setCiudad] = useState('');
     const [servicios, setServicios] = useState('');
     const [error, setError] = useState(null);
+    const [formErrors, setFormErrors] = useState({});
 
     useEffect(() => {
         const fetchCoworking = async () => {
             try {
                 const token = localStorage.getItem('token');
                 if (!token) {
-                    setError('No se encontró el token de autenticación');
+                    setError('Debes estar logueado para visualizar el portal.');
                     return;
                 }
 
@@ -40,12 +41,31 @@ const EditCoworking = () => {
         fetchCoworking();
     }, [id]);
 
+    // Validar los campos
+    const validateForm = () => {
+        const errors = {};
+        if (!nombre) errors.nombre = 'El nombre es obligatorio.';
+        if (!direccion) errors.direccion = 'La dirección es obligatoria.';
+        if (!ciudad) errors.ciudad = 'La ciudad es obligatoria.';
+        if (!servicios) errors.servicios = 'Los servicios son obligatorios.';
+
+        return errors;
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        // Validación de los campos
+        const errors = validateForm();
+        setFormErrors(errors);
+
+        // Si hay errores, no enviamos el formulario
+        if (Object.keys(errors).length > 0) return;
+
         try {
             const token = localStorage.getItem('token');
             if (!token) {
-                setError('No se encontró el token de autenticación');
+                setError('Debes estar logueado para visualizar el portal.');
                 return;
             }
 
@@ -79,44 +99,45 @@ const EditCoworking = () => {
                     <input
                         type="text"
                         id="nombre"
-                        className="form-control"
+                        className={`form-control ${formErrors.nombre ? 'is-invalid' : ''}`}
                         value={nombre}
                         onChange={(e) => setNombre(e.target.value)}
-                        required
                     />
+                    {formErrors.nombre && <div className="invalid-feedback">{formErrors.nombre}</div>}
                 </div>
                 <div className="mb-3">
                     <label htmlFor="direccion" className="form-label">Dirección</label>
                     <input
                         type="text"
                         id="direccion"
-                        className="form-control"
+                        className={`form-control ${formErrors.direccion ? 'is-invalid' : ''}`}
                         value={direccion}
                         onChange={(e) => setDireccion(e.target.value)}
-                        required
                     />
+                    {formErrors.direccion && <div className="invalid-feedback">{formErrors.direccion}</div>}
                 </div>
                 <div className="mb-3">
                     <label htmlFor="ciudad" className="form-label">Ciudad</label>
                     <input
                         type="text"
                         id="ciudad"
-                        className="form-control"
+                        className={`form-control ${formErrors.ciudad ? 'is-invalid' : ''}`}
                         value={ciudad}
                         onChange={(e) => setCiudad(e.target.value)}
-                        required
                     />
+                    {formErrors.ciudad && <div className="invalid-feedback">{formErrors.ciudad}</div>}
                 </div>
                 <div className="mb-3">
                     <label htmlFor="servicios" className="form-label">Servicios</label>
                     <input
                         type="text"
                         id="servicios"
-                        className="form-control"
+                        className={`form-control ${formErrors.servicios ? 'is-invalid' : ''}`}
                         value={servicios}
                         onChange={(e) => setServicios(e.target.value)}
                         placeholder="Ejemplo: Internet, Impresoras"
                     />
+                    {formErrors.servicios && <div className="invalid-feedback">{formErrors.servicios}</div>}
                 </div>
                 <button type="submit" className="btn btn-primary">Guardar cambios</button>
             </form>

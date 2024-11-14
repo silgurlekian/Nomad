@@ -13,7 +13,7 @@ const CoworkingsList = () => {
             try {
                 const token = localStorage.getItem('token');
                 if (!token) {
-                    setError('No se encontró el token de autenticación');
+                    setError('Debes estar logueado para visualizar el portal.');
                     return;
                 }
 
