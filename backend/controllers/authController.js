@@ -1,18 +1,15 @@
+// controllers/authController.js
 import User from '../models/User.js';
 import jwt from 'jsonwebtoken';
 import { validationResult } from 'express-validator';
 
-// Generar Token
 const generarToken = (id) => {
-    return jwt.sign({ id }, process.env.JWT_SECRET, {
-        expiresIn: '30d',
-    });
+    return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '30d' });
 };
 
-// Registrar Usuario
+// Registro de Usuario
 export const registerUser = async (req, res) => {
     const errores = validationResult(req);
-
     if (!errores.isEmpty()) {
         return res.status(400).json({ errores: errores.array() });
     }
@@ -39,7 +36,6 @@ export const registerUser = async (req, res) => {
 // Login de Usuario
 export const loginUser = async (req, res) => {
     const errores = validationResult(req);
-    
     if (!errores.isEmpty()) {
         return res.status(400).json({ errores: errores.array() });
     }
