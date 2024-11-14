@@ -55,11 +55,9 @@ const EditCoworking = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // Validación de los campos
         const errors = validateForm();
         setFormErrors(errors);
 
-        // Si hay errores, no enviamos el formulario
         if (Object.keys(errors).length > 0) return;
 
         try {
@@ -83,7 +81,7 @@ const EditCoworking = () => {
             };
 
             await axios.put(`http://localhost:3000/api/coworkings/${id}`, updatedCoworking, config);
-            navigate('/CoworkingsList'); // Redirigir a la lista de coworkings después de editar
+            navigate('/CoworkingsList');
         } catch (error) {
             setError('Error al actualizar el coworking: ' + error.message);
         }

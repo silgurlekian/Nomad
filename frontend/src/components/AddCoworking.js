@@ -29,7 +29,6 @@ const AddCoworking = () => {
         const errors = validateForm();
         setFormErrors(errors);
 
-        // Si hay errores, no enviamos el formulario
         if (Object.keys(errors).length > 0) return;
 
         try {
@@ -53,7 +52,7 @@ const AddCoworking = () => {
             };
 
             await axios.post('http://localhost:3000/api/coworkings', newCoworking, config);
-            navigate('/CoworkingsList'); // Redirigir a la lista de coworkings después de agregar
+            navigate('/CoworkingsList');
         } catch (error) {
             setError('Error al agregar el coworking: ' + error.message);
         }
