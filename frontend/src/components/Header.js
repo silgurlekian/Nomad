@@ -35,13 +35,14 @@ const Header = () => {
                 Coworkings
               </Link>
             </li>
+
+            <li className="me-3">
+              <Link to="/ServiceList" className="text-decoration-none">
+                Servicios
+              </Link>
+            </li>
             {token && parsedUser && (
               <>
-                <li className="me-3">
-                  <Link to="/add-coworking" className="text-decoration-none">
-                    Agregar Coworking
-                  </Link>
-                </li>
                 <li className="d-flex align-items-center">
                   <span className="me-2">Hola, {parsedUser.nombre}</span>{" "}
                 </li>

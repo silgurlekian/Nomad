@@ -1,4 +1,4 @@
-import Coworking from '../models/Coworking.js';
+import Coworking from '../models/CoworkingModel.js';
 
 // Obtener todos los coworkings con filtrado, orden y paginado
 export const getCoworkings = async (req, res) => {

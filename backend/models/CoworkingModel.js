@@ -8,7 +8,7 @@ const coworkingSchema = new mongoose.Schema({
     email: { type: String },
     website: { type: String },
     descripcion: { type: String },
-    servicios: [{ type: String }],
+    services: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Service' }],
 }, { timestamps: true });
 
 const Coworking = mongoose.model('Coworking', coworkingSchema);

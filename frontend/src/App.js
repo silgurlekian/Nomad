@@ -12,6 +12,8 @@ import Register from "./components/Register";
 import CoworkingsList from "./components/CoworkingsList";
 import AddCoworking from "./components/AddCoworking";
 import EditCoworking from "./components/EditCoworking";
+import ServiceList from "./components/ServiceList";
+import CreateEditService from "./components/CreateEditService";
 
 function App() {
   return (
@@ -24,6 +26,10 @@ function App() {
         <Route path="/CoworkingsList" element={<CoworkingsList />} />
         <Route path="/add-coworking" element={<AddCoworking />} />
         <Route path="/edit-coworking/:id" element={<EditCoworking />} />
+
+        <Route path="/ServiceList" element={<ServiceList />} />
+        <Route path="/ServiceList/create" element={<CreateEditService />} />
+        <Route path="/ServiceList/edit/:id" element={<CreateEditService />} />
       </Routes>
     </Router>
   );
