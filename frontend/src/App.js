@@ -4,6 +4,8 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-d
 import Login from './components/Login';
 import Register from './components/Register';
 import CoworkingsList from './components/CoworkingsList';
+import AddCoworking from './components/AddCoworking';
+import EditCoworking from './components/EditCoworking';
 
 function App() {
     return (
@@ -13,6 +15,8 @@ function App() {
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/CoworkingsList" element={<CoworkingsList />} />
+                <Route path="/add-coworking" element={<AddCoworking />} />
+                <Route path="/edit-coworking/:id" element={<EditCoworking />} />
             </Routes>
         </Router>
     );

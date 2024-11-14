@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import AddCoworking from './AddCoworking';
+import { useNavigate } from 'react-router-dom';
 import DeleteCoworking from './DeleteCoworking';
-import EditCoworking from './EditCoworking';
 
 const CoworkingsList = () => {
     const [coworkings, setCoworkings] = useState([]);
     const [error, setError] = useState(null);
-    const [coworkingToEdit, setCoworkingToEdit] = useState(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchCoworkings = async () => {
@@ -34,34 +33,20 @@ const CoworkingsList = () => {
         fetchCoworkings();
     }, []);
 
-    const handleCoworkingAdded = (newCoworking) => {
-        setCoworkings([...coworkings, newCoworking]);
-    };
-
     const handleCoworkingDeleted = (coworkingId) => {
         setCoworkings(coworkings.filter(coworking => coworking._id !== coworkingId));
-    };
-
-    const handleCoworkingUpdated = (updatedCoworking) => {
-        setCoworkings(
-            coworkings.map(coworking =>
-                coworking._id === updatedCoworking._id ? updatedCoworking : coworking
-            )
-        );
-        setCoworkingToEdit(null);
     };
 
     return (
         <div className="container mt-4">
             <h2>Lista de Coworkings</h2>
             {error && <div className="alert alert-danger">{error}</div>}
-            <AddCoworking onCoworkingAdded={handleCoworkingAdded} />
-            {coworkingToEdit && (
-                <EditCoworking
-                    coworkingId={coworkingToEdit}
-                    onCoworkingUpdated={handleCoworkingUpdated}
-                />
-            )}
+            <button
+                className="btn btn-primary mb-3"
+                onClick={() => navigate('/add-coworking')}
+            >
+                Agregar Coworking
+            </button>
             <table className="table table-striped mt-4">
                 <thead>
                     <tr>
@@ -82,7 +67,7 @@ const CoworkingsList = () => {
                             <td>
                                 <button
                                     className="btn btn-warning me-2"
-                                    onClick={() => setCoworkingToEdit(coworking._id)}
+                                    onClick={() => navigate(`/edit-coworking/${coworking._id}`)}
                                 >
                                     Editar
                                 </button>

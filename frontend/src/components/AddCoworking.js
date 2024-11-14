@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
-const AddCoworking = ({ onCoworkingAdded }) => {
+const AddCoworking = () => {
     const [nombre, setNombre] = useState('');
     const [direccion, setDireccion] = useState('');
     const [ciudad, setCiudad] = useState('');
     const [servicios, setServicios] = useState('');
     const [error, setError] = useState(null);
+    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -30,12 +32,8 @@ const AddCoworking = ({ onCoworkingAdded }) => {
                 servicios: servicios.split(',').map(service => service.trim()),
             };
 
-            const response = await axios.post('http://localhost:3000/api/coworkings', newCoworking, config);
-            onCoworkingAdded(response.data);
-            setNombre('');
-            setDireccion('');
-            setCiudad('');
-            setServicios('');
+            await axios.post('http://localhost:3000/api/coworkings', newCoworking, config);
+            navigate('/CoworkingsList'); // Redirigir a la lista de coworkings después de agregar
         } catch (error) {
             setError('Error al agregar el coworking: ' + error.message);
         }

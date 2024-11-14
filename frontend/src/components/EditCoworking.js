@@ -1,7 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate, useParams } from 'react-router-dom';
 
-const EditCoworking = ({ coworkingId, onCoworkingUpdated }) => {
+const EditCoworking = () => {
+    const { id } = useParams();
+    const navigate = useNavigate();
     const [nombre, setNombre] = useState('');
     const [direccion, setDireccion] = useState('');
     const [ciudad, setCiudad] = useState('');
@@ -23,7 +26,7 @@ const EditCoworking = ({ coworkingId, onCoworkingUpdated }) => {
                     },
                 };
 
-                const response = await axios.get(`http://localhost:3000/api/coworkings/${coworkingId}`, config);
+                const response = await axios.get(`http://localhost:3000/api/coworkings/${id}`, config);
                 const { nombre, direccion, ciudad, servicios } = response.data;
                 setNombre(nombre);
                 setDireccion(direccion);
@@ -35,7 +38,7 @@ const EditCoworking = ({ coworkingId, onCoworkingUpdated }) => {
         };
 
         fetchCoworking();
-    }, [coworkingId]);
+    }, [id]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -59,8 +62,8 @@ const EditCoworking = ({ coworkingId, onCoworkingUpdated }) => {
                 servicios: servicios.split(',').map(service => service.trim()),
             };
 
-            const response = await axios.put(`http://localhost:3000/api/coworkings/${coworkingId}`, updatedCoworking, config);
-            onCoworkingUpdated(response.data);
+            await axios.put(`http://localhost:3000/api/coworkings/${id}`, updatedCoworking, config);
+            navigate('/CoworkingsList'); // Redirigir a la lista de coworkings después de editar
         } catch (error) {
             setError('Error al actualizar el coworking: ' + error.message);
         }
@@ -115,7 +118,7 @@ const EditCoworking = ({ coworkingId, onCoworkingUpdated }) => {
                         placeholder="Ejemplo: Internet, Impresoras"
                     />
                 </div>
-                <button type="submit" className="btn btn-primary">Actualizar</button>
+                <button type="submit" className="btn btn-primary">Guardar cambios</button>
             </form>
         </div>
     );
