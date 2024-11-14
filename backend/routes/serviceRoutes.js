@@ -5,9 +5,9 @@ const router = express.Router();
 
 // Crear un servicio
 router.post('/create', async (req, res) => {
-  const { name, description } = req.body;
+  const { name } = req.body;
   try {
-    const newService = new Service({ name, description });
+    const newService = new Service({ name });
     await newService.save();
     res.status(201).json(newService);
   } catch (err) {
@@ -42,11 +42,11 @@ router.get('/:id', async (req, res) => {
 // Actualizar un servicio
 router.put('/:id', async (req, res) => {
   const { id } = req.params;
-  const { name, description } = req.body;
+  const { name } = req.body;
   try {
     const updatedService = await Service.findByIdAndUpdate(
       id,
-      { name, description },
+      { name },
       { new: true }
     );
     if (!updatedService) {

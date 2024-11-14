@@ -8,14 +8,14 @@ const ServiceList = () => {
   useEffect(() => {
     // Obtener todos los servicios
     axios
-      .get("http://localhost:3000/api/servicios")
+      .get("http://localhost:3000/api/services")
       .then((response) => setServices(response.data))
       .catch((error) => console.error(error));
   }, []);
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:3000/api/servicios/${id}`);
+      await axios.delete(`http://localhost:3000/api/services/${id}`);
       setServices(services.filter((service) => service._id !== id));
     } catch (error) {
       console.error("Error al eliminar el servicio", error);
@@ -34,7 +34,7 @@ const ServiceList = () => {
           </li>
         ))}
       </ul>
-      <Link to="/services/create" className="btn btn-primary">
+      <Link to="/addService" className="btn btn-primary">
         Crear Servicio
       </Link>
     </div>

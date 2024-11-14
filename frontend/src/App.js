@@ -13,7 +13,8 @@ import CoworkingsList from "./components/CoworkingsList";
 import AddCoworking from "./components/AddCoworking";
 import EditCoworking from "./components/EditCoworking";
 import ServiceList from "./components/ServiceList";
-import CreateEditService from "./components/CreateEditService";
+import AddService from "./components/AddService";
+import EditService from "./components/EditService";
 
 function App() {
   return (
@@ -24,12 +25,12 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/CoworkingsList" element={<CoworkingsList />} />
-        <Route path="/add-coworking" element={<AddCoworking />} />
-        <Route path="/edit-coworking/:id" element={<EditCoworking />} />
+        <Route path="/addCoworking" element={<AddCoworking />} />
+        <Route path="/editCoworking/:id" element={<EditCoworking />} />
 
         <Route path="/ServiceList" element={<ServiceList />} />
-        <Route path="/ServiceList/create" element={<CreateEditService />} />
-        <Route path="/ServiceList/edit/:id" element={<CreateEditService />} />
+        <Route path="/AddService" element={<AddService />} />
+        <Route path="/EditService/:id" element={<EditService />} />
       </Routes>
     </Router>
   );

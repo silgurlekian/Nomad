@@ -7,11 +7,6 @@ const serviceSchema = new mongoose.Schema(
       type: String,
       required: true,
       trim: true
-    },
-    description: {
-      type: String,
-      required: true,
-      trim: true
     }
   },
   { timestamps: true } // Esto agrega las fechas de creación y actualización automáticamente

@@ -21,7 +21,7 @@ app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/coworkings", coworkingRoutes);
 app.use("/api/cafeterias", cafeteriaRoutes);
-app.use("/api/servicios", serviceRoutes);
+app.use("/api/services", serviceRoutes);
 
 // Ruta de archivos estáticos (CSS, imágenes, etc.)
 const __filename = fileURLToPath(import.meta.url);
