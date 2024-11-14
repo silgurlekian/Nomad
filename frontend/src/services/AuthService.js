@@ -1,4 +1,3 @@
-// src/services/AuthService.js
 import axios from "axios";
 
 export const registerUser = async ({ nombre, email, password }) => {
@@ -16,14 +15,16 @@ export const registerUser = async ({ nombre, email, password }) => {
   }
 };
 
-export const loginUser = async ({ email, password }) => {
+const loginUser = async ({ email, password }) => {
   try {
     const response = await axios.post("http://localhost:3000/api/auth/login", {
       email,
       password,
     });
-    return response.data;
+    return response.data; // Asegúrate de que tu API devuelva el token u otra respuesta relevante
   } catch (error) {
-    throw new Error(error.response?.data?.message || "Error al iniciar sesión");
+    throw new Error("Error al iniciar sesión. Verifica tus credenciales.");
   }
 };
+
+export { loginUser };
