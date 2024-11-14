@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { loginUser } from "../services/AuthService";
+import { useNavigate } from "react-router-dom"; // Para redirigir después del login
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -9,6 +10,8 @@ const Login = () => {
 
   const [emailError, setEmailError] = useState(null);
   const [passwordError, setPasswordError] = useState(null);
+
+  const navigate = useNavigate(); // Hook para redirigir a otro componente
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -38,7 +41,14 @@ const Login = () => {
     try {
       const data = await loginUser({ email, password });
       console.log("Inicio de sesión exitoso", data);
+
+      // Guardar el token en localStorage
+      localStorage.setItem("token", data.token);
+
       setSuccessMessage("Inicio de sesión exitoso. Bienvenido!");
+
+      // Redirigir a la página de coworkings
+      navigate("/CoworkingsList");
     } catch (err) {
       setError(err.message);
     }
@@ -92,13 +102,19 @@ const Login = () => {
             </button>
           </form>
 
-          {/* Mostrar mensaje de éxito */}
+          {/* Mensaje de éxito */}
           {successMessage && (
-            <p className="text-success text-center mt-3">{successMessage}</p>
+            <div className="alert alert-success mt-3" role="alert">
+              {successMessage}
+            </div>
           )}
 
-          {/* Mostrar mensaje de error */}
-          {error && <p className="text-danger text-center mt-3">{error}</p>}
+          {/* Mensaje de error general */}
+          {error && (
+            <div className="alert alert-danger mt-3" role="alert">
+              {error}
+            </div>
+          )}
         </div>
       </div>
     </div>
