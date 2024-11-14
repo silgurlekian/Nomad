@@ -42,8 +42,9 @@ const Login = () => {
       const data = await loginUser({ email, password });
       console.log("Inicio de sesión exitoso", data);
 
-      // Guardar el token en localStorage
+      // Guardar el token y los datos del usuario en localStorage
       localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data)); // Guarda el objeto de usuario completo
 
       setSuccessMessage("Inicio de sesión exitoso. Bienvenido!");
 

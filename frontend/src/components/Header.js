@@ -4,18 +4,21 @@ import { Link, useNavigate } from "react-router-dom";
 const Header = () => {
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
-  const user = localStorage.getItem("user"); 
+  const user = localStorage.getItem("user");
 
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
-    navigate("/login"); 
+    navigate("/login");
   };
 
+  // Parsear los datos del usuario
+  const parsedUser = user ? JSON.parse(user) : null;
+
   return (
-    <header className="bg-dark text-white p-3">
+    <header className="bg-light p-3">
       <div className="container d-flex justify-content-between align-items-center">
-        <Link to="/" className="text-white text-decoration-none">
+        <Link to="/" className="text-decoration-none">
           <img
             src="/images/logo.png"
             alt="Nomad Logo"
@@ -25,29 +28,26 @@ const Header = () => {
         </Link>
 
         <nav>
-          <ul className="d-flex list-unstyled m-0">
+          <ul className="d-flex align-items-center list-unstyled m-0">
             <li className="me-3">
-              <Link
-                to="/CoworkingsList"
-                className="text-white text-decoration-none"
-              >
+              <Link to="/CoworkingsList" className="text-decoration-none">
                 Coworkings
               </Link>
             </li>
-            {token && (
+            {token && parsedUser && (
               <>
                 <li className="me-3">
-                  <Link
-                    to="/add-coworking"
-                    className="text-white text-decoration-none"
-                  >
+                  <Link to="/add-coworking" className="text-decoration-none">
                     Agregar Coworking
                   </Link>
+                </li>
+                <li className="d-flex align-items-center">
+                  <span className="me-2">Hola, {parsedUser.nombre}</span>{" "}
                 </li>
                 <li className="me-3">
                   <button
                     onClick={handleLogout}
-                    className="btn btn-outline-light btn-sm"
+                    className="btn btn-outline-dark text-decoration-none mt-0"
                   >
                     Logout
                   </button>
@@ -57,26 +57,19 @@ const Header = () => {
             {!token && (
               <>
                 <li className="me-3">
-                  <Link to="/login" className="text-white text-decoration-none">
-                    Login
+                  <Link to="/login" className="text-decoration-none">
+                    Iniciar sesión
                   </Link>
                 </li>
                 <li className="me-3">
-                  <Link to="/register" className="btn btn-outline-light btn-sm">
-                    Register
+                  <Link to="/register" className="btn btn-outline-dark btn-sm">
+                    Registrarse
                   </Link>
                 </li>
               </>
             )}
           </ul>
         </nav>
-
-        {/* Usuario logueado */}
-        {token && user && (
-          <div className="d-flex align-items-center">
-            <span className="me-2">Hola, {user}</span>
-          </div>
-        )}
       </div>
     </header>
   );
