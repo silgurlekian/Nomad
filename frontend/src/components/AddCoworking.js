@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
@@ -6,10 +6,32 @@ const AddCoworking = () => {
     const [nombre, setNombre] = useState('');
     const [direccion, setDireccion] = useState('');
     const [ciudad, setCiudad] = useState('');
-    const [servicios, setServicios] = useState('');
+    const [selectedServices, setSelectedServices] = useState([]); // Servicios seleccionados por el usuario
+    const [allServices, setAllServices] = useState([]); // Todos los Servicios disponibles
     const [error, setError] = useState(null);
     const [formErrors, setFormErrors] = useState({});
     const navigate = useNavigate();
+
+    // Cargar los Servicios disponibles desde el backend
+    useEffect(() => {
+        const fetchServices = async () => {
+            try {
+                const response = await axios.get('http://localhost:3000/api/services');
+                setAllServices(response.data); // Guarda los Servicios disponibles
+            } catch (error) {
+                setError('Error al cargar los Servicios: ' + error.message);
+            }
+        };
+        fetchServices();
+    }, []);
+
+    // Manejar la selección de los checkboxes
+    const handleCheckboxChange = (e) => {
+        const { value, checked } = e.target;
+        setSelectedServices((prevSelected) =>
+            checked ? [...prevSelected, value] : prevSelected.filter((id) => id !== value)
+        );
+    };
 
     // Validar los campos
     const validateForm = () => {
@@ -17,7 +39,7 @@ const AddCoworking = () => {
         if (!nombre) errors.nombre = 'El nombre es obligatorio.';
         if (!direccion) errors.direccion = 'La dirección es obligatoria.';
         if (!ciudad) errors.ciudad = 'La ciudad es obligatoria.';
-        if (!servicios) errors.servicios = 'Los servicios son obligatorios.';
+        if (selectedServices.length === 0) errors.Services = 'Los Servicios son obligatorios.';
 
         return errors;
     };
@@ -34,7 +56,7 @@ const AddCoworking = () => {
         try {
             const token = localStorage.getItem('token');
             if (!token) {
-                setError('Debes estar logueado para visualizar el portal.');
+                setError('Debes estar logueado para realizar esta acción.');
                 return;
             }
 
@@ -48,7 +70,7 @@ const AddCoworking = () => {
                 nombre,
                 direccion,
                 ciudad,
-                servicios: servicios.split(',').map(service => service.trim()),
+                servicios: selectedServices,
             };
 
             await axios.post('http://localhost:3000/api/coworkings', newCoworking, config);
@@ -97,16 +119,22 @@ const AddCoworking = () => {
                     {formErrors.ciudad && <div className="invalid-feedback">{formErrors.ciudad}</div>}
                 </div>
                 <div className="mb-3">
-                    <label htmlFor="servicios" className="form-label">Servicios</label>
-                    <input
-                        type="text"
-                        id="servicios"
-                        className={`form-control ${formErrors.servicios ? 'is-invalid' : ''}`}
-                        value={servicios}
-                        onChange={(e) => setServicios(e.target.value)}
-                        placeholder="Ejemplo: Internet, Impresoras"
-                    />
-                    {formErrors.servicios && <div className="invalid-feedback">{formErrors.servicios}</div>}
+                    <label className="form-label">Servicios</label>
+                    <div>
+                        {allServices.map((service) => (
+                            <div key={service._id}>
+                                <input
+                                    type="checkbox"
+                                    id={service._id}
+                                    value={service._id}
+                                    checked={selectedServices.includes(service._id)}
+                                    onChange={handleCheckboxChange}
+                                />
+                                <label htmlFor={service._id}>{service.name}</label>
+                            </div>
+                        ))}
+                    </div>
+                    {formErrors.Services && <div className="invalid-feedback">{formErrors.Services}</div>}
                 </div>
                 <button type="submit" className="btn btn-primary">Agregar</button>
             </form>
