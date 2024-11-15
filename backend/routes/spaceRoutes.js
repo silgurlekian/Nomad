@@ -5,7 +5,7 @@ import {
     createSpace,
     updateSpace,
     deleteSpace,
-} from '../controllers/spacesController.js';
+} from '../controllers/spaceController.js';
 import { protect } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
