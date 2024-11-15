@@ -51,7 +51,7 @@ const Header = () => {
                     onClick={handleLogout}
                     className="btn btn-outline-dark text-decoration-none mt-0"
                   >
-                    Logout
+                    Cerrar sesión
                   </button>
                 </li>
               </>
