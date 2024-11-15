@@ -8,11 +8,14 @@ const EditSpace = () => {
   const [nombre, setNombre] = useState("");
   const [direccion, setDireccion] = useState("");
   const [ciudad, setCiudad] = useState("");
-  const [servicios, setServicios] = useState([]); 
-  const [availableServices, setAvailableServices] = useState([]); 
+  const [servicios, setServicios] = useState([]);
+  const [availableServices, setAvailableServices] = useState([]);
   const [error, setError] = useState(null);
   const [formErrors, setFormErrors] = useState({});
+  const [imagen, setImagen] = useState(null);
+  const [currentImage, setCurrentImage] = useState("");
 
+  // Cargar datos del espacio y servicios disponibles
   useEffect(() => {
     const fetchSpace = async () => {
       try {
@@ -33,11 +36,16 @@ const EditSpace = () => {
           `http://localhost:3000/api/spaces/${id}`,
           config
         );
-        const { nombre, direccion, ciudad, servicios } = response.data;
+        const { nombre, direccion, ciudad, servicios, imagen } = response.data;
         setNombre(nombre);
         setDireccion(direccion);
         setCiudad(ciudad);
-        setServicios(servicios.map((service) => service._id)); 
+        setServicios(servicios.map((service) => service._id));
+
+        // Establecer la imagen actual
+        if (imagen) {
+          setCurrentImage(imagen); // Asignar la URL de la imagen actual
+        }
       } catch (error) {
         setError("Error al obtener los datos del espacio: " + error.message);
       }
@@ -45,7 +53,7 @@ const EditSpace = () => {
 
     const fetchAvailableServices = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/api/services"); 
+        const response = await axios.get("http://localhost:3000/api/services");
         setAvailableServices(response.data);
       } catch (error) {
         setError(
@@ -66,10 +74,15 @@ const EditSpace = () => {
     if (!ciudad) errors.ciudad = "La ciudad es obligatoria.";
     if (servicios.length === 0)
       errors.servicios = "Los servicios son obligatorios.";
-
     return errors;
   };
 
+  // Manejar cambio de archivo
+  const handleFileChange = (e) => {
+    setImagen(e.target.files[0]);
+  };
+
+  // Manejar el envío del formulario
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -88,15 +101,21 @@ const EditSpace = () => {
       const config = {
         headers: {
           Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
         },
       };
 
-      const updatedSpace = {
-        nombre,
-        direccion,
-        ciudad,
-        servicios, 
-      };
+      // Crear FormData para enviar al backend
+      const updatedSpace = new FormData();
+      updatedSpace.append("nombre", nombre);
+      updatedSpace.append("direccion", direccion);
+      updatedSpace.append("ciudad", ciudad);
+
+      servicios.forEach((serviceId) => {
+        updatedSpace.append("servicios", serviceId);
+      });
+
+      if (imagen) updatedSpace.append("imagen", imagen);
 
       await axios.put(
         `http://localhost:3000/api/spaces/${id}`,
@@ -109,6 +128,7 @@ const EditSpace = () => {
     }
   };
 
+  // Manejar cambio en los checkboxes de servicios
   const handleServicioChange = (e) => {
     const { value, checked } = e.target;
     setServicios((prev) =>
@@ -122,6 +142,7 @@ const EditSpace = () => {
     <div className="container mt-4">
       <h2>Editar espacio</h2>
       {error && <div className="alert alert-danger">{error}</div>}
+
       <form onSubmit={handleSubmit}>
         <div className="mb-3">
           <label htmlFor="nombre" className="form-label">
@@ -138,6 +159,7 @@ const EditSpace = () => {
             <div className="invalid-feedback">{formErrors.nombre}</div>
           )}
         </div>
+
         <div className="mb-3">
           <label htmlFor="direccion" className="form-label">
             Dirección
@@ -155,6 +177,7 @@ const EditSpace = () => {
             <div className="invalid-feedback">{formErrors.direccion}</div>
           )}
         </div>
+
         <div className="mb-3">
           <label htmlFor="ciudad" className="form-label">
             Ciudad
@@ -170,6 +193,7 @@ const EditSpace = () => {
             <div className="invalid-feedback">{formErrors.ciudad}</div>
           )}
         </div>
+
         <div className="mb-3">
           <label htmlFor="servicios" className="form-label">
             Servicios
@@ -200,6 +224,28 @@ const EditSpace = () => {
             </div>
           )}
         </div>
+
+        <div className="mb-3">
+          <label className="form-label">Imagen</label>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleFileChange}
+            className="form-control"
+          />
+
+          {currentImage && (
+            <div className="mb-3">
+              <img
+                src={`http://localhost:3000/${currentImage}`}
+                alt="Imagen actual"
+                style={{ width: "200px", marginBottom: "10px" }}
+              />
+              <p>Imagen actual</p>
+            </div>
+          )}
+        </div>
+
         <button type="submit" className="btn btn-primary">
           Guardar cambios
         </button>

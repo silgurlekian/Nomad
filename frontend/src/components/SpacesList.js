@@ -17,12 +17,7 @@ const SpacesList = () => {
           return;
         }
 
-        const config = {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        };
-
+        const config = { headers: { Authorization: `Bearer ${token}` } };
         const response = await axios.get(
           "http://localhost:3000/api/spaces",
           config
@@ -37,9 +32,7 @@ const SpacesList = () => {
   }, []);
 
   const handleSpaceDeleted = (spaceId) => {
-    setSpaces(
-      spaces.filter((space) => space._id !== spaceId)
-    );
+    setSpaces(spaces.filter((space) => space._id !== spaceId));
   };
 
   return (
@@ -55,6 +48,7 @@ const SpacesList = () => {
       <table className="table table-striped mt-4">
         <thead>
           <tr>
+            <th>Imagen</th>
             <th>Nombre</th>
             <th>Dirección</th>
             <th>Ciudad</th>
@@ -65,14 +59,21 @@ const SpacesList = () => {
         <tbody>
           {spaces.map((space) => (
             <tr key={space._id}>
+              <td>
+                {space.imagen && (
+                  <img
+                    src={`http://localhost:3000/${space.imagen}`}
+                    alt={space.nombre}
+                    style={{ width: "100px" }}
+                  />
+                )}
+              </td>
               <td>{space.nombre}</td>
               <td>{space.direccion}</td>
               <td>{space.ciudad}</td>
               <td>
                 {space.servicios && Array.isArray(space.servicios)
-                  ? space.servicios
-                      .map((service) => service.name)
-                      .join(", ") 
+                  ? space.servicios.map((service) => service.name).join(", ")
                   : "No services available"}
               </td>
 
@@ -83,6 +84,7 @@ const SpacesList = () => {
                 >
                   Editar
                 </button>
+
                 <DeleteSpace
                   spaceId={space._id}
                   onSpaceDeleted={handleSpaceDeleted}
