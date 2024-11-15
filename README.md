@@ -7,10 +7,6 @@ nomad es una aplicación web para gestionar y descubrir espacios de trabajo. Per
 1. [Características](#características)
 2. [Tecnologías utilizadas](#tecnologías-utilizadas)
 3. [Instalación](#instalación)
-4. [Uso](#uso)
-5. [Estructura del Proyecto](#estructura-del-proyecto)
-6. [Contribuciones](#contribuciones)
-7. [Licencia](#licencia)
 
 ## **Características**
 
