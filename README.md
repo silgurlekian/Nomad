@@ -1,192 +1,46 @@
-# API de Coworkings Nomad
+# **nomad**
 
-## Descripción
+nomad es una aplicación web para gestionar y descubrir espacios de trabajo. Permite a los usuarios buscar, crear, editar y eliminar espacios de coworking, así como administrar los servicios que ofrecen. La aplicación utiliza **React** para el frontend y **Node.js** con **MongoDB** para el backend.
 
-Esta API RESTful permite centralizar y gestionar todos los espacios de coworking y cafeterías de una ciudad. Incluye funcionalidades de autenticación, CRUD completo para los espacios de coworking y cafeterías, filtrado, ordenamiento y paginado.
+## **Tabla de Contenidos**
 
-## Tecnologías Utilizadas
+1. [Características](#características)
+2. [Tecnologías utilizadas](#tecnologías-utilizadas)
+3. [Instalación](#instalación)
+4. [Uso](#uso)
+5. [Estructura del Proyecto](#estructura-del-proyecto)
+6. [Contribuciones](#contribuciones)
+7. [Licencia](#licencia)
 
-- **Node.js**
-- **Express**
-- **MongoDB** con **Mongo Compass**
-- **JSON Web Tokens (JWT)**
-- **Postman** para pruebas
+## **Características**
 
-## Instalación
+- **Autenticación de usuarios**: Los usuarios deben estar autenticados para poder ver los detalles completos de los espacios y realizar acciones.
+- **CRUD de coworking**: Los administradores pueden crear, leer, actualizar y eliminar espacios de coworking.
+- **Gestión de servicios**: Los usuarios pueden ver los servicios disponibles en cada espacio de coworking, y los administradores pueden añadir nuevos servicios.
+- **Interfaz de usuario intuitiva**: UI/UX amigable para la gestión de coworkings.
 
-Repositorio: https://github.com/silgurlekian/Nomad.git
+## **Tecnologías utilizadas**
 
-## Endpoints
+- **Frontend**:
+  - React.js
+  - React Router (para la navegación)
+  - Axios (para las peticiones HTTP)
+  - Bootstrap (para el diseño responsivo)
+  - React Hooks (useState, useEffect)
 
-### Autenticación
+- **Backend**:
+  - Node.js
+  - Express.js
+  - MongoDB (con Mongoose)
+  - JWT (para la autenticación)
+  - Bcrypt.js (para el cifrado de contraseñas)
 
-| **Método** | **Endpoint**             | **Descripción**                |
-|------------|--------------------------|--------------------------------|
-| POST       | `/api/auth/register`     | Registrar un nuevo usuario     |
-| POST       | `/api/auth/login`        | Iniciar sesión                 |
+- **Otras herramientas**:
+  - MongoDB (para la base de datos)
 
-### Coworkings
+## **Instalación**
 
-| **Método** | **Endpoint**                                               | **Descripción**                                   |
-|------------|------------------------------------------------------------|---------------------------------------------------|
-| GET        | `/api/coworkings`                                          | Obtener todos los coworkings                      |
-| GET        | `/api/coworkings/:id`                                      | Obtener un coworking por ID                        |
-| GET        | `/api/coworkings?ciudad=CABA`                              | Filtrar coworkings por ciudad                      |
-| GET        | `/api/coworkings?nombre=Central`                            | Filtrar coworkings por nombre                      |
-| GET        | `/api/coworkings?ordenarPor=nombre&orden=desc`              | Ordenar coworkings por nombre en orden descendente  |
-| POST       | `/api/coworkings`                                          | Crear un nuevo coworking                            |
-| PUT        | `/api/coworkings/:id`                                      | Actualizar un coworking                             |
-| DELETE     | `/api/coworkings/:id`                                      | Eliminar un coworking                               |
+### **Clonar el repositorio**
 
-### Cafeterías
-
-| **Método** | **Endpoint**                                               | **Descripción**                                   |
-|------------|------------------------------------------------------------|---------------------------------------------------|
-| GET        | `/api/cafeterias`                                          | Obtener todas las cafeterías                      |
-| GET        | `/api/cafeterias/:id`                                      | Obtener una cafetería por ID                      |
-| POST       | `/api/cafeterias`                                          | Crear una nueva cafetería                          |
-| PUT        | `/api/cafeterias/:id`                                      | Actualizar una cafetería                           |
-| DELETE     | `/api/cafeterias/:id`                                      | Eliminar una cafetería                             |
-
-### Usuarios
-
-| **Método** | **Endpoint**                     | **Descripción**                                   |
-|------------|----------------------------------|---------------------------------------------------|
-| PUT        | `/api/usuarios/cambiar-password` | Cambiar la contraseña de un usuario autenticado    |
-
-**Nota:** Todos los endpoints relacionados con los **coworkings**, **cafeterías** y **usuarios** están protegidos y requieren autenticación mediante un **Token JWT**. 
-
-## Pruebas con Postman
-
-A continuación, se describen los pasos básicos para realizar las pruebas:
-
-1. **Registrar un nuevo usuario**
-
-    - **Método:** POST
-    - **URL:** `http://localhost:3000/api/auth/register`
-
-        ```json
-        {
-            "nombre": "Juan Pérez",
-            "email": "juan.perez@mail.com",
-            "password": "123456"
-        }
-        ```
-
-2. **Iniciar sesión**
-
-    - **Método:** POST
-    - **URL:** `http://localhost:3000/api/auth/login`
-
-        ```json
-        {
-            "email": "juan.perez@example.com",
-            "password": "123456"
-        }
-        ```
-
-    - **Respuesta esperada:** Un objeto con el **Token JWT** que se utilizará para autenticar las siguientes solicitudes.
-
-3. **Obtener todos los Coworkings**
-
-    - **Método:** GET
-    - **URL:** `http://localhost:3000/api/coworkings`
-
-4. **Obtener todas las Cafeterías**
-
-    - **Método:** GET
-    - **URL:** `http://localhost:3000/api/cafeterias`
-
-5. **Filtrar Coworkings por ciudad**
-
-    - **Método:** GET
-    - **URL:** `http://localhost:3000/api/coworkings?ciudad=CABA`
-
-6. **Filtrar Coworkings por nombre**
-
-    - **Método:** GET
-    - **URL:** `http://localhost:3000/api/coworkings?nombre=Central`
-
-7. **Ordenar Coworkings por nombre descendente**
-
-    - **Método:** GET
-    - **URL:** `http://localhost:3000/api/coworkings?ordenarPor=nombre&orden=desc`
-
-8. **Crear un nuevo Coworking**
-
-    - **Método:** POST
-    - **URL:** `http://localhost:3000/api/coworkings`
-
-        ```json
-        {
-            "nombre": "Coworking Central",
-            "direccion": "Calle Falsa 123",
-            "ciudad": "Ciudad Ejemplo",
-            "telefono": "123456789",
-            "email": "contacto@coworkingcentral.com",
-            "website": "https://coworkingcentral.com",
-            "descripcion": "Espacio de coworking en el centro de la ciudad.",
-            "servicios": ["WiFi", "Café", "Salas de reunión"]
-        }
-        ```
-
-9. **Crear una nueva Cafetería**
-
-    - **Método:** POST
-    - **URL:** `http://localhost:3000/api/cafeterias`
-
-        ```json
-        {
-            "nombre": "Cafetería Ejemplo",
-            "direccion": "Calle Falsa 456",
-            "ciudad": "Ciudad Ejemplo",
-            "telefono": "987654321",
-            "email": "contacto@cafeteriaejemplo.com",
-            "website": "https://cafeteriaejemplo.com",
-            "descripcion": "Una cafetería acogedora.",
-            "servicios": ["WiFi", "Pasteles", "Café"],
-            "horarioApertura": "08:00",
-            "horarioCierre": "20:00"
-        }
-        ```
-
-10. **Actualizar un Coworking**
-
-    - **Método:** PUT
-    - **URL:** `http://localhost:3000/api/coworkings/<id>`
-
-        ```json
-        {
-            "telefono": "987654321",
-            "servicios": ["WiFi", "Café", "Salas de reunión", "Impresoras"]
-        }
-        ```
-
-11. **Actualizar una Cafetería**
-
-    - **Método:** PUT
-    - **URL:** `http://localhost:3000/api/cafeterias/<id>`
-
-        ```json
-        {
-            "telefono": "321654987",
-            "servicios": ["WiFi", "Café", "Pasteles", "Libros"]
-        }
-        ```
-
-12. **Eliminar un Coworking**
-
-    - **Método:** DELETE
-    - **URL:** `http://localhost:3000/api/coworkings/<id>`
-
-13. **Eliminar una Cafetería**
-
-    - **Método:** DELETE
-    - **URL:** `http://localhost:3000/api/cafeterias/<id>`
-
-## Autor
-
-- **Silvana Gurlekian**
-- **Aplicaciones Híbridas**
-- **Camila Belén Marcos Galban**
-- **[DWN4AV]**
+```bash
+git clone https://github.com/silgurlekian/nomad.git

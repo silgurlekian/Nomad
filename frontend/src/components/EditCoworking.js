@@ -8,8 +8,8 @@ const EditCoworking = () => {
   const [nombre, setNombre] = useState("");
   const [direccion, setDireccion] = useState("");
   const [ciudad, setCiudad] = useState("");
-  const [servicios, setServicios] = useState([]); // Ahora es un array
-  const [availableServices, setAvailableServices] = useState([]); // Para obtener todos los servicios disponibles
+  const [servicios, setServicios] = useState([]); 
+  const [availableServices, setAvailableServices] = useState([]); 
   const [error, setError] = useState(null);
   const [formErrors, setFormErrors] = useState({});
 
@@ -37,7 +37,7 @@ const EditCoworking = () => {
         setNombre(nombre);
         setDireccion(direccion);
         setCiudad(ciudad);
-        setServicios(servicios.map((service) => service._id)); // Guardar los servicios como IDs
+        setServicios(servicios.map((service) => service._id)); 
       } catch (error) {
         setError("Error al obtener los datos del coworking: " + error.message);
       }
@@ -45,7 +45,7 @@ const EditCoworking = () => {
 
     const fetchAvailableServices = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/api/services"); // Obtener todos los servicios
+        const response = await axios.get("http://localhost:3000/api/services"); 
         setAvailableServices(response.data);
       } catch (error) {
         setError(
@@ -95,7 +95,7 @@ const EditCoworking = () => {
         nombre,
         direccion,
         ciudad,
-        servicios, // Enviar los IDs de los servicios seleccionados
+        servicios, 
       };
 
       await axios.put(
