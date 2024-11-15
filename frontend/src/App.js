@@ -9,9 +9,9 @@ import {
 import Header from "./components/Header";
 import Login from "./components/Login";
 import Register from "./components/Register";
-import CoworkingsList from "./components/CoworkingsList";
-import AddCoworking from "./components/AddCoworking";
-import EditCoworking from "./components/EditCoworking";
+import SpacesList from "./components/SpacesList";
+import AddSpace from "./components/AddSpace";
+import EditSpace from "./components/EditSpace";
 import ServiceList from "./components/ServiceList";
 import AddService from "./components/AddService";
 import EditService from "./components/EditService";
@@ -24,9 +24,9 @@ function App() {
         <Route path="/" element={<Navigate to="/register" />} />{" "}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/CoworkingsList" element={<CoworkingsList />} />
-        <Route path="/addCoworking" element={<AddCoworking />} />
-        <Route path="/editCoworking/:id" element={<EditCoworking />} />
+        <Route path="/SpacesList" element={<SpacesList />} />
+        <Route path="/AddSpace" element={<AddSpace />} />
+        <Route path="/EditSpace/:id" element={<EditSpace />} />
 
         <Route path="/ServiceList" element={<ServiceList />} />
         <Route path="/AddService" element={<AddService />} />

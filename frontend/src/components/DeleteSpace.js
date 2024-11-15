@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-const DeleteCoworking = ({ coworkingId, onCoworkingDeleted }) => {
+const DeleteSpace = ({ spaceId, onSpaceDeleted }) => {
     const [error, setError] = useState(null);
 
     const handleDelete = async () => {
@@ -18,10 +18,10 @@ const DeleteCoworking = ({ coworkingId, onCoworkingDeleted }) => {
                 },
             };
 
-            await axios.delete(`http://localhost:3000/api/coworkings/${coworkingId}`, config);
-            onCoworkingDeleted(coworkingId);
+            await axios.delete(`http://localhost:3000/api/spaces/${spaceId}`, config);
+            onSpaceDeleted(spaceId);
         } catch (error) {
-            setError('Error al eliminar el coworking: ' + error.message);
+            setError('Error al eliminar el espacio: ' + error.message);
         }
     };
 
@@ -33,4 +33,4 @@ const DeleteCoworking = ({ coworkingId, onCoworkingDeleted }) => {
     );
 };
 
-export default DeleteCoworking;
+export default DeleteSpace;

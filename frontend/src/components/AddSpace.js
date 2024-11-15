@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-const AddCoworking = () => {
+const AddSpace = () => {
     const [nombre, setNombre] = useState('');
     const [direccion, setDireccion] = useState('');
     const [ciudad, setCiudad] = useState('');
@@ -66,23 +66,23 @@ const AddCoworking = () => {
                 },
             };
 
-            const newCoworking = {
+            const newSpace = {
                 nombre,
                 direccion,
                 ciudad,
                 servicios: selectedServices,
             };
 
-            await axios.post('http://localhost:3000/api/coworkings', newCoworking, config);
-            navigate('/CoworkingsList');
+            await axios.post('http://localhost:3000/api/spaces', newSpace, config);
+            navigate('/SpacesList');
         } catch (error) {
-            setError('Error al agregar el coworking: ' + error.message);
+            setError('Error al agregar el espacio: ' + error.message);
         }
     };
 
     return (
         <div className="container mt-4">
-            <h2>Agregar Coworking</h2>
+            <h2>Agregar espacio</h2>
             {error && <div className="alert alert-danger">{error}</div>}
             <form onSubmit={handleSubmit}>
                 <div className="mb-3">
@@ -142,4 +142,4 @@ const AddCoworking = () => {
     );
 };
 
-export default AddCoworking;
+export default AddSpace;

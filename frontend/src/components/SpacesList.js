@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import DeleteCoworking from "./DeleteCoworking";
+import DeleteSpace from "./DeleteSpace";
 
-const CoworkingsList = () => {
-  const [coworkings, setCoworkings] = useState([]);
+const SpacesList = () => {
+  const [spaces, setSpaces] = useState([]);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchCoworkings = async () => {
+    const fetchSpaces = async () => {
       try {
         const token = localStorage.getItem("token");
         if (!token) {
@@ -24,33 +24,33 @@ const CoworkingsList = () => {
         };
 
         const response = await axios.get(
-          "http://localhost:3000/api/coworkings",
+          "http://localhost:3000/api/spaces",
           config
         );
-        setCoworkings(response.data);
+        setSpaces(response.data);
       } catch (error) {
-        setError("Error al obtener los coworkings: " + error.message);
+        setError("Error al obtener los espacios: " + error.message);
       }
     };
 
-    fetchCoworkings();
+    fetchSpaces();
   }, []);
 
-  const handleCoworkingDeleted = (coworkingId) => {
-    setCoworkings(
-      coworkings.filter((coworking) => coworking._id !== coworkingId)
+  const handleSpaceDeleted = (spaceId) => {
+    setSpaces(
+      spaces.filter((space) => space._id !== spaceId)
     );
   };
 
   return (
     <div className="container mt-4">
-      <h2>Lista de Coworkings</h2>
+      <h2>Lista de espacios</h2>
       {error && <div className="alert alert-danger">{error}</div>}
       <button
         className="btn btn-primary mb-3"
-        onClick={() => navigate("/addCoworking")}
+        onClick={() => navigate("/addSpace")}
       >
-        Agregar Coworking
+        Agregar espacio
       </button>
       <table className="table table-striped mt-4">
         <thead>
@@ -63,14 +63,14 @@ const CoworkingsList = () => {
           </tr>
         </thead>
         <tbody>
-          {coworkings.map((coworking) => (
-            <tr key={coworking._id}>
-              <td>{coworking.nombre}</td>
-              <td>{coworking.direccion}</td>
-              <td>{coworking.ciudad}</td>
+          {spaces.map((space) => (
+            <tr key={space._id}>
+              <td>{space.nombre}</td>
+              <td>{space.direccion}</td>
+              <td>{space.ciudad}</td>
               <td>
-                {coworking.servicios && Array.isArray(coworking.servicios)
-                  ? coworking.servicios
+                {space.servicios && Array.isArray(space.servicios)
+                  ? space.servicios
                       .map((service) => service.name)
                       .join(", ") 
                   : "No services available"}
@@ -79,13 +79,13 @@ const CoworkingsList = () => {
               <td>
                 <button
                   className="btn btn-warning me-2"
-                  onClick={() => navigate(`/editCoworking/${coworking._id}`)}
+                  onClick={() => navigate(`/editSpace/${space._id}`)}
                 >
                   Editar
                 </button>
-                <DeleteCoworking
-                  coworkingId={coworking._id}
-                  onCoworkingDeleted={handleCoworkingDeleted}
+                <DeleteSpace
+                  spaceId={space._id}
+                  onSpaceDeleted={handleSpaceDeleted}
                 />
               </td>
             </tr>
@@ -96,4 +96,4 @@ const CoworkingsList = () => {
   );
 };
 
-export default CoworkingsList;
+export default SpacesList;

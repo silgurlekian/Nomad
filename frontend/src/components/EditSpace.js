@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 
-const EditCoworking = () => {
+const EditSpace = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [nombre, setNombre] = useState("");
@@ -14,7 +14,7 @@ const EditCoworking = () => {
   const [formErrors, setFormErrors] = useState({});
 
   useEffect(() => {
-    const fetchCoworking = async () => {
+    const fetchSpace = async () => {
       try {
         const token = localStorage.getItem("token");
         if (!token) {
@@ -28,9 +28,9 @@ const EditCoworking = () => {
           },
         };
 
-        // Obtener el coworking por ID
+        // Obtener el espacio por ID
         const response = await axios.get(
-          `http://localhost:3000/api/coworkings/${id}`,
+          `http://localhost:3000/api/spaces/${id}`,
           config
         );
         const { nombre, direccion, ciudad, servicios } = response.data;
@@ -39,7 +39,7 @@ const EditCoworking = () => {
         setCiudad(ciudad);
         setServicios(servicios.map((service) => service._id)); 
       } catch (error) {
-        setError("Error al obtener los datos del coworking: " + error.message);
+        setError("Error al obtener los datos del espacio: " + error.message);
       }
     };
 
@@ -54,7 +54,7 @@ const EditCoworking = () => {
       }
     };
 
-    fetchCoworking();
+    fetchSpace();
     fetchAvailableServices();
   }, [id]);
 
@@ -91,7 +91,7 @@ const EditCoworking = () => {
         },
       };
 
-      const updatedCoworking = {
+      const updatedSpace = {
         nombre,
         direccion,
         ciudad,
@@ -99,13 +99,13 @@ const EditCoworking = () => {
       };
 
       await axios.put(
-        `http://localhost:3000/api/coworkings/${id}`,
-        updatedCoworking,
+        `http://localhost:3000/api/spaces/${id}`,
+        updatedSpace,
         config
       );
-      navigate("/CoworkingsList");
+      navigate("/SpacesList");
     } catch (error) {
-      setError("Error al actualizar el coworking: " + error.message);
+      setError("Error al actualizar el espacio: " + error.message);
     }
   };
 
@@ -120,7 +120,7 @@ const EditCoworking = () => {
 
   return (
     <div className="container mt-4">
-      <h2>Editar Coworking</h2>
+      <h2>Editar espacio</h2>
       {error && <div className="alert alert-danger">{error}</div>}
       <form onSubmit={handleSubmit}>
         <div className="mb-3">
@@ -208,4 +208,4 @@ const EditCoworking = () => {
   );
 };
 
-export default EditCoworking;
+export default EditSpace;

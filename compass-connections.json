@@ -16,7 +16,7 @@
       },
       "savedConnectionType": "recent",
       "connectionOptions": {
-        "connectionString": "mongodb://localhost:27017/coworkingDB",
+        "connectionString": "mongodb://localhost:27017/nomad-pwa",
         "oidc": {
           "serializedState": "eyJvaWRjUGx1Z2luU3RhdGVWZXJzaW9uIjowLCJzdGF0ZSI6W119"
         }

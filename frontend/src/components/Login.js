@@ -48,8 +48,8 @@ const Login = () => {
 
       setSuccessMessage("Inicio de sesión exitoso. Bienvenido!");
 
-      // Redirigir a la página de coworkings
-      navigate("/CoworkingsList");
+      // Redirigir a la página de espacios
+      navigate("/SpacesList");
     } catch (err) {
       setError(err.message);
     }

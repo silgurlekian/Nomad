@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const coworkingSchema = new mongoose.Schema({
+const spaceSchema = new mongoose.Schema({
     nombre: { type: String, required: true },
     direccion: { type: String, required: true },
     ciudad: { type: String, required: true },
@@ -11,6 +11,6 @@ const coworkingSchema = new mongoose.Schema({
     servicios: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Service' }],
 }, { timestamps: true });
 
-const Coworking = mongoose.model('Coworking', coworkingSchema);
+const Space = mongoose.model('Space', spaceSchema);
 
-export default Coworking;
+export default Space;

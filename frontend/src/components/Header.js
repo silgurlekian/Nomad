@@ -31,8 +31,8 @@ const Header = () => {
         <nav>
           <ul className="d-flex align-items-center list-unstyled m-0">
             <li className="me-3">
-              <Link to="/CoworkingsList" className="text-decoration-none">
-                Coworkings
+              <Link to="/SpacesList" className="text-decoration-none">
+                Espacios
               </Link>
             </li>
 
