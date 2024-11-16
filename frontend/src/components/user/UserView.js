@@ -8,7 +8,6 @@ const UserView = () => {
   useEffect(() => {
     const fetchSpaces = async () => {
       try {
-        // No se necesita token para acceder a esta ruta
         const response = await axios.get("http://localhost:3000/api/spaces");
         setSpaces(response.data);
       } catch (error) {
