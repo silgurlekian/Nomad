@@ -8,6 +8,7 @@ const EditSpace = () => {
   const [nombre, setNombre] = useState("");
   const [direccion, setDireccion] = useState("");
   const [ciudad, setCiudad] = useState("");
+  const [precio, setPrecio] = useState("");
   const [servicios, setServicios] = useState([]);
   const [availableServices, setAvailableServices] = useState([]);
   const [error, setError] = useState(null);
@@ -36,10 +37,11 @@ const EditSpace = () => {
           `http://localhost:3000/api/spaces/${id}`,
           config
         );
-        const { nombre, direccion, ciudad, servicios, imagen } = response.data;
+        const { nombre, direccion, ciudad, precio, servicios, imagen } = response.data;
         setNombre(nombre);
         setDireccion(direccion);
         setCiudad(ciudad);
+        setPrecio(precio);
         setServicios(servicios.map((service) => service._id));
 
         // Establecer la imagen actual
@@ -72,6 +74,7 @@ const EditSpace = () => {
     if (!nombre) errors.nombre = "El nombre es obligatorio.";
     if (!direccion) errors.direccion = "La dirección es obligatoria.";
     if (!ciudad) errors.ciudad = "La ciudad es obligatoria.";
+    if (!precio) errors.precio = "El precio es obligatoria.";
     if (servicios.length === 0)
       errors.servicios = "Los servicios son obligatorios.";
     return errors;
@@ -110,6 +113,7 @@ const EditSpace = () => {
       updatedSpace.append("nombre", nombre);
       updatedSpace.append("direccion", direccion);
       updatedSpace.append("ciudad", ciudad);
+      updatedSpace.append("precio", precio);
 
       servicios.forEach((serviceId) => {
         updatedSpace.append("servicios", serviceId);
@@ -191,6 +195,22 @@ const EditSpace = () => {
           />
           {formErrors.ciudad && (
             <div className="invalid-feedback">{formErrors.ciudad}</div>
+          )}
+        </div>
+
+        <div className="mb-3">
+          <label htmlFor="precio" className="form-label">
+            Precio
+          </label>
+          <input
+            type="number"
+            id="precio"
+            className={`form-control ${formErrors.precio ? "is-invalid" : ""}`}
+            value={precio}
+            onChange={(e) => setPrecio(e.target.value)}
+          />
+          {formErrors.precio && (
+            <div className="invalid-feedback">{formErrors.precio}</div>
           )}
         </div>
 

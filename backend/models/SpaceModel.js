@@ -6,7 +6,7 @@ const spaceSchema = new mongoose.Schema(
     direccion: { type: String, required: true },
     ciudad: { type: String, required: true },
     telefono: { type: String },
-    email: { type: String },
+    precio: { type: Number },
     website: { type: String },
     descripcion: { type: String },
     servicios: [{ type: mongoose.Schema.Types.ObjectId, ref: "Service" }],

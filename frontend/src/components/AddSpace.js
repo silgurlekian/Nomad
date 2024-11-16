@@ -6,6 +6,7 @@ const AddSpace = () => {
   const [nombre, setNombre] = useState("");
   const [direccion, setDireccion] = useState("");
   const [ciudad, setCiudad] = useState("");
+  const [precio, setPrecio] = useState("");
   const [selectedServices, setSelectedServices] = useState([]);
   const [allServices, setAllServices] = useState([]);
   const [error, setError] = useState(null);
@@ -43,6 +44,7 @@ const AddSpace = () => {
     if (!nombre) errors.nombre = "El nombre es obligatorio.";
     if (!direccion) errors.direccion = "La dirección es obligatoria.";
     if (!ciudad) errors.ciudad = "La ciudad es obligatoria.";
+    if (!precio) errors.precio = "El precio es obligatorio.";
     if (selectedServices.length === 0)
       errors.Services = "Los Servicios son obligatorios.";
 
@@ -86,6 +88,7 @@ const AddSpace = () => {
       newSpace.append("nombre", nombre);
       newSpace.append("direccion", direccion);
       newSpace.append("ciudad", ciudad);
+      newSpace.append("precio", precio);
 
       selectedServices.forEach((serviceId) => {
         newSpace.append("servicios", serviceId);
@@ -150,6 +153,21 @@ const AddSpace = () => {
           />
           {formErrors.ciudad && (
             <div className="invalid-feedback">{formErrors.ciudad}</div>
+          )}
+        </div>
+        <div className="mb-3">
+          <label htmlFor="precio" className="form-label">
+            Precio
+          </label>
+          <input
+            type="number"
+            id="precio"
+            className={`form-control ${formErrors.precio ? "is-invalid" : ""}`}
+            value={precio}
+            onChange={(e) => setPrecio(e.target.value)}
+          />
+          {formErrors.precio && (
+            <div className="invalid-feedback">{formErrors.precio}</div>
           )}
         </div>
         <div className="mb-3">

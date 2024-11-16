@@ -31,7 +31,7 @@ const upload = multer({
 // Obtener todos los espacios con filtrado, orden y paginado
 export const getSpaces = async (req, res) => {
   try {
-    const { nombre, ciudad, ordenarPor, orden, limite, pagina } = req.query;
+    const { nombre, ciudad, precio, ordenarPor, orden, limite, pagina } = req.query;
     const query = {};
 
     // Filtrado por nombre
@@ -42,6 +42,11 @@ export const getSpaces = async (req, res) => {
     // Filtrado por ciudad
     if (ciudad) {
       query.ciudad = ciudad;
+    }
+
+    // Filtrado por precio
+    if (precio) {
+      query.precio = precio;
     }
 
     // Ordenamiento

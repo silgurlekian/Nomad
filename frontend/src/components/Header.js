@@ -18,7 +18,7 @@ const Header = () => {
   return (
     <header className="bg-light p-3">
       <div className="container d-flex justify-content-between align-items-center">
-        <Link to="/" className="text-decoration-none">
+        <Link to="/SpacesList" className="text-decoration-none">
           <img
             src="/images/logo.png"
             alt="Nomad Logo"
