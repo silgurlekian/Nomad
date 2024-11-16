@@ -6,17 +6,17 @@ import {
   updateSpace,
   deleteSpace,
 } from "../controllers/spaceController.js";
-import { protect } from "../middleware/authMiddleware.js";
+import { protect } from "../middleware/authMiddleware.js"; // Middleware de protección
 import multer from "multer";
 
 const router = express.Router();
 const upload = multer({ dest: "uploads/" });
 
-// Rutas protegidas
-router.use(protect);
+// Ruta pública para obtener todos los espacios
+router.get("/", getSpaces); // Esta ruta no requiere autenticación
 
-// Obtener todos los espacios con filtrado, orden y paginado
-router.get("/", getSpaces);
+// Rutas protegidas (requieren autenticación)
+router.use(protect);
 
 // Obtener un espacio por ID
 router.get("/:id", getSpaceById);

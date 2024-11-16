@@ -4,7 +4,6 @@ import {
   BrowserRouter as Router,
   Route,
   Routes,
-  Navigate,
 } from "react-router-dom";
 import Header from "./components/Header";
 import Login from "./components/Login";
@@ -16,12 +15,14 @@ import ServiceList from "./components/ServiceList";
 import AddService from "./components/AddService";
 import EditService from "./components/EditService";
 
+import UserView from "./components/UserView"; // Asegúrate de la ruta correcta
+
 function App() {
   return (
     <Router>
       <Header />
       <Routes>
-        <Route path="/" element={<Navigate to="/register" />} />{" "}
+        <Route path="/" element={<UserView />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/SpacesList" element={<SpacesList />} />

@@ -28,44 +28,9 @@ const upload = multer({
   },
 });
 
-// Obtener todos los espacios con filtrado, orden y paginado
 export const getSpaces = async (req, res) => {
   try {
-    const { nombre, ciudad, precio, ordenarPor, orden, limite, pagina } = req.query;
-    const query = {};
-
-    // Filtrado por nombre
-    if (nombre) {
-      query.nombre = { $regex: nombre, $options: "i" };
-    }
-
-    // Filtrado por ciudad
-    if (ciudad) {
-      query.ciudad = ciudad;
-    }
-
-    // Filtrado por precio
-    if (precio) {
-      query.precio = precio;
-    }
-
-    // Ordenamiento
-    let sort = {};
-    if (ordenarPor) {
-      sort[ordenarPor] = orden === "desc" ? -1 : 1;
-    }
-
-    // Paginado
-    const lim = parseInt(limite) || 10;
-    const pag = parseInt(pagina) || 1;
-    const skip = (pag - 1) * lim;
-
-    const spaces = await Space.find(query)
-      .populate("servicios", "name") // Popula el campo servicios con el nombre de los servicios
-      .sort(sort)
-      .limit(lim)
-      .skip(skip);
-
+    const spaces = await Space.find().populate("servicios", "name"); // Obtiene todos los espacios
     res.json(spaces);
   } catch (error) {
     res.status(500).json({ message: "Error al obtener los espacios", error });
