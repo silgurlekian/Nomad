@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { loginUser } from "../../services/AuthService";
+import { loginUser } from "../services/AuthService";
 import { useNavigate } from "react-router-dom"; // Para redirigir después del login
 
 const Login = () => {

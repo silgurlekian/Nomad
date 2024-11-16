@@ -4,24 +4,22 @@ import {
   Route,
   Routes,
 } from "react-router-dom";
-import Header from "./components/admin/Header";
-import Login from "./components/admin/Login";
-import Register from "./components/admin/Register";
-import SpacesList from "./components/admin/SpacesList";
-import AddSpace from "./components/admin/AddSpace";
-import EditSpace from "./components/admin/EditSpace";
-import ServiceList from "./components/admin/ServiceList";
-import AddService from "./components/admin/AddService";
-import EditService from "./components/admin/EditService";
-
-import UserView from "./components/user/UserView";
+import Header from "./components/Header";
+import Login from "./components/Login";
+import Register from "./components/Register";
+import SpacesList from "./components/SpacesList";
+import AddSpace from "./components/AddSpace";
+import EditSpace from "./components/EditSpace";
+import ServiceList from "./components/ServiceList";
+import AddService from "./components/AddService";
+import EditService from "./components/EditService";
 
 function App() {
   return (
     <Router>
       <Header />
       <Routes>
-        <Route path="/" element={<UserView />} />
+        <Route path="/" element={<Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/SpacesList" element={<SpacesList />} />
