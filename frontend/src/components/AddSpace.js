@@ -6,6 +6,7 @@ const AddSpace = () => {
   const [nombre, setNombre] = useState("");
   const [direccion, setDireccion] = useState("");
   const [ciudad, setCiudad] = useState("");
+  const [website, setWebsite] = useState("");
   const [precio, setPrecio] = useState("");
   const [selectedServices, setSelectedServices] = useState([]);
   const [allServices, setAllServices] = useState([]);
@@ -88,6 +89,7 @@ const AddSpace = () => {
       newSpace.append("nombre", nombre);
       newSpace.append("direccion", direccion);
       newSpace.append("ciudad", ciudad);
+      newSpace.append("website", website);
       newSpace.append("precio", precio);
 
       selectedServices.forEach((serviceId) => {
@@ -154,6 +156,18 @@ const AddSpace = () => {
           {formErrors.ciudad && (
             <div className="invalid-feedback">{formErrors.ciudad}</div>
           )}
+        </div>
+        <div className="mb-3">
+          <label htmlFor="website" className="form-label">
+            Sitio web
+          </label>
+          <input
+            type="text"
+            id="website"
+            className={`form-control`}
+            value={website}
+            onChange={(e) => setWebsite(e.target.value)}
+          />
         </div>
         <div className="mb-3">
           <label htmlFor="precio" className="form-label">

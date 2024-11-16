@@ -8,6 +8,7 @@ const EditSpace = () => {
   const [nombre, setNombre] = useState("");
   const [direccion, setDireccion] = useState("");
   const [ciudad, setCiudad] = useState("");
+  const [website, setWebsite] = useState("");
   const [precio, setPrecio] = useState("");
   const [servicios, setServicios] = useState([]);
   const [availableServices, setAvailableServices] = useState([]);
@@ -37,10 +38,11 @@ const EditSpace = () => {
           `http://localhost:3000/api/spaces/${id}`,
           config
         );
-        const { nombre, direccion, ciudad, precio, servicios, imagen } = response.data;
+        const { nombre, direccion, ciudad, website, precio, servicios, imagen } = response.data;
         setNombre(nombre);
         setDireccion(direccion);
         setCiudad(ciudad);
+        setWebsite(website);
         setPrecio(precio);
         setServicios(servicios.map((service) => service._id));
 
@@ -113,6 +115,7 @@ const EditSpace = () => {
       updatedSpace.append("nombre", nombre);
       updatedSpace.append("direccion", direccion);
       updatedSpace.append("ciudad", ciudad);
+      updatedSpace.append("website", website);
       updatedSpace.append("precio", precio);
 
       servicios.forEach((serviceId) => {
@@ -196,6 +199,19 @@ const EditSpace = () => {
           {formErrors.ciudad && (
             <div className="invalid-feedback">{formErrors.ciudad}</div>
           )}
+        </div>
+
+        <div className="mb-3">
+          <label htmlFor="website" className="form-label">
+            Sitio web
+          </label>
+          <input
+            type="text"
+            id="website"
+            className={`form-control`}
+            value={website}
+            onChange={(e) => setWebsite(e.target.value)}
+          />
         </div>
 
         <div className="mb-3">

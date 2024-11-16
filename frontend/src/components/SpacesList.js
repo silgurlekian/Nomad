@@ -52,6 +52,7 @@ const SpacesList = () => {
             <th>Nombre</th>
             <th>Dirección</th>
             <th>Ciudad</th>
+            <th>Web</th>
             <th>Precio</th>
             <th>Servicios</th>
             <th>Acciones</th>
@@ -72,6 +73,7 @@ const SpacesList = () => {
               <td>{space.nombre}</td>
               <td>{space.direccion}</td>
               <td>{space.ciudad}</td>
+              <td>{space.website}</td>
               <td>$ {space.precio}</td>
               <td>
                 {space.servicios && Array.isArray(space.servicios)
