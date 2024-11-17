@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
@@ -8,11 +8,27 @@ const AddService = () => {
     const [formErrors, setFormErrors] = useState({});
     const navigate = useNavigate();
 
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        const user = JSON.parse(localStorage.getItem('user')); // Obtener datos del usuario
+
+        if (!token) {
+            setError('Debes estar logueado para realizar esta acción.');
+            return;
+        }
+
+        // Verificar si el usuario tiene rol 'admin'
+        if (user && user.role !== 'admin') {
+            setError('Debes ser administrador para poder agregar servicios.');
+            navigate('/ServiceList'); // Redirigir a la lista de servicios
+            return;
+        }
+    }, [navigate]);
+
     // Validar los campos
     const validateForm = () => {
         const errors = {};
         if (!name) errors.name = 'El nombre es obligatorio.';
-
         return errors;
     };
 
@@ -37,9 +53,7 @@ const AddService = () => {
                 },
             };
 
-            const newService = {
-                name,
-            };
+            const newService = { name };
 
             await axios.post('http://localhost:3000/api/services', newService, config); 
 

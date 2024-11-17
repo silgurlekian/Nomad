@@ -13,11 +13,25 @@ const AddSpace = () => {
   const [error, setError] = useState(null);
   const [formErrors, setFormErrors] = useState({});
   const navigate = useNavigate();
-
   const [imagen, setImagen] = useState(null);
 
   // Cargar los Servicios disponibles desde el backend
   useEffect(() => {
+    const token = localStorage.getItem("token");
+    const user = JSON.parse(localStorage.getItem("user")); // Obtener datos del usuario
+
+    if (!token) {
+      setError("Debes estar logueado para realizar esta acción.");
+      return;
+    }
+
+    // Verificar si el usuario tiene rol 'admin'
+    if (user && user.role !== 'admin') {
+      setError("Debes ser administrador para poder agregar espacios.");
+      navigate("/SpacesList"); // Redirigir a la lista de espacios
+      return;
+    }
+
     const fetchServices = async () => {
       try {
         const response = await axios.get("http://localhost:3000/api/services");
@@ -26,8 +40,9 @@ const AddSpace = () => {
         setError("Error al cargar los Servicios: " + error.message);
       }
     };
+    
     fetchServices();
-  }, []);
+  }, [navigate]);
 
   // Manejar la selección de los checkboxes
   const handleCheckboxChange = (e) => {
@@ -111,9 +126,7 @@ const AddSpace = () => {
       {error && <div className="alert alert-danger">{error}</div>}
       <form onSubmit={handleSubmit}>
         <div className="mb-3">
-          <label htmlFor="nombre" className="form-label">
-            Nombre
-          </label>
+          <label htmlFor="nombre" className="form-label">Nombre</label>
           <input
             type="text"
             id="nombre"
@@ -126,15 +139,11 @@ const AddSpace = () => {
           )}
         </div>
         <div className="mb-3">
-          <label htmlFor="direccion" className="form-label">
-            Dirección
-          </label>
+          <label htmlFor="direccion" className="form-label">Dirección</label>
           <input
             type="text"
             id="direccion"
-            className={`form-control ${
-              formErrors.direccion ? "is-invalid" : ""
-            }`}
+            className={`form-control ${formErrors.direccion ? "is-invalid" : ""}`}
             value={direccion}
             onChange={(e) => setDireccion(e.target.value)}
           />
@@ -143,9 +152,7 @@ const AddSpace = () => {
           )}
         </div>
         <div className="mb-3">
-          <label htmlFor="ciudad" className="form-label">
-            Ciudad
-          </label>
+          <label htmlFor="ciudad" className="form-label">Ciudad</label>
           <input
             type="text"
             id="ciudad"
@@ -158,9 +165,7 @@ const AddSpace = () => {
           )}
         </div>
         <div className="mb-3">
-          <label htmlFor="website" className="form-label">
-            Sitio web
-          </label>
+          <label htmlFor="website" className="form-label">Sitio web</label>
           <input
             type="text"
             id="website"
@@ -170,9 +175,7 @@ const AddSpace = () => {
           />
         </div>
         <div className="mb-3">
-          <label htmlFor="precio" className="form-label">
-            Precio
-          </label>
+          <label htmlFor="precio" className="form-label">Precio</label>
           <input
             type="number"
             id="precio"
@@ -213,9 +216,7 @@ const AddSpace = () => {
             className="form-control"
           />
         </div>
-        <button type="submit" className="btn btn-primary">
-          Agregar
-        </button>
+        <button type="submit" className="btn btn-primary">Agregar</button>
       </form>
     </div>
   );

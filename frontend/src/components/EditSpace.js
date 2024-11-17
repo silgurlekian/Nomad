@@ -19,14 +19,23 @@ const EditSpace = () => {
 
   // Cargar datos del espacio y servicios disponibles
   useEffect(() => {
+    const token = localStorage.getItem("token");
+    const user = JSON.parse(localStorage.getItem("user")); // Obtener datos del usuario
+
+    if (!token) {
+      setError("Debes estar logueado para visualizar el portal.");
+      return;
+    }
+
+    // Verificar si el usuario tiene rol 'admin'
+    if (user && user.role !== 'admin') {
+      setError("Debes ser administrador para poder editar espacios.");
+      navigate("/SpacesList"); // Redirigir a la lista de espacios
+      return;
+    }
+
     const fetchSpace = async () => {
       try {
-        const token = localStorage.getItem("token");
-        if (!token) {
-          setError("Debes estar logueado para visualizar el portal.");
-          return;
-        }
-
         const config = {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -68,7 +77,7 @@ const EditSpace = () => {
 
     fetchSpace();
     fetchAvailableServices();
-  }, [id]);
+  }, [id, navigate]);
 
   // Validar los campos
   const validateForm = () => {

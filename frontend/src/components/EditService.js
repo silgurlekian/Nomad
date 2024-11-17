@@ -10,6 +10,21 @@ const EditService = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    const token = localStorage.getItem("token");
+    const user = JSON.parse(localStorage.getItem("user")); // Obtener datos del usuario
+
+    if (!token) {
+      setError("Debes estar logueado para visualizar el portal.");
+      return;
+    }
+
+    // Verificar si el usuario tiene rol 'admin'
+    if (user && user.role !== 'admin') {
+      setError("Debes ser administrador para poder editar servicios.");
+      navigate("/ServiceList"); // Redirigir a la lista de servicios
+      return;
+    }
+
     const fetchService = async () => {
       try {
         const response = await axios.get(`http://localhost:3000/api/services/${id}`);
@@ -21,7 +36,7 @@ const EditService = () => {
     };
 
     fetchService();
-  }, [id]);
+  }, [id, navigate]);
 
   // Validar los campos del formulario
   const validateForm = () => {

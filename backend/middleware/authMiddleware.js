@@ -31,3 +31,12 @@ export const protect = async (req, res, next) => {
         return res.status(401).json({ message: 'No autorizado, sin token' });
     }
 };
+
+// Middleware para verificar si el usuario es admin
+export const admin = (req, res, next) => {
+    if (req.user && req.user.role === 'admin') {
+        next(); // El usuario es admin, permite continuar
+    } else {
+        res.status(403).json({ message: 'Acceso denegado. Se requiere rol admin.' }); // Acceso denegado
+    }
+};

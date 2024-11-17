@@ -6,12 +6,31 @@ import DeleteService from "./DeleteService";
 const ServiceList = () => {
   const [services, setServices] = useState([]);
   const [error, setError] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false); // Estado para verificar si es admin
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchServices = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/api/services");
+        const token = localStorage.getItem("token");
+        const user = JSON.parse(localStorage.getItem("user")); // Obtener datos del usuario
+
+        if (!token) {
+          setError("Debes estar logueado para visualizar el portal.");
+          return;
+        }
+
+        // Verificar si el usuario tiene rol 'admin'
+        if (user && user.role === 'admin') {
+          setIsAdmin(true); // Establecer que es admin
+        } else {
+          setError("Debes ser administrador para poder visualizar esta sección.");
+          return; // Salir si no es admin
+        }
+
+        const response = await axios.get("http://localhost:3000/api/services", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
         setServices(response.data);
       } catch (error) {
         setError("Error al obtener los servicios: " + error.message);
@@ -19,7 +38,7 @@ const ServiceList = () => {
     };
 
     fetchServices();
-  }, []);
+  }, [navigate]);
 
   const handleServiceDeleted = (serviceId) => {
     setServices(services.filter((service) => service._id !== serviceId));
@@ -29,12 +48,15 @@ const ServiceList = () => {
     <div className="container mt-4">
       <h2>Lista de Servicios</h2>
       {error && <div className="alert alert-danger">{error}</div>}
-      <button
-        className="btn btn-primary mb-3"
-        onClick={() => navigate("/addService")}
-      >
-        Crear Servicio
-      </button>
+      {/* Mostrar botón solo si es admin */}
+      {isAdmin && (
+        <button
+          className="btn btn-primary mb-3"
+          onClick={() => navigate("/addService")}
+        >
+          Crear Servicio
+        </button>
+      )}
       <table className="table table-striped mt-4">
         <thead>
           <tr>

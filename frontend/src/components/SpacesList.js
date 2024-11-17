@@ -7,13 +7,24 @@ const SpacesList = () => {
   const [spaces, setSpaces] = useState([]);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const [isAdmin, setIsAdmin] = useState(false); // Estado para verificar si es admin
 
   useEffect(() => {
     const fetchSpaces = async () => {
       try {
         const token = localStorage.getItem("token");
+        const user = JSON.parse(localStorage.getItem("user")); // Obtener datos del usuario
+
         if (!token) {
           setError("Debes estar logueado para visualizar el portal.");
+          return;
+        }
+
+        // Verificar si el usuario tiene rol 'admin'
+        if (user && user.role === 'admin') {
+          setIsAdmin(true); // Establecer que es admin
+        } else {
+          setError("Debes ser administrador para poder visualizar esta sección.");
           return;
         }
 
@@ -29,7 +40,7 @@ const SpacesList = () => {
     };
 
     fetchSpaces();
-  }, []);
+  }, [navigate]);
 
   const handleSpaceDeleted = (spaceId) => {
     setSpaces(spaces.filter((space) => space._id !== spaceId));
@@ -39,12 +50,15 @@ const SpacesList = () => {
     <div className="container mt-4">
       <h2>Lista de espacios</h2>
       {error && <div className="alert alert-danger">{error}</div>}
-      <button
-        className="btn btn-primary mb-3"
-        onClick={() => navigate("/addSpace")}
-      >
-        Agregar espacio
-      </button>
+      {/* Mostrar botón solo si es admin */}
+      {isAdmin && (
+        <button
+          className="btn btn-primary mb-3"
+          onClick={() => navigate("/addSpace")}
+        >
+          Agregar espacio
+        </button>
+      )}
       <table className="table table-striped mt-4">
         <thead>
           <tr>
