@@ -27,7 +27,8 @@ export const registerUser = async (req, res) => {
             nombre: usuario.nombre,
             email: usuario.email,
             token: generarToken(usuario._id),
-            role: usuario.role // Incluir rol en la respuesta
+            role: usuario.role,
+            createdAt: usuario.createdAt
         });
     } catch (error) {
         res.status(500).json({ message: "Error al registrar el usuario", error });
