@@ -1,7 +1,7 @@
 {
   "name": "nomad",
   "version": "1.0.0",
-  "description": "",
+  "description": "## Descripción",
   "main": "server.js",
   "type": "module",
   "scripts": {
