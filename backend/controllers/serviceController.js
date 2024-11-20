@@ -1,4 +1,3 @@
-// controllers/ServiceController.js
 import Service from "../models/ServiceModel.js";
 
 // Obtener todos los servicios
