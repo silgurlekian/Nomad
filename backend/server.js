@@ -1,24 +1,25 @@
 import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
-import cors from "cors"; // Importar cors
+import cors from "cors";
 import authRoutes from "./routes/authRoutes.js";
 import spaceRoutes from "./routes/spaceRoutes.js";
 import serviceRoutes from "./routes/serviceRoutes.js";
 import path from "path";
 import { fileURLToPath } from "url";
 
+// Cargar variables de entorno
 dotenv.config();
 
 const app = express();
 
 // Configuración de CORS
 const corsOptions = {
-  origin: ["http://localhost:3001", "http://localhost:3002"], // Permitir ambos orígenes
-  methods: ["GET", "POST", "PUT", "DELETE"], // Métodos permitidos
-  credentials: true, // Permitir credenciales si es necesario
+    origin: ["http://localhost:3001", "http://localhost:3002"], 
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true, 
 };
-app.use(cors(corsOptions)); // Usar cors con las opciones configuradas
+app.use(cors(corsOptions)); 
 
 // Middleware
 app.use(express.json());
@@ -38,39 +39,34 @@ app.use(express.static(path.join(__dirname, "views")));
 
 // Ruta de la página principal
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "views", "index.html"));
+    res.sendFile(path.join(__dirname, "views", "index.html"));
 });
 
 // Verificar que las variables de entorno esenciales están configuradas
 if (!process.env.MONGODB_URI) {
-  console.error(
-    "Error: La variable de entorno MONGODB_URI no está configurada."
-  );
-  process.exit(1); // Detiene la aplicación si falta esta configuración
+    console.error("Error: La variable de entorno MONGODB_URI no está configurada.");
+    process.exit(1); // Detiene la aplicación si falta esta configuración
 }
 
 if (!process.env.PORT) {
-  console.warn(
-    "Advertencia: La variable de entorno PORT no está configurada. Usando el puerto 3000 por defecto."
-  );
+    console.warn("Advertencia: La variable de entorno PORT no está configurada. Usando el puerto 3000 por defecto.");
 }
 
 // Conexión a MongoDB
-mongoose
-  .connect(process.env.MONGODB_URI, {
+mongoose.connect(process.env.MONGODB_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
-  })
-  .then(() => {
-    console.log("Conectado a MongoDB");
+})
+    .then(() => {
+        console.log("Conectado a MongoDB");
 
-    // Inicio del servidor
-    const PORT = process.env.PORT || 3000; // Usar puerto por defecto si no está configurado
-    app.listen(PORT, () => {
-      console.log(`Servidor corriendo en el puerto ${PORT}`);
+        // Inicio del servidor
+        const PORT = process.env.PORT || 3000; // Usar puerto por defecto si no está configurado
+        app.listen(PORT, () => {
+            console.log(`Servidor corriendo en el puerto ${PORT}`);
+        });
+    })
+    .catch((error) => {
+        console.error("Error al conectar a MongoDB:", error.message);
+        process.exit(1); // Detener la aplicación si no se puede conectar a MongoDB
     });
-  })
-  .catch((error) => {
-    console.error("Error al conectar a MongoDB:", error.message);
-    process.exit(1); // Detener la aplicación si no se puede conectar a MongoDB
-  });
