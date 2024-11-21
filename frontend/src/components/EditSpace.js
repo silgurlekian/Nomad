@@ -44,7 +44,7 @@ const EditSpace = () => {
 
         // Obtener el espacio por ID
         const response = await axios.get(
-          `http://localhost:3000/api/spaces/${id}`,
+          `https://api-nomad.onrender.com/api/spaces/${id}`,
           config
         );
         const { nombre, direccion, ciudad, website, precio, servicios, imagen } = response.data;
@@ -66,7 +66,7 @@ const EditSpace = () => {
 
     const fetchAvailableServices = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/api/services");
+        const response = await axios.get("https://api-nomad.onrender.com/api/services");
         setAvailableServices(response.data);
       } catch (error) {
         setError(
@@ -134,7 +134,7 @@ const EditSpace = () => {
       if (imagen) updatedSpace.append("imagen", imagen);
 
       await axios.put(
-        `http://localhost:3000/api/spaces/${id}`,
+        `https://api-nomad.onrender.com/api/spaces/${id}`,
         updatedSpace,
         config
       );
@@ -282,7 +282,7 @@ const EditSpace = () => {
           {currentImage && (
             <div className="mb-3">
               <img
-                src={`http://localhost:3000/${currentImage}`}
+                src={`https://api-nomad.onrender.com/${currentImage}`}
                 alt="Imagen actual"
                 style={{ width: "200px", marginBottom: "10px" }}
               />
