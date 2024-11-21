@@ -15,7 +15,11 @@ const app = express();
 
 // Configuración de CORS
 const corsOptions = {
-  origin: ["http://localhost:3001", "http://localhost:3002"],
+  origin: [
+    "http://localhost:3001", // Desarrollo local
+    "http://localhost:3002", // Desarrollo local
+    "https://api-nomad.onrender.com", // URL de producción en Render
+  ],
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true,
 };
@@ -56,7 +60,7 @@ if (!process.env.PORT) {
   );
 }
 
-mongoose.set('debug', true);
+mongoose.set("debug", true);
 
 // Conexión a MongoDB
 mongoose
