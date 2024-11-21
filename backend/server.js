@@ -56,6 +56,8 @@ if (!process.env.PORT) {
   );
 }
 
+mongoose.set('debug', true);
+
 // Conexión a MongoDB
 mongoose
   .connect(process.env.MONGODB_URI)
