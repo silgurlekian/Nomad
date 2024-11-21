@@ -16,10 +16,11 @@ const app = express();
 // Configuración de CORS
 const corsOptions = {
   origin: [
-    "http://localhost:3001", // Desarrollo local
-    "http://localhost:3002", // Desarrollo local
-    "https://nomad.com.ar", // Dominio de producción
-    "https://api-nomad.onrender.com", // URL de producción en Render
+    "http://localhost:3001", 
+    "http://localhost:3002", 
+    "https://nomad.com.ar",
+    "https://pwa.nomad.com.ar",
+    "https://api-nomad.onrender.com", 
   ],
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true,
