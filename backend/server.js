@@ -18,12 +18,18 @@ const corsOptions = {
   origin: [
     "http://localhost:3001", // Desarrollo local
     "http://localhost:3002", // Desarrollo local
+    "https://nomad.com.ar", // Dominio de producción
     "https://api-nomad.onrender.com", // URL de producción en Render
   ],
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true,
 };
+
+// Permitir solicitudes CORS para los orígenes configurados
 app.use(cors(corsOptions));
+
+// Manejo de solicitudes preflight (OPTIONS)
+app.options("*", cors(corsOptions));  // Asegura que se manejen las solicitudes OPTIONS
 
 // Middleware
 app.use(express.json());
@@ -67,8 +73,8 @@ mongoose
   .connect(process.env.MONGODB_URI)
   .then(() => {
     console.log("Conectado a MongoDB");
-    app.listen(process.env.PORT, () => {
-      console.log(`Servidor corriendo en el puerto ${process.env.PORT}`);
+    app.listen(process.env.PORT || 3000, () => {
+      console.log(`Servidor corriendo en el puerto ${process.env.PORT || 3000}`);
     });
   })
   .catch((error) => {

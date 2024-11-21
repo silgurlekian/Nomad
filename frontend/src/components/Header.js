@@ -20,7 +20,7 @@ const Header = () => {
       <div className="container d-flex justify-content-between align-items-center">
         <Link to="/SpacesList" className="text-decoration-none">
           <img
-            src="/images/logo.png"
+            src="./images/logo.png"
             alt="Nomad Logo"
             className="logo"
             style={{ width: "150px", height: "auto" }}

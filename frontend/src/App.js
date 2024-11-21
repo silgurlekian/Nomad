@@ -16,7 +16,7 @@ import EditService from "./components/EditService";
 
 function App() {
   return (
-    <Router>
+    <Router basename="/portal">
       <Header />
       <Routes>
         <Route path="/" element={<Register />} />
