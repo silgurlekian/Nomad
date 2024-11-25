@@ -1,9 +1,19 @@
+import express from "express";
+import {
+  getSpaces,
+  getSpaceById,
+  createSpace,
+  updateSpace,
+  deleteSpace,
+} from "../controllers/spaceController.js";
+import { protect } from "../middleware/authMiddleware.js"; // Middleware de protección
+import multer from "multer";
+
 const router = express.Router();
 const upload = multer({ dest: "uploads/" });
 
 // Ruta pública para obtener todos los espacios
 router.get("/", getSpaces); 
-
 // Obtener un espacio por ID
 router.get("/:id", getSpaceById);
 

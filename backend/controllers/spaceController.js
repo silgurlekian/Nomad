@@ -28,7 +28,6 @@ const upload = multer({
   },
 });
 
-// Obtener todos los espacios
 export const getSpaces = async (req, res) => {
   try {
     const spaces = await Space.find().populate("servicios", "name"); // Obtiene todos los espacios
@@ -45,6 +44,7 @@ export const getSpaceById = async (req, res) => {
       "servicios",
       "name"
     );
+
     if (space) {
       res.json(space);
     } else {

@@ -16,7 +16,6 @@ const app = express();
 // Configuración de CORS
 const corsOptions = {
   origin: [
-    "*",
     "http://localhost:3001", 
     "http://localhost:3002", 
     "https://nomad.com.ar",
