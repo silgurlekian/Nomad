@@ -28,9 +28,10 @@ const upload = multer({
   },
 });
 
+// Obtener todos los espacios
 export const getSpaces = async (req, res) => {
   try {
-    const spaces = await Space.find().populate("servicios", "name"); // Obtiene todos los espacios
+    const spaces = await Space.find().populate("servicios", "name");
     res.json(spaces);
   } catch (error) {
     res.status(500).json({ message: "Error al obtener los espacios", error });
@@ -40,18 +41,14 @@ export const getSpaces = async (req, res) => {
 // Obtener un espacio por ID
 export const getSpaceById = async (req, res) => {
   try {
-    const space = await Space.findById(req.params.id).populate(
-      "servicios",
-      "name"
-    );
-
-    if (space) {
-      res.json(space);
-    } else {
-      res.status(404).json({ message: "Espacio no encontrado" });
+    const space = await Space.findById(req.params.id);
+    if (!space) {
+      return res.status(404).json({ message: "Espacio no encontrado" });
     }
+    res.json(space);
   } catch (error) {
-    res.status(500).json({ message: "Error al obtener el espacio", error });
+    console.error(error);
+    res.status(500).json({ message: "Error del servidor" });
   }
 };
 
