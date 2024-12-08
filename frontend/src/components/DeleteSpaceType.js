@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 
-const DeleteSpaceType = ({ spaceId, onSpaceTypeDeleted }) => {
+const DeleteSpaceType = ({ spaceTypeId, onSpaceTypeDeleted }) => {
   const [error, setError] = useState(null);
 
   const handleDelete = async () => {
@@ -18,16 +18,16 @@ const DeleteSpaceType = ({ spaceId, onSpaceTypeDeleted }) => {
         },
       };
 
-      console.log("Eliminando tipo de espacio con ID:", spaceId); // Verifica que el ID sea correcto
+      console.log("Eliminando tipo de espacio con ID:", spaceTypeId); // Verifica que el ID sea correcto
 
       await axios.delete(
-        `https://api-nomad.onrender.com/api/spaces/${encodeURIComponent(spaceId)}`,
+        `https://api-nomad.onrender.com/api/spacesType/${encodeURIComponent(spaceTypeId)}`,
         config
       );
 
-      onSpaceTypeDeleted(spaceId);
+      onSpaceTypeDeleted(spaceTypeId);
     } catch (error) {
-      setError("Error al eliminar el servicio: " + error.message);
+      setError("Error al eliminar el tipo de espacio: " + error.message);
     }
   };
 

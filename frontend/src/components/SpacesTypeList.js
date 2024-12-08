@@ -3,14 +3,14 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import DeleteSpaceType from "./DeleteSpaceType";
 
-const SpacesType = () => {
-  const [spaces, setSpacesType] = useState([]);
+const SpaceTypeList = () => {
+  const [spacesType, setSpacesType] = useState([]);
   const [error, setError] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false); // Estado para verificar si es admin
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchSpaceType = async () => {
+    const fetchSpacesType = async () => {
       try {
         const token = localStorage.getItem("token");
         const user = JSON.parse(localStorage.getItem("user")); // Obtener datos del usuario
@@ -33,15 +33,15 @@ const SpacesType = () => {
         });
         setSpacesType(response.data);
       } catch (error) {
-        setError("Error al obtener los servicios: " + error.message);
+        setError("Error al obtener los tipos de espacio: " + error.message);
       }
     };
 
-    fetchSpaceType();
+    fetchSpacesType();
   }, [navigate]);
 
-  const handleSpaceTypeDeleted = (spaceId) => {
-    setSpacesType(spaces.filter((space) => space._id !== spaceId));
+  const handleSpaceTypeDeleted = (spaceTypeId) => {
+    setSpacesType(spacesType.filter((spaceType) => spaceType._id !== spaceTypeId));
   };
 
   return (
@@ -65,18 +65,18 @@ const SpacesType = () => {
           </tr>
         </thead>
         <tbody>
-          {spaces.map((space) => (
-            <tr key={space._id}>
-              <td>{space.name}</td>
+          {spacesType.map((spaceType) => (
+            <tr key={spaceType._id}>
+              <td>{spaceType.name}</td>
               <td className="d-flex justify-content-end">
                 <button
                   className="btn btn-warning me-2 mt-0"
-                  onClick={() => navigate(`/EditSpaceType/${space._id}`)}
+                  onClick={() => navigate(`/EditSpaceType/${spaceType._id}`)}
                 >
                   Editar
                 </button>
                 <DeleteSpaceType
-                  spaceId={space._id}
+                  spaceTypeId={spaceType._id}
                   onSpaceTypeDeleted={handleSpaceTypeDeleted}
                 />
               </td>
@@ -88,4 +88,4 @@ const SpacesType = () => {
   );
 };
 
-export default SpacesType;
+export default SpaceTypeList;

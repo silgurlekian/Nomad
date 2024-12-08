@@ -8,7 +8,7 @@ const AddTypeSpace = () => {
   const [formErrors, setFormErrors] = useState({});
   const navigate = useNavigate();
 
-  // Cargar los Servicios disponibles desde el backend
+  // Cargar los tipos de espacios disponibles desde el backend
   useEffect(() => {
     const token = localStorage.getItem("token");
     const user = JSON.parse(localStorage.getItem("user")); // Obtener datos del usuario
@@ -21,7 +21,7 @@ const AddTypeSpace = () => {
     // Verificar si el usuario tiene rol 'admin'
     if (user && user.role !== "admin") {
       setError("Debes ser administrador para poder agregar espacios.");
-      navigate("/SpacesList"); // Redirigir a la lista de espacios
+      navigate("/SpacesTypeList"); // Redirigir a la lista de espacios
       return;
     }
   }, [navigate]);
@@ -64,7 +64,7 @@ const AddTypeSpace = () => {
         newSpace,
         config
       );
-      navigate("/SpacesList");
+      navigate("/SpacesTypeList");
     } catch (error) {
       setError("Error al agregar el espacio: " + error.message);
     }

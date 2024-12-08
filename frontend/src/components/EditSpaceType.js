@@ -20,7 +20,7 @@ const EditSpaceType = () => {
 
     // Verificar si el usuario tiene rol 'admin'
     if (user && user.role !== 'admin') {
-      setError("Debes ser administrador para poder editar servicios.");
+      setError("Debes ser administrador para poder editar tipos de espacio.");
       navigate("/SpacesTypeList"); // Redirigir a la lista de tipos de espacios
       return;
     }
