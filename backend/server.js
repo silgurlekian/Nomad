@@ -5,6 +5,7 @@ import cors from "cors";
 import authRoutes from "./routes/authRoutes.js";
 import spaceRoutes from "./routes/spaceRoutes.js";
 import serviceRoutes from "./routes/serviceRoutes.js";
+import spaceTypeRoutes from "./routes/spaceTypeRoutes.js";
 import path from "path";
 import { fileURLToPath } from "url";
 
@@ -40,6 +41,7 @@ app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/spaces", spaceRoutes);
 app.use("/api/services", serviceRoutes);
+app.use("/api/spacesType", spaceTypeRoutes);
 
 // Servir archivos estáticos desde la carpeta 'uploads'
 const __filename = fileURLToPath(import.meta.url);

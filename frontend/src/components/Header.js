@@ -37,6 +37,12 @@ const Header = () => {
             </li>
 
             <li className="me-3">
+              <Link to="/SpacesTypeList" className="text-decoration-none">
+                Tipos de espacios
+              </Link>
+            </li>
+
+            <li className="me-3">
               <Link to="/ServiceList" className="text-decoration-none">
                 Servicios
               </Link>
