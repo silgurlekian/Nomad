@@ -32,7 +32,89 @@
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
+}
+
+
+body {
+  background-image: url("/public/images/coworking.jpg");
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: cover;
+  background-position: 0%;
+}
+
+@font-face {
+  font-family: 'Avenir Next';
+  src: url('../public/fonts/avenirnextltpro-bold.ttf') format('truetype');
+  font-weight: bold;
+}
+
+@font-face {
+  font-family: 'Avenir Next';
+  src: url('../public/fonts/avenirnextltpro-regular.ttf') format('truetype');
+  font-weight: normal;
+}
+
+body {
+  margin: 0;
+  line-height: normal;
+  font-family: 'Avenir Next', Arial, sans-serif;
+}
+
+.bkg-container {
+  background-color: rgba(255, 255, 255, .9);
+  padding: 20px;
+  border-radius: 12px;
+  margin-top: 50px;
+}
+
+h2 {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.btn-primary,
+.btn-warning {
+  background-color: #39A58E;
+  outline: none;
+  border: 0;
+  color: #FFFFFF;
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+  background-color: #256c5d;
+}
+
+.btn-secondary {
+  background-color: transparent;
+  border: 1px solid #39A58E !important;
+  border: 0;
+  color: #39A58E;
+}
+
+.btn-secondary:hover,
+.btn-secondary:focus {
+  background-color: #39A58E;
+  color: #FFFFFF;
+}
+
+.btn-secondary,
+.btn-danger {
+  height: 40px;
+}
+
+.space-image {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 5px;
+}
+
+.form-label {
+  font-weight: bold;
 }
