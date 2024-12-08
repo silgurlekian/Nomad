@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-const AddTypeSpace = () => {
+const AddSpaceType = () => {
   const [nombre, setNombre] = useState("");
   const [error, setError] = useState(null);
   const [formErrors, setFormErrors] = useState({});
@@ -56,12 +56,12 @@ const AddTypeSpace = () => {
         },
       };
 
-      const newSpace = new FormData();
-      newSpace.append("nombre", nombre);
+      const newSpaceType = new FormData();
+      newSpaceType.append("nombre", nombre);
 
       await axios.post(
         "https://api-nomad.onrender.com/api/spacesType",
-        newSpace,
+        newSpaceType,
         config
       );
       navigate("/SpacesTypeList");
@@ -98,4 +98,4 @@ const AddTypeSpace = () => {
   );
 };
 
-export default AddTypeSpace;
+export default AddSpaceType;
