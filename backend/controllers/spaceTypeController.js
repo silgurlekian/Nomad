@@ -22,22 +22,48 @@ export const getSpaceTypeById = async (req, res) => {
     }
     res.status(200).json(spaceType);
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Error al obtener el tipo de espacio", error: error.message });
+    res.status(500).json({
+      message: "Error al obtener el tipo de espacio",
+      error: error.message,
+    });
   }
 };
 
-// Crear un nuevo tipo
+// Crear un nuevo tipo de espacio
 export const createSpaceType = async (req, res) => {
   try {
-    const newSpaceType = new SpaceType(req.body);
+    // Verificar si el usuario está logueado y si tiene rol 'admin'
+    const token = req.headers.authorization?.split(" ")[1]; // Obtener token del header Authorization
+    if (!token) {
+      return res
+        .status(401)
+        .json({ message: "Debes estar logueado para realizar esta acción." });
+    }
+
+    // Verificar el token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET); // Asegúrate de tener una clave secreta configurada
+    if (decoded.role !== "admin") {
+      return res.status(403).json({
+        message: "Debes ser administrador para agregar un tipo de espacio.",
+      });
+    }
+
+    // Crear el nuevo tipo de espacio
+    const { nombre } = req.body;
+    if (!nombre) {
+      return res.status(400).json({ message: "El nombre es obligatorio." });
+    }
+
+    const newSpaceType = new SpaceType({ name: nombre }); // Usar "name" en lugar de "nombre"
     await newSpaceType.save();
-    res.status(201).json(newSpaceType);
+
+    res.status(201).json(newSpaceType); // Devolver el tipo de espacio creado
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Error al crear el tipo de espacio", error: error.message });
+    console.error(error); // Para depuración
+    res.status(500).json({
+      message: "Error al crear el tipo de espacio",
+      error: error.message,
+    });
   }
 };
 
@@ -73,8 +99,12 @@ export const deleteSpaceType = async (req, res) => {
       return res.status(404).json({ message: "Tipo de espacio no encontrado" });
     }
 
-    res.status(200).json({ message: "Tipo de espacio eliminado correctamente" });
+    res
+      .status(200)
+      .json({ message: "Tipo de espacio eliminado correctamente" });
   } catch (error) {
-    res.status(500).json({ message: "Error al eliminar el tipo de espacio", error });
+    res
+      .status(500)
+      .json({ message: "Error al eliminar el tipo de espacio", error });
   }
 };

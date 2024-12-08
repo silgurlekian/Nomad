@@ -6,7 +6,8 @@ const AddSpaceType = () => {
   const [nombre, setNombre] = useState("");
   const [error, setError] = useState(null);
   const [formErrors, setFormErrors] = useState({});
-  const [success, setSuccess] = useState(false); 
+  const [success, setSuccess] = useState(false);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   // Cargar los tipos de espacios disponibles desde el backend
@@ -43,6 +44,8 @@ const AddSpaceType = () => {
 
     if (Object.keys(errors).length > 0) return; // Si hay errores, no hace submit
 
+    setLoading(true); 
+
     try {
       const token = localStorage.getItem("token");
       if (!token) {
@@ -53,25 +56,28 @@ const AddSpaceType = () => {
       const config = {
         headers: {
           Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json", 
+          "Content-Type": "application/json",
         },
       };
 
       const newSpaceType = { nombre };
 
       await axios.post(
-        "https://api-nomad.onrender.com/api/spacesType",
+        "https://api-nomad.onrender.com/api/spacesType", 
         newSpaceType,
         config
       );
 
       setSuccess(true); // Mostrar mensaje de éxito
-      setTimeout(() => navigate("/SpacesTypeList"), 2000);
+      setTimeout(() => navigate("/SpacesTypeList"), 2000); // Redirigir después de 2 segundos para mostrar mensaje de éxito
     } catch (error) {
+      console.error(error);
       setError(
-        "Error al agregar el espacio: " +
+        "Error al agregar el tipo de espacio: " +
           (error.response?.data?.message || error.message)
       );
+    } finally {
+      setLoading(false); 
     }
   };
 
@@ -83,8 +89,7 @@ const AddSpaceType = () => {
         <div className="alert alert-success">
           Espacio agregado correctamente!
         </div>
-      )}{" "}
-      {/* Mostrar mensaje de éxito */}
+      )}
       <form onSubmit={handleSubmit}>
         <div className="mb-3">
           <label htmlFor="nombre" className="form-label">
@@ -96,13 +101,18 @@ const AddSpaceType = () => {
             className={`form-control ${formErrors.nombre ? "is-invalid" : ""}`}
             value={nombre}
             onChange={(e) => setNombre(e.target.value)}
+            disabled={loading} 
           />
           {formErrors.nombre && (
             <div className="invalid-feedback">{formErrors.nombre}</div>
           )}
         </div>
-        <button type="submit" className="btn btn-primary">
-          Agregar
+        <button
+          type="submit"
+          className="btn btn-primary"
+          disabled={loading} 
+        >
+          {loading ? "Cargando..." : "Agregar"}
         </button>
       </form>
     </div>

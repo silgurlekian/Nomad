@@ -9,10 +9,10 @@ import {
 
 const router = express.Router();
 
-router.get("/", getAllSpacesType);
-router.get("/:id", getSpaceTypeById);
-router.post("/", createSpaceType);
-router.put("/:id", updateSpaceType);
-router.delete("/:id", deleteSpaceType); 
+router.get("/", getAllSpacesType); // Para obtener todos los tipos de espacio
+router.get("/:id", getSpaceTypeById); // Para obtener un tipo de espacio por ID
+router.post("/", createSpaceType); // Para crear un nuevo tipo de espacio
+router.put("/:id", updateSpaceType); // Para actualizar un tipo de espacio por ID
+router.delete("/:id", deleteSpaceType); // Para eliminar un tipo de espacio por ID
 
 export default router;
