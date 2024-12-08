@@ -32,38 +32,13 @@ export const getSpaceTypeById = async (req, res) => {
 // Crear un nuevo tipo de espacio
 export const createSpaceType = async (req, res) => {
   try {
-    // Verificar si el usuario está logueado y si tiene rol 'admin'
-    const token = req.headers.authorization?.split(" ")[1]; // Obtener token del header Authorization
-    if (!token) {
-      return res
-        .status(401)
-        .json({ message: "Debes estar logueado para realizar esta acción." });
-    }
-
-    // Verificar el token
-    const decoded = jwt.verify(token, process.env.JWT_SECRET); // Asegúrate de tener una clave secreta configurada
-    if (decoded.role !== "admin") {
-      return res.status(403).json({
-        message: "Debes ser administrador para agregar un tipo de espacio.",
-      });
-    }
-
-    // Crear el nuevo tipo de espacio
-    const { nombre } = req.body;
-    if (!nombre) {
-      return res.status(400).json({ message: "El nombre es obligatorio." });
-    }
-
-    const newSpaceType = new SpaceType({ name: nombre }); // Usar "name" en lugar de "nombre"
+    const newSpaceType = new SpaceType(req.body);
     await newSpaceType.save();
-
-    res.status(201).json(newSpaceType); // Devolver el tipo de espacio creado
+    res.status(201).json(newSpaceType);
   } catch (error) {
-    console.error(error); // Para depuración
-    res.status(500).json({
-      message: "Error al crear el tipo de espacio",
-      error: error.message,
-    });
+    res
+      .status(500)
+      .json({ message: "Error al crear el tipo de espacio", error: error.message });
   }
 };
 

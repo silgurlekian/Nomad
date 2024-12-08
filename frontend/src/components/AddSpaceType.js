@@ -3,11 +3,10 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 const AddSpaceType = () => {
-  const [nombre, setNombre] = useState("");
+  const [name, setName] = useState("");
   const [error, setError] = useState(null);
   const [formErrors, setFormErrors] = useState({});
   const [success, setSuccess] = useState(false);
-  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   // Cargar los tipos de espacios disponibles desde el backend
@@ -31,7 +30,7 @@ const AddSpaceType = () => {
   // Validar los campos
   const validateForm = () => {
     const errors = {};
-    if (!nombre) errors.nombre = "El nombre es obligatorio.";
+    if (!name) errors.name = "El nombre es obligatorio.";
 
     return errors;
   };
@@ -43,8 +42,6 @@ const AddSpaceType = () => {
     setFormErrors(errors);
 
     if (Object.keys(errors).length > 0) return; // Si hay errores, no hace submit
-
-    setLoading(true); 
 
     try {
       const token = localStorage.getItem("token");
@@ -60,10 +57,10 @@ const AddSpaceType = () => {
         },
       };
 
-      const newSpaceType = { nombre };
+      const newSpaceType = { name };
 
       await axios.post(
-        "https://api-nomad.onrender.com/api/spacesType", 
+        "https://api-nomad.onrender.com/api/spacesType",
         newSpaceType,
         config
       );
@@ -76,14 +73,12 @@ const AddSpaceType = () => {
         "Error al agregar el tipo de espacio: " +
           (error.response?.data?.message || error.message)
       );
-    } finally {
-      setLoading(false); 
     }
   };
 
   return (
     <div className="container mt-4">
-      <h2>Agregar espacio</h2>
+      <h2>Agregar tipo de espacio</h2>
       {error && <div className="alert alert-danger">{error}</div>}
       {success && (
         <div className="alert alert-success">
@@ -92,27 +87,22 @@ const AddSpaceType = () => {
       )}
       <form onSubmit={handleSubmit}>
         <div className="mb-3">
-          <label htmlFor="nombre" className="form-label">
+          <label htmlFor="name" className="form-label">
             Nombre
           </label>
           <input
             type="text"
-            id="nombre"
-            className={`form-control ${formErrors.nombre ? "is-invalid" : ""}`}
-            value={nombre}
-            onChange={(e) => setNombre(e.target.value)}
-            disabled={loading} 
+            id="name"
+            className={`form-control ${formErrors.name ? "is-invalid" : ""}`}
+            value={name}
+            onChange={(e) => setName(e.target.value)}
           />
-          {formErrors.nombre && (
-            <div className="invalid-feedback">{formErrors.nombre}</div>
+          {formErrors.name && (
+            <div className="invalid-feedback">{formErrors.name}</div>
           )}
         </div>
-        <button
-          type="submit"
-          className="btn btn-primary"
-          disabled={loading} 
-        >
-          {loading ? "Cargando..." : "Agregar"}
+        <button type="submit" className="btn btn-primary">
+          Agregar
         </button>
       </form>
     </div>
