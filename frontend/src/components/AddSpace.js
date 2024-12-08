@@ -12,39 +12,46 @@ const AddSpace = () => {
   const [allServices, setAllServices] = useState([]);
   const [error, setError] = useState(null);
   const [formErrors, setFormErrors] = useState({});
-  const navigate = useNavigate();
   const [imagen, setImagen] = useState(null);
+  const [aceptaReservas, setAceptaReservas] = useState(false);
+  const [tiposReservas, setTiposReservas] = useState({
+    hora: false,
+    dia: false,
+    mes: false,
+    anual: false,
+  });
 
-  // Cargar los Servicios disponibles desde el backend
+  const navigate = useNavigate();
+
   useEffect(() => {
     const token = localStorage.getItem("token");
-    const user = JSON.parse(localStorage.getItem("user")); // Obtener datos del usuario
+    const user = JSON.parse(localStorage.getItem("user"));
 
     if (!token) {
       setError("Debes estar logueado para realizar esta acción.");
       return;
     }
 
-    // Verificar si el usuario tiene rol 'admin'
-    if (user && user.role !== 'admin') {
+    if (user && user.role !== "admin") {
       setError("Debes ser administrador para poder agregar espacios.");
-      navigate("/SpacesList"); // Redirigir a la lista de espacios
+      navigate("/SpacesList");
       return;
     }
 
     const fetchServices = async () => {
       try {
-        const response = await axios.get("https://api-nomad.onrender.com/api/services");
-        setAllServices(response.data); // Guarda los Servicios disponibles
+        const response = await axios.get(
+          "https://api-nomad.onrender.com/api/services"
+        );
+        setAllServices(response.data);
       } catch (error) {
         setError("Error al cargar los Servicios: " + error.message);
       }
     };
-    
+
     fetchServices();
   }, [navigate]);
 
-  // Manejar la selección de los checkboxes
   const handleCheckboxChange = (e) => {
     const { value, checked } = e.target;
     setSelectedServices((prevSelected) =>
@@ -54,7 +61,21 @@ const AddSpace = () => {
     );
   };
 
-  // Validar los campos
+  const handleReservaChange = (e) => {
+    setAceptaReservas(e.target.checked);
+    if (!e.target.checked) {
+      setTiposReservas({ hora: false, dia: false, mes: false, anual: false });
+    }
+  };
+
+  const handleTipoReservaChange = (e) => {
+    const { name, checked } = e.target;
+    setTiposReservas((prevTipos) => ({
+      ...prevTipos,
+      [name]: checked,
+    }));
+  };
+
   const validateForm = () => {
     const errors = {};
     if (!nombre) errors.nombre = "El nombre es obligatorio.";
@@ -63,11 +84,9 @@ const AddSpace = () => {
     if (!precio) errors.precio = "El precio es obligatorio.";
     if (selectedServices.length === 0)
       errors.Services = "Los Servicios son obligatorios.";
-
     return errors;
   };
 
-  // Manejar cambio de archivo
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file && file.type.startsWith("image/")) {
@@ -113,7 +132,17 @@ const AddSpace = () => {
 
       if (imagen) newSpace.append("imagen", imagen);
 
-      await axios.post("https://api-nomad.onrender.com/api/spaces", newSpace, config);
+      newSpace.append("aceptaReservas", aceptaReservas);
+      if (aceptaReservas) {
+        newSpace.append("tiposReservas", JSON.stringify(tiposReservas));
+      }
+
+      await axios.post(
+        "https://api-nomad.onrender.com/api/spaces",
+        newSpace,
+        config
+      );
+
       navigate("/SpacesList");
     } catch (error) {
       setError("Error al agregar el espacio: " + error.message);
@@ -121,102 +150,164 @@ const AddSpace = () => {
   };
 
   return (
-    <div className="container mt-4">
-      <h2>Agregar espacio</h2>
+    <div className="container bkg-container mt-4">
+      <h2 className="mb-3">Agregar espacio</h2>
       {error && <div className="alert alert-danger">{error}</div>}
+
       <form onSubmit={handleSubmit}>
         <div className="mb-3">
-          <label htmlFor="nombre" className="form-label">Nombre</label>
+          <label htmlFor="nombre" className="form-label">
+            Nombre
+          </label>
           <input
             type="text"
             id="nombre"
             className={`form-control ${formErrors.nombre ? "is-invalid" : ""}`}
             value={nombre}
             onChange={(e) => setNombre(e.target.value)}
+            placeholder="Ingrese el nombre del espacio"
           />
           {formErrors.nombre && (
             <div className="invalid-feedback">{formErrors.nombre}</div>
           )}
         </div>
+
         <div className="mb-3">
-          <label htmlFor="direccion" className="form-label">Dirección</label>
+          <label htmlFor="direccion" className="form-label">
+            Dirección
+          </label>
           <input
             type="text"
             id="direccion"
-            className={`form-control ${formErrors.direccion ? "is-invalid" : ""}`}
+            className={`form-control ${
+              formErrors.direccion ? "is-invalid" : ""
+            }`}
             value={direccion}
             onChange={(e) => setDireccion(e.target.value)}
+            placeholder="Ejemplo: Calle Falsa 123"
           />
           {formErrors.direccion && (
             <div className="invalid-feedback">{formErrors.direccion}</div>
           )}
         </div>
+
         <div className="mb-3">
-          <label htmlFor="ciudad" className="form-label">Ciudad</label>
+          <label htmlFor="ciudad" className="form-label">
+            Ciudad
+          </label>
           <input
             type="text"
             id="ciudad"
             className={`form-control ${formErrors.ciudad ? "is-invalid" : ""}`}
             value={ciudad}
             onChange={(e) => setCiudad(e.target.value)}
+            placeholder="Ingrese la ciudad"
           />
           {formErrors.ciudad && (
             <div className="invalid-feedback">{formErrors.ciudad}</div>
           )}
         </div>
+
         <div className="mb-3">
-          <label htmlFor="website" className="form-label">Sitio web</label>
+          <label htmlFor="website" className="form-label">
+            Sitio web
+          </label>
           <input
             type="text"
             id="website"
-            className={`form-control`}
+            className="form-control"
             value={website}
             onChange={(e) => setWebsite(e.target.value)}
+            placeholder="Ejemplo: https://www.mi-espacio.com"
           />
         </div>
+
         <div className="mb-3">
-          <label htmlFor="precio" className="form-label">Precio</label>
+          <label htmlFor="precio" className="form-label">
+            Precio
+          </label>
           <input
             type="number"
             id="precio"
             className={`form-control ${formErrors.precio ? "is-invalid" : ""}`}
             value={precio}
             onChange={(e) => setPrecio(e.target.value)}
+            placeholder="Ingrese el precio por hora"
           />
           {formErrors.precio && (
             <div className="invalid-feedback">{formErrors.precio}</div>
           )}
         </div>
+
         <div className="mb-3">
           <label className="form-label">Servicios</label>
           <div>
-            {allServices.map((service) => (
-              <div key={service._id}>
-                <input
-                  type="checkbox"
-                  id={service._id}
-                  value={service._id}
-                  checked={selectedServices.includes(service._id)}
-                  onChange={handleCheckboxChange}
-                />
-                <label htmlFor={service._id}>{service.name}</label>
-              </div>
-            ))}
+            {allServices.length > 0 ? ( // Verifica si hay servicios
+              allServices.map((service) => (
+                <div key={service._id} className="d-flex gap-2 mb-2">
+                  <input
+                    type="checkbox"
+                    id={service._id}
+                    value={service._id}
+                    checked={selectedServices.includes(service._id)}
+                    onChange={handleCheckboxChange}
+                  />
+                  <label htmlFor={service._id}>{service.name}</label>
+                </div>
+              ))
+            ) : (
+              <p>No hay servicios disponibles.</p> // Mensaje si no hay servicios
+            )}
           </div>
           {formErrors.Services && (
             <div className="invalid-feedback">{formErrors.Services}</div>
           )}
         </div>
+
         <div className="mb-3">
-          <label className="form-label">Imagen</label>
+          <label className="form-label">¿Acepta reservas?</label>
           <input
-            type="file"
-            accept="image/*"
-            onChange={handleFileChange}
-            className="form-control"
+            type="checkbox"
+            className="form-check-input"
+            checked={aceptaReservas}
+            onChange={handleReservaChange}
           />
         </div>
-        <button type="submit" className="btn btn-primary">Agregar</button>
+
+        {aceptaReservas && (
+          <div className="mb-3">
+            <label className="form-label">Tipos de reserva</label>
+            <div className="d-flex gap-2">
+              {["hora", "dia", "mes", "anual"].map((tipo) => (
+                <div key={tipo}>
+                  <input
+                    type="checkbox"
+                    name={tipo}
+                    checked={tiposReservas[tipo]}
+                    onChange={handleTipoReservaChange}
+                  />
+                  <label>{`Por ${tipo}`}</label>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <div className="mb-3">
+          <label htmlFor="imagen" className="form-label">
+            Imagen del espacio
+          </label>
+          <input
+            type="file"
+            id="imagen"
+            className="form-control"
+            onChange={handleFileChange}
+          />
+        </div>
+
+        <button type="submit" className="btn btn-primary">
+          Agregar Espacio
+        </button>
       </form>
     </div>
   );

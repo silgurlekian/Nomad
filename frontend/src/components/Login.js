@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { loginUser } from "../services/AuthService";
 import { useNavigate } from "react-router-dom"; // Para redirigir después del login
+import "../App.css";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -56,13 +57,13 @@ const Login = () => {
   };
 
   return (
-    <div className="container">
+    <div className="container bkg-container">
       <h2 className="text-center my-4">Iniciar Sesión</h2>
       <div className="row justify-content-center">
         <div className="col-md-6">
           <form
             onSubmit={handleLogin}
-            className="bg-light p-4 rounded shadow-sm"
+            className="p-4"
           >
             <div className="mb-3">
               <label htmlFor="email" className="form-label">
