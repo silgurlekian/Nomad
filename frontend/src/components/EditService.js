@@ -27,7 +27,7 @@ const EditService = () => {
 
     const fetchService = async () => {
       try {
-        const response = await axios.get(`https://api-nomad.onrender.com/api/services/${id}`);
+        const response = await axios.get(`http://localhost:3000/api/services/${id}`);
         const { name } = response.data;
         setName(name);
       } catch (error) {
@@ -55,7 +55,7 @@ const EditService = () => {
 
     try {
       const updatedService = { name };
-      await axios.put(`https://api-nomad.onrender.com/api/services/${id}`, updatedService);
+      await axios.put(`http://localhost:3000/api/services/${id}`, updatedService);
       navigate("/ServiceList"); 
     } catch (error) {
       setError("Error al actualizar el servicio: " + error.message);

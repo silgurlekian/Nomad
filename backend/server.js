@@ -20,7 +20,7 @@ const corsOptions = {
     "http://localhost:3002", 
     "https://nomad.com.ar",
     "https://pwa.nomad.com.ar",
-    "https://api-nomad.onrender.com", 
+    "http://localhost:3000", 
   ],
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true,

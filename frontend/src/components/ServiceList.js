@@ -28,7 +28,7 @@ const ServiceList = () => {
           return; // Salir si no es admin
         }
 
-        const response = await axios.get("https://api-nomad.onrender.com/api/services", {
+        const response = await axios.get("http://localhost:3000/api/services", {
           headers: { Authorization: `Bearer ${token}` },
         });
         setServices(response.data);

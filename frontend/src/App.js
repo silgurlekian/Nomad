@@ -16,7 +16,13 @@ import EditService from "./components/EditService";
 
 function App() {
   return (
-    <Router basename="/portal">
+    <Router
+      basename="/portal"
+      future={{
+        v7_startTransition: true,
+        v7_relativeSplatPath: true,
+      }}
+    >
       <Header />
       <Routes>
         <Route path="/" element={<Register />} />

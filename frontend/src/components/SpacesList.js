@@ -30,7 +30,7 @@ const SpacesList = () => {
 
         const config = { headers: { Authorization: `Bearer ${token}` } };
         const response = await axios.get(
-          "https://api-nomad.onrender.com/api/spaces",
+          "http://localhost:3000/api/spaces",
           config
         );
         setSpaces(response.data);
@@ -78,7 +78,7 @@ const SpacesList = () => {
               <td>
                 {space.imagen && (
                   <img
-                    src={`https://api-nomad.onrender.com/${space.imagen}`}
+                    src={`http://localhost:3000/${space.imagen}`}
                     alt={space.nombre}
                     style={{ width: "100px" }}
                   />
