@@ -6,6 +6,7 @@ const AddSpaceType = () => {
   const [nombre, setNombre] = useState("");
   const [error, setError] = useState(null);
   const [formErrors, setFormErrors] = useState({});
+  const [success, setSuccess] = useState(false); 
   const navigate = useNavigate();
 
   // Cargar los tipos de espacios disponibles desde el backend
@@ -40,7 +41,7 @@ const AddSpaceType = () => {
     const errors = validateForm();
     setFormErrors(errors);
 
-    if (Object.keys(errors).length > 0) return;
+    if (Object.keys(errors).length > 0) return; // Si hay errores, no hace submit
 
     try {
       const token = localStorage.getItem("token");
@@ -52,21 +53,25 @@ const AddSpaceType = () => {
       const config = {
         headers: {
           Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
+          "Content-Type": "application/json", 
         },
       };
 
-      const newSpaceType = new FormData();
-      newSpaceType.append("nombre", nombre);
+      const newSpaceType = { nombre };
 
       await axios.post(
         "https://api-nomad.onrender.com/api/spacesType",
         newSpaceType,
         config
       );
-      navigate("/SpacesTypeList");
+
+      setSuccess(true); // Mostrar mensaje de éxito
+      setTimeout(() => navigate("/SpacesTypeList"), 2000);
     } catch (error) {
-      setError("Error al agregar el espacio: " + error.message);
+      setError(
+        "Error al agregar el espacio: " +
+          (error.response?.data?.message || error.message)
+      );
     }
   };
 
@@ -74,6 +79,12 @@ const AddSpaceType = () => {
     <div className="container mt-4">
       <h2>Agregar espacio</h2>
       {error && <div className="alert alert-danger">{error}</div>}
+      {success && (
+        <div className="alert alert-success">
+          Espacio agregado correctamente!
+        </div>
+      )}{" "}
+      {/* Mostrar mensaje de éxito */}
       <form onSubmit={handleSubmit}>
         <div className="mb-3">
           <label htmlFor="nombre" className="form-label">

@@ -16,7 +16,7 @@ export const getAllSpacesType = async (req, res) => {
 // Obtener un tipo de espacio por ID
 export const getSpaceTypeById = async (req, res) => {
   try {
-    const spaceType = await Space.findById(req.params.id);
+    const spaceType = await SpaceType.findById(req.params.id);
     if (!spaceType) {
       return res.status(404).json({ message: "Tipo de espacio no encontrado" });
     }
