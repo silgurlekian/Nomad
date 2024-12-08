@@ -34,7 +34,7 @@ const AddSpace = () => {
 
     const fetchServices = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/api/services");
+        const response = await axios.get("https://api-nomad.onrender.com/api/services");
         setAllServices(response.data); // Guarda los Servicios disponibles
       } catch (error) {
         setError("Error al cargar los Servicios: " + error.message);
@@ -113,7 +113,7 @@ const AddSpace = () => {
 
       if (imagen) newSpace.append("imagen", imagen);
 
-      await axios.post("http://localhost:3000/api/spaces", newSpace, config);
+      await axios.post("https://api-nomad.onrender.com/api/spaces", newSpace, config);
       navigate("/SpacesList");
     } catch (error) {
       setError("Error al agregar el espacio: " + error.message);
