@@ -47,20 +47,18 @@ const EditSpace = () => {
 
     const fetchData = async () => {
       try {
-        // Fetch services and space types concurrently
-        const [servicesResponse, spaceTypesResponse, spaceResponse] = await Promise.all([
-          axios.get("http://localhost:3000/api/services"),
-          axios.get("http://localhost:3000/api/spacesType"),
-          axios.get(`http://localhost:3000/api/spaces/${id}`, {
-            headers: { Authorization: `Bearer ${token}` }
-          })
-        ]);
+        const [servicesResponse, spaceTypesResponse, spaceResponse] =
+          await Promise.all([
+            axios.get("http://localhost:3000/api/services"),
+            axios.get("http://localhost:3000/api/spacesType"),
+            axios.get(`http://localhost:3000/api/spaces/${id}`, {
+              headers: { Authorization: `Bearer ${token}` },
+            }),
+          ]);
 
-        // Set services and space types
         setAllServices(servicesResponse.data);
         setAllSpacesType(spaceTypesResponse.data);
 
-        // Prepare form data from the space
         const space = spaceResponse.data;
         setFormData({
           nombre: space.nombre || "",
@@ -68,20 +66,22 @@ const EditSpace = () => {
           ciudad: space.ciudad || "",
           website: space.website || "",
           precio: space.precio || "",
-          selectedServices: space.servicios.map(service => service._id),
+          selectedServices: space.servicios.map((service) => service._id),
           selectedSpacesType: space.spacesType[0]?._id || "",
           aceptaReservas: space.aceptaReservas || false,
           tiposReservas: {
-            porHora: space.tiposReservas.includes('porHora'),
-            porDia: space.tiposReservas.includes('porDia'),
-            porMes: space.tiposReservas.includes('porMes'),
-            porAno: space.tiposReservas.includes('porAno')
-          }
+            porHora: space.tiposReservas.includes("porHora"),
+            porDia: space.tiposReservas.includes("porDia"),
+            porMes: space.tiposReservas.includes("porMes"),
+            porAno: space.tiposReservas.includes("porAno"),
+          },
         });
 
         setIsLoading(false);
       } catch (error) {
-        setGlobalError("Error al cargar los datos del espacio: " + error.message);
+        setGlobalError(
+          "Error al cargar los datos del espacio: " + error.message
+        );
         setIsLoading(false);
       }
     };
@@ -94,7 +94,6 @@ const EditSpace = () => {
 
     if (type === "checkbox") {
       if (name === "aceptaReservas") {
-        // Reset reservation types when toggling acceptance of reservations
         setFormData((prev) => ({
           ...prev,
           [name]: checked,
@@ -108,7 +107,6 @@ const EditSpace = () => {
               },
         }));
       } else if (name.startsWith("tiposReservas.")) {
-        // Handle reservation type checkboxes
         const reservationType = name.split(".")[1];
         setFormData((prev) => ({
           ...prev,
@@ -118,7 +116,6 @@ const EditSpace = () => {
           },
         }));
       } else {
-        // Handle other checkboxes (like services)
         setFormData((prev) => ({ ...prev, [name]: checked }));
       }
     } else {
@@ -160,7 +157,7 @@ const EditSpace = () => {
     if (!selectedSpacesType)
       newErrors.selectedSpacesType = "Los tipos de espacio son obligatorios.";
 
-    // If reservations are accepted, at least one reservation type must be selected
+    // Si se aceptan reservas, se debe seleccionar al menos un tipo de reserva
     if (aceptaReservas && !Object.values(tiposReservas).some((val) => val)) {
       newErrors.tiposReservas = "Debe seleccionar al menos un tipo de reserva.";
     }
@@ -192,7 +189,6 @@ const EditSpace = () => {
         } else if (key === "selectedSpacesType") {
           spaceData.append("spacesType", value);
         } else if (key === "tiposReservas") {
-          // Convert reservation types to an array of selected types
           const selectedReservationTypes = Object.entries(value)
             .filter(([_, isSelected]) => isSelected)
             .map(([type, _]) => type);
@@ -208,14 +204,17 @@ const EditSpace = () => {
 
       if (imagen) spaceData.append("imagen", imagen);
 
-      await axios.put(`http://localhost:3000/api/spaces/${id}`, spaceData, config);
+      await axios.put(
+        `http://localhost:3000/api/spaces/${id}`,
+        spaceData,
+        config
+      );
       navigate("/SpacesList");
     } catch (error) {
       setGlobalError("Error al actualizar el espacio: " + error.message);
     }
   };
 
-  // Loading state
   if (isLoading) {
     return <div className="container mt-4">Cargando...</div>;
   }
@@ -380,7 +379,6 @@ const EditSpace = () => {
           )}
         </div>
 
-        {/* New Reservation Toggle */}
         <div className="mb-3">
           <div className="form-check form-switch">
             <input

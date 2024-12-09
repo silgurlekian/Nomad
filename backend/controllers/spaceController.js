@@ -27,11 +27,11 @@ export const uploadSpaceImage = upload.single("imagen");
 export const getSpaces = async (req, res) => {
   try {
     const spaces = await Space.find()
-      .populate({ path: "servicios", select: "name" }) // Poblamos los servicios, seleccionando solo el nombre
-      .populate({ path: "spacesType", select: "name" }) // Poblamos los tipos de espacio, seleccionando solo el nombre
+      .populate({ path: "servicios", select: "name" }) 
+      .populate({ path: "spacesType", select: "name" }) 
       .lean(); // Esto devuelve solo los datos planos (sin instancias de mongoose)
 
-    console.log("Spaces with populated data:", spaces); // Verificamos los datos poblados
+    console.log("Spaces with populated data:", spaces); 
 
     res.status(200).json(spaces);
   } catch (error) {
@@ -65,21 +65,42 @@ export const createSpace = async (req, res) => {
       !req.body.ciudad ||
       !req.body.precio
     ) {
-      return res.status(400).json({ message: "Todos los campos son obligatorios" });
+      return res
+        .status(400)
+        .json({ message: "Todos los campos son obligatorios" });
+    }
+
+    // Validar tiposReservas solo si aceptaReservas es true
+    const aceptaReservas =
+      req.body.aceptaReservas === true || req.body.aceptaReservas === "true";
+
+    if (
+      aceptaReservas &&
+      (!req.body.tiposReservas || req.body.tiposReservas.length === 0)
+    ) {
+      return res.status(400).json({
+        message:
+          "Si aceptaReservas es true, debe incluir al menos un tipo de reserva",
+      });
     }
 
     // Creación del nuevo espacio
     const newSpace = new Space({
       ...req.body,
+      aceptaReservas: aceptaReservas,
       servicios: req.body.servicios || [],
       spacesType: req.body.spacesType || [],
-      imagen: req.file ? req.file.path : null, 
+      imagen: req.file ? req.file.path : null,
+      // Garantizar que tiposReservas esté vacío si aceptaReservas es false
+      tiposReservas: aceptaReservas ? req.body.tiposReservas : [],
     });
 
     const savedSpace = await newSpace.save();
     res.status(201).json(savedSpace);
   } catch (err) {
-    res.status(500).json({ message: "Error al crear el espacio", error: err.message });
+    res
+      .status(500)
+      .json({ message: "Error al crear el espacio", error: err.message });
   }
 };
 
@@ -95,7 +116,23 @@ export const updateSpace = async (req, res) => {
       !req.body.ciudad ||
       !req.body.precio
     ) {
-      return res.status(400).json({ message: "Todos los campos son obligatorios" });
+      return res
+        .status(400)
+        .json({ message: "Todos los campos son obligatorios" });
+    }
+
+    // Validar tiposReservas solo si aceptaReservas es true
+    const aceptaReservas =
+      req.body.aceptaReservas === true || req.body.aceptaReservas === "true";
+
+    if (
+      aceptaReservas &&
+      (!req.body.tiposReservas || req.body.tiposReservas.length === 0)
+    ) {
+      return res.status(400).json({
+        message:
+          "Si aceptaReservas es true, debe incluir al menos un tipo de reserva",
+      });
     }
 
     // Buscar el espacio por ID y actualizarlo
@@ -103,11 +140,14 @@ export const updateSpace = async (req, res) => {
       id,
       {
         ...req.body,
+        aceptaReservas: aceptaReservas,
         servicios: req.body.servicios || [],
         spacesType: req.body.spacesType || [],
         imagen: req.file ? req.file.path : undefined, // Solo actualizar la imagen si se proporciona una nueva
+        // Garantizar que tiposReservas esté vacío si aceptaReservas es false
+        tiposReservas: aceptaReservas ? req.body.tiposReservas : [],
       },
-      { new: true } // Devuelve el documento actualizado
+      { new: true, runValidators: true } // Añadimos runValidators para asegurar validaciones
     );
 
     if (!updatedSpace) {
@@ -116,7 +156,9 @@ export const updateSpace = async (req, res) => {
 
     res.status(200).json(updatedSpace);
   } catch (err) {
-    res.status(500).json({ message: "Error al actualizar el espacio", error: err.message });
+    res
+      .status(500)
+      .json({ message: "Error al actualizar el espacio", error: err.message });
   }
 };
 
@@ -132,6 +174,8 @@ export const deleteSpace = async (req, res) => {
 
     res.json({ message: "Espacio eliminado con éxito", deletedSpace });
   } catch (err) {
-    res.status(500).json({ message: "Error al eliminar el espacio", error: err.message });
+    res
+      .status(500)
+      .json({ message: "Error al eliminar el espacio", error: err.message });
   }
 };

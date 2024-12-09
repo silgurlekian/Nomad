@@ -72,7 +72,6 @@ const AddSpace = () => {
 
     if (type === "checkbox") {
       if (name === "aceptaReservas") {
-        // Reset reservation types when toggling acceptance of reservations
         setFormData((prev) => ({
           ...prev,
           [name]: checked,
@@ -86,7 +85,6 @@ const AddSpace = () => {
               },
         }));
       } else if (name.startsWith("tiposReservas.")) {
-        // Handle reservation type checkboxes
         const reservationType = name.split(".")[1];
         setFormData((prev) => ({
           ...prev,
@@ -96,7 +94,6 @@ const AddSpace = () => {
           },
         }));
       } else {
-        // Handle other checkboxes (like services)
         setFormData((prev) => ({ ...prev, [name]: checked }));
       }
     } else {
@@ -138,7 +135,7 @@ const AddSpace = () => {
     if (!selectedSpacesType)
       newErrors.selectedSpacesType = "Los tipos de espacio son obligatorios.";
 
-    // If reservations are accepted, at least one reservation type must be selected
+    // Si se aceptan reservas, se debe seleccionar al menos un tipo de reserva
     if (aceptaReservas && !Object.values(tiposReservas).some((val) => val)) {
       newErrors.tiposReservas = "Debe seleccionar al menos un tipo de reserva.";
     }
@@ -170,7 +167,6 @@ const AddSpace = () => {
         } else if (key === "selectedSpacesType") {
           spaceData.append("spacesType", value);
         } else if (key === "tiposReservas") {
-          // Convert reservation types to an array of selected types
           const selectedReservationTypes = Object.entries(value)
             .filter(([_, isSelected]) => isSelected)
             .map(([type, _]) => type);
@@ -358,7 +354,6 @@ const AddSpace = () => {
           )}
         </div>
 
-        {/* New Reservation Toggle */}
         <div className="mb-3">
           <div className="form-check form-switch">
             <input
@@ -375,7 +370,6 @@ const AddSpace = () => {
           </div>
         </div>
 
-        {/* Reservation Types - Only show if aceptaReservas is true */}
         {formData.aceptaReservas && (
           <div className="mb-3">
             <label className="form-label">Tipos de Reservas</label>
@@ -411,7 +405,6 @@ const AddSpace = () => {
           </div>
         )}
 
-        {/* Campo para subir imagen */}
         <div className="mb-3">
           <label htmlFor="imagen" className="form-label">
             {" "}
@@ -426,7 +419,6 @@ const AddSpace = () => {
           />
         </div>
 
-        {/* Botón para enviar el formulario */}
         <button type="submit" className="btn btn-primary">
           Agregar Espacio
         </button>

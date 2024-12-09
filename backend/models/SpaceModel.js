@@ -55,7 +55,6 @@ const spaceSchema = new mongoose.Schema(
     imagen: {
       type: String,
     },
-    // New fields for reservations
     aceptaReservas: {
       type: Boolean,
       default: false
@@ -71,5 +70,13 @@ const spaceSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+
+// borrar tiposReservas cuando aceptaReservas es falso
+spaceSchema.pre('save', function(next) {
+  if (!this.aceptaReservas) {
+    this.tiposReservas = []; // borrar tiposReservas array
+  }
+  next();
+});
 
 export default mongoose.model("Space", spaceSchema);
