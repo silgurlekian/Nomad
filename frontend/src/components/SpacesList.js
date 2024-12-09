@@ -27,7 +27,7 @@ const SpacesList = () => {
 
         const config = { headers: { Authorization: `Bearer ${token}` } };
         const response = await axios.get(
-          "http://localhost:3000/api/spaces",
+          "https://api-nomad.onrender.com/api/spaces",
           config
         );
         setSpaces(response.data);
@@ -57,7 +57,7 @@ const SpacesList = () => {
       const config = { headers: { Authorization: `Bearer ${token}` } };
 
       await axios.delete(
-        `http://localhost:3000/api/spaces/${selectedSpace._id}`,
+        `https://api-nomad.onrender.com/api/spaces/${selectedSpace._id}`,
         config
       );
 
@@ -100,7 +100,7 @@ const SpacesList = () => {
               <td>
                 {space.imagen && (
                   <img
-                    src={`http://localhost:3000/${space.imagen}`}
+                    src={`https://api-nomad.onrender.com/${space.imagen}`}
                     alt={space.nombre}
                     className="space-image"
                   />

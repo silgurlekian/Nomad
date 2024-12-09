@@ -49,9 +49,9 @@ const EditSpace = () => {
       try {
         const [servicesResponse, spaceTypesResponse, spaceResponse] =
           await Promise.all([
-            axios.get("http://localhost:3000/api/services"),
-            axios.get("http://localhost:3000/api/spacesType"),
-            axios.get(`http://localhost:3000/api/spaces/${id}`, {
+            axios.get("https://api-nomad.onrender.com/api/services"),
+            axios.get("https://api-nomad.onrender.com/api/spacesType"),
+            axios.get(`https://api-nomad.onrender.com/api/spaces/${id}`, {
               headers: { Authorization: `Bearer ${token}` },
             }),
           ]);
@@ -205,7 +205,7 @@ const EditSpace = () => {
       if (imagen) spaceData.append("imagen", imagen);
 
       await axios.put(
-        `http://localhost:3000/api/spaces/${id}`,
+        `https://api-nomad.onrender.com/api/spaces/${id}`,
         spaceData,
         config
       );

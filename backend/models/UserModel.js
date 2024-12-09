@@ -5,7 +5,9 @@ const userSchema = new mongoose.Schema({
     nombre: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
-    role: { type: String, default: 'user' }, // Campo para el rol
+    role: { type: String, default: 'user' },
+    resetPasswordToken: { type: String }, // Campo para el token
+    resetPasswordExpires: { type: Date }, // Campo para la fecha de expiración
 }, { timestamps: true });
 
 // Método para encriptar la contraseña antes de guardar
