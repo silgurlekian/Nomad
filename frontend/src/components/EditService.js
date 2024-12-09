@@ -63,7 +63,7 @@ const EditService = () => {
   };
 
   return (
-    <div className="container mt-4">
+    <div className="container bkg-container mt-4">
       <h2>Editar Servicio</h2>
       {error && <div className="alert alert-danger">{error}</div>}
       <form onSubmit={handleSubmit}>
