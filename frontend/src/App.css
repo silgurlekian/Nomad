@@ -113,6 +113,19 @@ h2 {
   height: 40px;
 }
 
+.btn-danger {
+  background-color: transparent;
+  border: 1px solid #c11b24 !important;
+  border: 0;
+  color: #c11b24;
+}
+
+.btn-secondary:hover,
+.btn-secondary:focus {
+  background-color: #c11b24;
+  color: #FFFFFF;
+}
+
 .space-image {
   width: 100px;
   height: 100px;
