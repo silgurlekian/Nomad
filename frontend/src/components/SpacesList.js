@@ -7,7 +7,7 @@ const SpacesList = () => {
   const [error, setError] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [showModal, setShowModal] = useState(false); // Estado para mostrar el modal
-  const [selectedSpace, setSelectedSpace] = useState(null); // Espacio seleccionado para eliminar
+  const [selectedSpace, setSelectedSpace] = useState(null); 
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -104,7 +104,7 @@ const SpacesList = () => {
               <td>
                 {space.imagen && (
                   <img
-                    src={`https://api-nomad.onrender.com/${space.imagen}`}
+                    src={`http://localhost:3000/${space.imagen}`}
                     alt={space.nombre}
                     className="space-image"
                   />

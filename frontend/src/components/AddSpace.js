@@ -3,23 +3,20 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 const AddSpace = () => {
-  const [nombre, setNombre] = useState("");
-  const [direccion, setDireccion] = useState("");
-  const [ciudad, setCiudad] = useState("");
-  const [website, setWebsite] = useState("");
-  const [precio, setPrecio] = useState("");
-  const [selectedServices, setSelectedServices] = useState([]);
-  const [allServices, setAllServices] = useState([]);
-  const [error, setError] = useState(null);
-  const [formErrors, setFormErrors] = useState({});
-  const [imagen, setImagen] = useState(null);
-  const [aceptaReservas, setAceptaReservas] = useState(false);
-  const [tiposReservas, setTiposReservas] = useState({
-    hora: false,
-    dia: false,
-    mes: false,
-    anual: false,
+  const [formData, setFormData] = useState({
+    nombre: "",
+    direccion: "",
+    ciudad: "",
+    website: "",
+    precio: "",
+    selectedServices: [],
+    aceptaReservas: false,
+    tiposReservas: { hora: false, dia: false, mes: false, anual: false },
   });
+  const [allServices, setAllServices] = useState([]);
+  const [imagen, setImagen] = useState(null);
+  const [errors, setErrors] = useState({});
+  const [globalError, setGlobalError] = useState(null);
 
   const navigate = useNavigate();
 
@@ -28,12 +25,12 @@ const AddSpace = () => {
     const user = JSON.parse(localStorage.getItem("user"));
 
     if (!token) {
-      setError("Debes estar logueado para realizar esta acción.");
+      setGlobalError("Debes estar logueado para realizar esta acción.");
       return;
     }
 
     if (user && user.role !== "admin") {
-      setError("Debes ser administrador para poder agregar espacios.");
+      setGlobalError("Debes ser administrador para agregar espacios.");
       navigate("/SpacesList");
       return;
     }
@@ -45,73 +42,62 @@ const AddSpace = () => {
         );
         setAllServices(response.data);
       } catch (error) {
-        setError("Error al cargar los Servicios: " + error.message);
+        setGlobalError("Error al cargar los servicios: " + error.message);
       }
     };
 
     fetchServices();
   }, [navigate]);
 
-  const handleCheckboxChange = (e) => {
-    const { value, checked } = e.target;
-    setSelectedServices((prevSelected) =>
-      checked
-        ? [...prevSelected, value]
-        : prevSelected.filter((id) => id !== value)
-    );
-  };
-
-  const handleReservaChange = (e) => {
-    setAceptaReservas(e.target.checked);
-    if (!e.target.checked) {
-      setTiposReservas({ hora: false, dia: false, mes: false, anual: false });
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    if (type === "checkbox" && name in formData.tiposReservas) {
+      setFormData((prev) => ({
+        ...prev,
+        tiposReservas: { ...prev.tiposReservas, [name]: checked },
+      }));
+    } else if (type === "checkbox") {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: checked,
+      }));
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
     }
-  };
-
-  const handleTipoReservaChange = (e) => {
-    const { name, checked } = e.target;
-    setTiposReservas((prevTipos) => ({
-      ...prevTipos,
-      [name]: checked,
-    }));
-  };
-
-  const validateForm = () => {
-    const errors = {};
-    if (!nombre) errors.nombre = "El nombre es obligatorio.";
-    if (!direccion) errors.direccion = "La dirección es obligatoria.";
-    if (!ciudad) errors.ciudad = "La ciudad es obligatoria.";
-    if (!precio) errors.precio = "El precio es obligatorio.";
-    if (selectedServices.length === 0)
-      errors.Services = "Los Servicios son obligatorios.";
-    return errors;
   };
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-    if (file && file.type.startsWith("image/")) {
+    if (file?.type.startsWith("image/")) {
       setImagen(file);
     } else {
-      setError("Por favor, sube un archivo de imagen válido.");
+      setGlobalError("Por favor, sube un archivo de imagen válido.");
       setImagen(null);
     }
   };
 
+  const validateForm = () => {
+    const { nombre, direccion, ciudad, precio, selectedServices } = formData;
+    const newErrors = {};
+    if (!nombre.trim()) newErrors.nombre = "El nombre es obligatorio.";
+    if (!direccion.trim()) newErrors.direccion = "La dirección es obligatoria.";
+    if (!ciudad.trim()) newErrors.ciudad = "La ciudad es obligatoria.";
+    if (!precio || precio <= 0)
+      newErrors.precio = "El precio debe ser mayor que cero.";
+    if (selectedServices.length === 0)
+      newErrors.selectedServices = "Los servicios son obligatorios.";
+    return newErrors;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const validationErrors = validateForm();
+    setErrors(validationErrors);
 
-    const errors = validateForm();
-    setFormErrors(errors);
-
-    if (Object.keys(errors).length > 0) return;
+    if (Object.keys(validationErrors).length > 0) return;
 
     try {
       const token = localStorage.getItem("token");
-      if (!token) {
-        setError("Debes estar logueado para realizar esta acción.");
-        return;
-      }
-
       const config = {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -119,41 +105,29 @@ const AddSpace = () => {
         },
       };
 
-      const newSpace = new FormData();
-      newSpace.append("nombre", nombre);
-      newSpace.append("direccion", direccion);
-      newSpace.append("ciudad", ciudad);
-      newSpace.append("website", website);
-      newSpace.append("precio", precio);
-
-      selectedServices.forEach((serviceId) => {
-        newSpace.append("servicios", serviceId);
+      const spaceData = new FormData();
+      Object.entries(formData).forEach(([key, value]) => {
+        if (key === "tiposReservas") {
+          spaceData.append(key, JSON.stringify(value));
+        } else if (key === "selectedServices") {
+          value.forEach((service) => spaceData.append("servicios", service));
+        } else {
+          spaceData.append(key, value);
+        }
       });
+      if (imagen) spaceData.append("imagen", imagen);
 
-      if (imagen) newSpace.append("imagen", imagen);
-
-      newSpace.append("aceptaReservas", aceptaReservas);
-      if (aceptaReservas) {
-        newSpace.append("tiposReservas", JSON.stringify(tiposReservas));
-      }
-
-      await axios.post(
-        "https://api-nomad.onrender.com/api/spaces",
-        newSpace,
-        config
-      );
-
+      await axios.post("http://localhost:3000/api/spaces", spaceData, config);
       navigate("/SpacesList");
     } catch (error) {
-      setError("Error al agregar el espacio: " + error.message);
+      setGlobalError("Error al agregar el espacio: " + error.message);
     }
   };
 
   return (
     <div className="container bkg-container mt-4">
-      <h2 className="mb-3">Agregar espacio</h2>
-      {error && <div className="alert alert-danger">{error}</div>}
-
+      <h2>Agregar espacio</h2>
+      {globalError && <div className="alert alert-danger">{globalError}</div>}
       <form onSubmit={handleSubmit}>
         <div className="mb-3">
           <label htmlFor="nombre" className="form-label">
@@ -162,13 +136,14 @@ const AddSpace = () => {
           <input
             type="text"
             id="nombre"
-            className={`form-control ${formErrors.nombre ? "is-invalid" : ""}`}
-            value={nombre}
-            onChange={(e) => setNombre(e.target.value)}
+            name="nombre"
+            value={formData.nombre}
+            onChange={handleChange}
             placeholder="Ingrese el nombre del espacio"
+            className={`form-control ${errors.nombre ? "is-invalid" : ""}`}
           />
-          {formErrors.nombre && (
-            <div className="invalid-feedback">{formErrors.nombre}</div>
+          {errors.nombre && (
+            <div className="invalid-feedback">{errors.nombre}</div>
           )}
         </div>
 
@@ -179,15 +154,14 @@ const AddSpace = () => {
           <input
             type="text"
             id="direccion"
-            className={`form-control ${
-              formErrors.direccion ? "is-invalid" : ""
-            }`}
-            value={direccion}
-            onChange={(e) => setDireccion(e.target.value)}
+            name="direccion"
+            value={formData.direccion}
+            onChange={handleChange}
             placeholder="Ejemplo: Calle Falsa 123"
+            className={`form-control ${errors.direccion ? "is-invalid" : ""}`}
           />
-          {formErrors.direccion && (
-            <div className="invalid-feedback">{formErrors.direccion}</div>
+          {errors.direccion && (
+            <div className="invalid-feedback">{errors.direccion}</div>
           )}
         </div>
 
@@ -198,13 +172,14 @@ const AddSpace = () => {
           <input
             type="text"
             id="ciudad"
-            className={`form-control ${formErrors.ciudad ? "is-invalid" : ""}`}
-            value={ciudad}
-            onChange={(e) => setCiudad(e.target.value)}
-            placeholder="Ingrese la ciudad"
+            name="ciudad"
+            value={formData.ciudad}
+            onChange={handleChange}
+            placeholder="Ejemplo: Buenos Aires"
+            className={`form-control ${errors.ciudad ? "is-invalid" : ""}`}
           />
-          {formErrors.ciudad && (
-            <div className="invalid-feedback">{formErrors.ciudad}</div>
+          {errors.ciudad && (
+            <div className="invalid-feedback">{errors.ciudad}</div>
           )}
         </div>
 
@@ -213,13 +188,17 @@ const AddSpace = () => {
             Sitio web
           </label>
           <input
-            type="text"
+            type="url"
             id="website"
-            className="form-control"
-            value={website}
-            onChange={(e) => setWebsite(e.target.value)}
+            name="website"
+            value={formData.website}
+            onChange={handleChange}
             placeholder="Ejemplo: https://www.mi-espacio.com"
+            className={`form-control ${errors.website ? "is-invalid" : ""}`}
           />
+          {errors.website && (
+            <div className="invalid-feedback">{errors.website}</div>
+          )}
         </div>
 
         <div className="mb-3">
@@ -229,38 +208,54 @@ const AddSpace = () => {
           <input
             type="number"
             id="precio"
-            className={`form-control ${formErrors.precio ? "is-invalid" : ""}`}
-            value={precio}
-            onChange={(e) => setPrecio(e.target.value)}
+            name="precio"
+            value={formData.precio}
+            onChange={handleChange}
             placeholder="Ingrese el precio por hora"
+            className={`form-control ${errors.precio ? "is-invalid" : ""}`}
           />
-          {formErrors.precio && (
-            <div className="invalid-feedback">{formErrors.precio}</div>
+          {errors.precio && (
+            <div className="invalid-feedback">{errors.precio}</div>
           )}
         </div>
 
         <div className="mb-3">
           <label className="form-label">Servicios</label>
           <div>
-            {allServices.length > 0 ? ( // Verifica si hay servicios
+            {allServices.length > 0 ? (
               allServices.map((service) => (
-                <div key={service._id} className="d-flex gap-2 mb-2">
+                <div key={service._id} className="form-check">
                   <input
                     type="checkbox"
-                    id={service._id}
+                    id={`service-${service._id}`}
                     value={service._id}
-                    checked={selectedServices.includes(service._id)}
-                    onChange={handleCheckboxChange}
+                    checked={formData.selectedServices.includes(service._id)}
+                    onChange={(e) => {
+                      const { value, checked } = e.target;
+                      setFormData((prev) => ({
+                        ...prev,
+                        selectedServices: checked
+                          ? [...prev.selectedServices, value]
+                          : prev.selectedServices.filter((id) => id !== value),
+                      }));
+                    }}
+                    className="form-check-input"
                   />
-                  <label htmlFor={service._id}>{service.name}</label>
+
+                  <label
+                    htmlFor={`service-${service._id}`}
+                    className="form-check-label"
+                  >
+                    {service.name}
+                  </label>
                 </div>
               ))
             ) : (
-              <p>No hay servicios disponibles.</p> // Mensaje si no hay servicios
+              <p>No hay servicios disponibles.</p>
             )}
           </div>
-          {formErrors.Services && (
-            <div className="invalid-feedback">{formErrors.Services}</div>
+          {errors.services && (
+            <div className="invalid-feedback">{errors.services}</div>
           )}
         </div>
 
@@ -268,25 +263,45 @@ const AddSpace = () => {
           <label className="form-label">¿Acepta reservas?</label>
           <input
             type="checkbox"
+            id="aceptaReservas"
+            checked={formData.aceptaReservas}
+            onChange={(e) => {
+              const { checked } = e.target;
+              setFormData((prev) => ({ ...prev, aceptaReservas: checked }));
+            }}
             className="form-check-input"
-            checked={aceptaReservas}
-            onChange={handleReservaChange}
           />
         </div>
 
-        {aceptaReservas && (
+        {formData.aceptaReservas && (
           <div className="mb-3">
             <label className="form-label">Tipos de reserva</label>
-            <div className="d-flex gap-2">
+            <div>
               {["hora", "dia", "mes", "anual"].map((tipo) => (
-                <div key={tipo}>
+                <div key={tipo} className="form-check">
                   <input
                     type="checkbox"
+                    id={`reserva-${tipo}`}
                     name={tipo}
-                    checked={tiposReservas[tipo]}
-                    onChange={handleTipoReservaChange}
+                    checked={formData.tiposReservas[tipo]}
+                    onChange={(e) => {
+                      const { name, checked } = e.target;
+                      setFormData((prev) => ({
+                        ...prev,
+                        tiposReservas: {
+                          ...prev.tiposReservas,
+                          [name]: checked,
+                        },
+                      }));
+                    }}
+                    className="form-check-input"
                   />
-                  <label>{`Por ${tipo}`}</label>
+                  <label
+                    htmlFor={`reserva-${tipo}`}
+                    className="form-check-label"
+                  >
+                    Por {tipo}
+                  </label>
                 </div>
               ))}
             </div>
@@ -300,8 +315,9 @@ const AddSpace = () => {
           <input
             type="file"
             id="imagen"
-            className="form-control"
+            name="imagen"
             onChange={handleFileChange}
+            className="form-control"
           />
         </div>
 
