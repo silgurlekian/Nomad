@@ -68,6 +68,26 @@ export const loginUser = async (req, res) => {
     }
 };
 
+export const verifyResetToken = async (req, res) => {
+    const { token } = req.params;
+
+    try {
+        const user = await User.findOne({
+            resetPasswordToken: token,
+            resetPasswordExpires: { $gt: Date.now() } // Verifica si el token no ha expirado
+        });
+
+        if (!user) {
+            return res.status(400).json({ message: "Token inválido o expirado." });
+        }
+
+        // Si el token es válido, puedes devolver un mensaje o redirigir a un formulario
+        res.status(200).json({ message: "Token válido, puedes restablecer tu contraseña." });
+    } catch (error) {
+        res.status(500).json({ message: "Hubo un error al verificar el token." });
+    }
+};
+
 export const resetPassword = async (req, res) => {
     const { newPassword } = req.body;
     const token = req.params.token;

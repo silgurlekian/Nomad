@@ -2,7 +2,7 @@ import express from 'express';
 import { registerUser, loginUser } from '../controllers/authController.js';
 import { protect, admin } from '../middleware/authMiddleware.js';
 import { check } from 'express-validator';
-import { resetPassword, resetPasswordRequest } from '../controllers/authController.js'; 
+import { resetPasswordRequest, resetPassword, verifyResetToken } from '../controllers/authController.js';
 
 const router = express.Router();
 
@@ -22,12 +22,13 @@ router.get('/admin', protect, admin, (req, res) => {
    res.json({ message: 'Bienvenido al portal de administración' });
 });
 
-router.post('/reset-password', [
-    check('email', 'Por favor, incluye un email válido').isEmail(),
-], resetPasswordRequest);
+// Ruta para solicitar el restablecimiento de contraseña
+router.post('/reset-password', resetPasswordRequest);
 
-router.post('/reset-password/:token', [
-    check('newPassword', 'La nueva contraseña es obligatoria').not().isEmpty(),
-], resetPassword);
+// Ruta GET para verificar el token y mostrar el formulario
+router.get('/reset-password/:token', verifyResetToken);
+
+// Ruta POST para restablecer la contraseña
+router.post('/reset-password/:token', resetPassword);
 
 export default router;
