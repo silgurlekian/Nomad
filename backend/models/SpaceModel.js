@@ -54,7 +54,18 @@ const spaceSchema = new mongoose.Schema(
     ],
     imagen: {
       type: String,
-    }
+    },
+    // New fields for reservations
+    aceptaReservas: {
+      type: Boolean,
+      default: false
+    },
+    tiposReservas: [
+      {
+        type: String,
+        enum: ['porHora', 'porDia', 'porMes', 'porAno']
+      }
+    ]
   },
   {
     timestamps: true,

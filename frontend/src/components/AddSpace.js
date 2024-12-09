@@ -11,6 +11,13 @@ const AddSpace = () => {
     precio: "",
     selectedServices: [],
     selectedSpacesType: "",
+    aceptaReservas: false,
+    tiposReservas: {
+      porHora: false,
+      porDia: false,
+      porMes: false,
+      porAno: false,
+    },
   });
   const [allServices, setAllServices] = useState([]);
   const [allSpacesType, setAllSpacesType] = useState([]);
@@ -64,7 +71,34 @@ const AddSpace = () => {
     const { name, value, type, checked } = e.target;
 
     if (type === "checkbox") {
-      setFormData((prev) => ({ ...prev, [name]: checked }));
+      if (name === "aceptaReservas") {
+        // Reset reservation types when toggling acceptance of reservations
+        setFormData((prev) => ({
+          ...prev,
+          [name]: checked,
+          tiposReservas: checked
+            ? prev.tiposReservas
+            : {
+                porHora: false,
+                porDia: false,
+                porMes: false,
+                porAno: false,
+              },
+        }));
+      } else if (name.startsWith("tiposReservas.")) {
+        // Handle reservation type checkboxes
+        const reservationType = name.split(".")[1];
+        setFormData((prev) => ({
+          ...prev,
+          tiposReservas: {
+            ...prev.tiposReservas,
+            [reservationType]: checked,
+          },
+        }));
+      } else {
+        // Handle other checkboxes (like services)
+        setFormData((prev) => ({ ...prev, [name]: checked }));
+      }
     } else {
       setFormData((prev) => ({ ...prev, [name]: value }));
     }
@@ -89,6 +123,8 @@ const AddSpace = () => {
       precio,
       selectedServices,
       selectedSpacesType,
+      aceptaReservas,
+      tiposReservas,
     } = formData;
     const newErrors = {};
 
@@ -101,6 +137,11 @@ const AddSpace = () => {
       newErrors.selectedServices = "Los servicios son obligatorios.";
     if (!selectedSpacesType)
       newErrors.selectedSpacesType = "Los tipos de espacio son obligatorios.";
+
+    // If reservations are accepted, at least one reservation type must be selected
+    if (aceptaReservas && !Object.values(tiposReservas).some((val) => val)) {
+      newErrors.tiposReservas = "Debe seleccionar al menos un tipo de reserva.";
+    }
 
     return newErrors;
   };
@@ -128,6 +169,16 @@ const AddSpace = () => {
           value.forEach((service) => spaceData.append("servicios", service));
         } else if (key === "selectedSpacesType") {
           spaceData.append("spacesType", value);
+        } else if (key === "tiposReservas") {
+          // Convert reservation types to an array of selected types
+          const selectedReservationTypes = Object.entries(value)
+            .filter(([_, isSelected]) => isSelected)
+            .map(([type, _]) => type);
+          selectedReservationTypes.forEach((type) =>
+            spaceData.append("tiposReservas", type)
+          );
+        } else if (key === "aceptaReservas") {
+          spaceData.append(key, value);
         } else {
           spaceData.append(key, value);
         }
@@ -306,6 +357,59 @@ const AddSpace = () => {
             <div className="invalid-feedback">{errors.services}</div>
           )}
         </div>
+
+        {/* New Reservation Toggle */}
+        <div className="mb-3">
+          <div className="form-check form-switch">
+            <input
+              className="form-check-input"
+              type="checkbox"
+              id="aceptaReservas"
+              name="aceptaReservas"
+              checked={formData.aceptaReservas}
+              onChange={handleChange}
+            />
+            <label className="form-check-label" htmlFor="aceptaReservas">
+              ¿Acepta reservas?
+            </label>
+          </div>
+        </div>
+
+        {/* Reservation Types - Only show if aceptaReservas is true */}
+        {formData.aceptaReservas && (
+          <div className="mb-3">
+            <label className="form-label">Tipos de Reservas</label>
+            <div>
+              {Object.entries(formData.tiposReservas).map(([type, value]) => (
+                <div key={type} className="form-check">
+                  <input
+                    type="checkbox"
+                    id={`reservationType-${type}`}
+                    name={`tiposReservas.${type}`}
+                    checked={value}
+                    onChange={handleChange}
+                    className="form-check-input"
+                  />
+                  <label
+                    htmlFor={`reservationType-${type}`}
+                    className="form-check-label"
+                  >
+                    {type === "porHora"
+                      ? "Por hora"
+                      : type === "porDia"
+                      ? "Por día"
+                      : type === "porMes"
+                      ? "Por mes"
+                      : "Por año"}
+                  </label>
+                </div>
+              ))}
+            </div>
+            {errors.tiposReservas && (
+              <div className="text-danger">{errors.tiposReservas}</div>
+            )}
+          </div>
+        )}
 
         {/* Campo para subir imagen */}
         <div className="mb-3">
