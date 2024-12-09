@@ -24,9 +24,12 @@ const SpacesList = () => {
         }
 
         setIsAdmin(true);
-        
+
         const config = { headers: { Authorization: `Bearer ${token}` } };
-        const response = await axios.get("http://localhost:3000/api/spaces", config);
+        const response = await axios.get(
+          "http://localhost:3000/api/spaces",
+          config
+        );
         setSpaces(response.data);
       } catch (error) {
         setError("Error al obtener los espacios: " + error.message);
@@ -87,6 +90,7 @@ const SpacesList = () => {
             <th>Ciudad</th>
             <th>Precio</th>
             <th>Servicios</th>
+            <th>Tipos de Espacio</th>
             <th>Acciones</th>
           </tr>
         </thead>
@@ -102,16 +106,45 @@ const SpacesList = () => {
                   />
                 )}
               </td>
-              <td>{space.nombre}</td>
-              <td>{space.direccion}</td>
-              <td>{space.ciudad}</td>
-              <td style={{ whiteSpace: "nowrap" }}>$ {space.precio}</td>
-              <td>
+              <td className="align-middle">{space.nombre}</td>
+              <td className="align-middle">{space.direccion}</td>
+              <td className="align-middle">{space.ciudad}</td>
+              <td className="align-middle" style={{ whiteSpace: "nowrap" }}>$ {space.precio}</td>
+              <td className="align-middle">
                 {space.servicios && Array.isArray(space.servicios)
                   ? space.servicios.map((service) => service.name).join(", ")
-                  : "No services available"}
+                  : "Sin servicios"}
               </td>
-              <td>
+              <td className="align-middle">
+                {space.spacesType && Array.isArray(space.spacesType) ? (
+                  space.spacesType.map((type) => {
+                    const colorMap = {
+                      Coworking: "bg-primary",
+                      "Oficina privada": "bg-success", 
+                      Hotel: "bg-success",
+                      Hostel: "bg-info",
+                      Cafetería: "bg-warning",
+                      "Espacio para eventos": "bg-danger",
+                      Aula: "bg-secondary",
+                    };
+
+                    const badgeClass =
+                      colorMap[type.name] || "bg-light text-dark";
+
+                    return (
+                      <span
+                        key={type._id}
+                        className={`badge ${badgeClass} me-1`}
+                      >
+                        {type.name}
+                      </span>
+                    );
+                  })
+                ) : (
+                  <span className="badge bg-light text-dark">Sin tipos</span>
+                )}
+              </td>
+              <td className="align-middle">
                 <div className="d-flex align-items-center">
                   <button
                     className="btn btn-secondary me-2"
@@ -147,7 +180,9 @@ const SpacesList = () => {
                   type="button"
                   className="btn-close"
                   onClick={() => setShowModal(false)}
-                >.</button>
+                >
+                  .
+                </button>
               </div>
               <div className="modal-body">
                 <p>
