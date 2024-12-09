@@ -60,7 +60,7 @@ const AddSpaceType = () => {
       const newSpaceType = { name };
 
       await axios.post(
-        "https://api-nomad.onrender.com/api/spacesType",
+        "http://localhost:3000/api/spacesType",
         newSpaceType,
         config
       );

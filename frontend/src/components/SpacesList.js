@@ -32,7 +32,7 @@ const SpacesList = () => {
 
         const config = { headers: { Authorization: `Bearer ${token}` } };
         const response = await axios.get(
-          "https://api-nomad.onrender.com/api/spaces",
+          "http://localhost:3000/api/spaces",
           config
         );
         setSpaces(response.data);
@@ -62,7 +62,7 @@ const SpacesList = () => {
       const config = { headers: { Authorization: `Bearer ${token}` } };
 
       await axios.delete(
-        `https://api-nomad.onrender.com/api/spaces/${selectedSpace._id}`,
+        `http://localhost:3000/api/spaces/${selectedSpace._id}`,
         config
       );
 

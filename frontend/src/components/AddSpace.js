@@ -38,7 +38,7 @@ const AddSpace = () => {
     const fetchServices = async () => {
       try {
         const response = await axios.get(
-          "https://api-nomad.onrender.com/api/services"
+          "http://localhost:3000/api/services"
         );
         setAllServices(response.data);
       } catch (error) {

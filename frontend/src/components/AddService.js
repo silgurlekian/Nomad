@@ -56,7 +56,7 @@ const AddService = () => {
       const newService = { name };
 
       await axios.post(
-        "https://api-nomad.onrender.com/api/services",
+        "http://localhost:3000/api/services",
         newService,
         config
       );

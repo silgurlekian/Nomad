@@ -32,7 +32,7 @@ const ServiceList = () => {
         }
 
         const response = await axios.get(
-          "https://api-nomad.onrender.com/api/services",
+          "http://localhost:3000/api/services",
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -57,7 +57,7 @@ const ServiceList = () => {
       const config = { headers: { Authorization: `Bearer ${token}` } };
 
       await axios.delete(
-        `https://api-nomad.onrender.com/api/services/${selectedService._id}`,
+        `http://localhost:3000/api/services/${selectedService._id}`,
         config
       );
 
