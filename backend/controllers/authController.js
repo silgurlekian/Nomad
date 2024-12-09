@@ -74,14 +74,13 @@ export const verifyResetToken = async (req, res) => {
     try {
         const user = await User.findOne({
             resetPasswordToken: token,
-            resetPasswordExpires: { $gt: Date.now() } // Verifica si el token no ha expirado
+            resetPasswordExpires: { $gt: Date.now() } 
         });
 
         if (!user) {
             return res.status(400).json({ message: "Token inválido o expirado." });
         }
 
-        // Si el token es válido, puedes devolver un mensaje o redirigir a un formulario
         res.status(200).json({ message: "Token válido, puedes restablecer tu contraseña." });
     } catch (error) {
         res.status(500).json({ message: "Hubo un error al verificar el token." });
@@ -142,8 +141,8 @@ export const resetPasswordRequest = async (req, res) => {
         const mailOptions = {
             to: email,
             subject: 'Restablecer contraseña',
-            text: `Por favor haz clic en el siguiente enlace para restablecer tu contraseña:
-                   https://api-nomad.onrender.com/reset-password/${token}`,
+            text: `Por favor haz clic en el siguiente enlace para restablecer tu contraseña: 
+                   https://pwa.nomad.com.ar/reset-password/${token}`, 
         };
 
         await transporter.sendMail(mailOptions);
