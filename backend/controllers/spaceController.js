@@ -68,16 +68,12 @@ export const createSpace = async (req, res) => {
       return res.status(400).json({ message: "Todos los campos son obligatorios" });
     }
 
-    // Validación y parseo de tiposReservas
-    const tiposReservas = req.body.tiposReservas ? JSON.parse(req.body.tiposReservas) : [];
-
     // Creación del nuevo espacio
     const newSpace = new Space({
       ...req.body,
       servicios: req.body.servicios || [],
       spacesType: req.body.spacesType || [],
-      imagen: req.file ? req.file.path : null, // Asegurar que se guarde la ruta de la imagen correctamente
-      tiposReservas: Array.isArray(tiposReservas) ? tiposReservas.filter((key) => key) : [],
+      imagen: req.file ? req.file.path : null, 
     });
 
     const savedSpace = await newSpace.save();
@@ -102,9 +98,6 @@ export const updateSpace = async (req, res) => {
       return res.status(400).json({ message: "Todos los campos son obligatorios" });
     }
 
-    // Validación y parseo de tiposReservas
-    const tiposReservas = req.body.tiposReservas ? JSON.parse(req.body.tiposReservas) : [];
-
     // Buscar el espacio por ID y actualizarlo
     const updatedSpace = await Space.findByIdAndUpdate(
       id,
@@ -113,7 +106,6 @@ export const updateSpace = async (req, res) => {
         servicios: req.body.servicios || [],
         spacesType: req.body.spacesType || [],
         imagen: req.file ? req.file.path : undefined, // Solo actualizar la imagen si se proporciona una nueva
-        tiposReservas: Array.isArray(tiposReservas) ? tiposReservas.filter((key) => key) : [],
       },
       { new: true } // Devuelve el documento actualizado
     );

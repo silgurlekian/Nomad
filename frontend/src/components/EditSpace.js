@@ -11,8 +11,6 @@ const EditSpace = () => {
     precio: "",
     selectedServices: [],
     selectedSpacesType: [], // Ensure this is initialized as an empty array
-    aceptaReservas: false,
-    tiposReservas: { hora: false, dia: false, mes: false, anual: false },
   });
   const [allServices, setAllServices] = useState([]);
   const [allSpacesType, setAllSpacesType] = useState([]);
@@ -78,14 +76,6 @@ const EditSpace = () => {
           selectedSpacesType: response.data.spacesType
             ? response.data.spacesType.map((spaceType) => spaceType._id)
             : [], // Add a fallback to empty array
-          aceptaReservas: response.data.aceptaReservas,
-          tiposReservas: response.data.tiposReservas.reduce(
-            (acc, tipo) => {
-              acc[tipo] = true;
-              return acc;
-            },
-            { hora: false, dia: false, mes: false, anual: false }
-          ),
         });
         // Asignar la imagen actual
         if (response.data.imagen) {
@@ -106,26 +96,7 @@ const EditSpace = () => {
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
 
-    if (type === "checkbox" && name === "aceptaReservas") {
-      // Si cambia "aceptaReservas", vaciar tipos de reserva
-      if (!checked) {
-        setFormData((prev) => ({
-          ...prev,
-          aceptaReservas: checked,
-          tiposReservas: { hora: false, dia: false, mes: false, anual: false },
-        }));
-      } else {
-        setFormData((prev) => ({
-          ...prev,
-          aceptaReservas: checked,
-        }));
-      }
-    } else if (type === "checkbox" && name in formData.tiposReservas) {
-      setFormData((prev) => ({
-        ...prev,
-        tiposReservas: { ...prev.tiposReservas, [name]: checked },
-      }));
-    } else if (type === "checkbox") {
+    if (type === "checkbox") {
       setFormData((prev) => ({
         ...prev,
         [name]: checked,
@@ -185,9 +156,7 @@ const EditSpace = () => {
 
       const spaceData = new FormData();
       Object.entries(formData).forEach(([key, value]) => {
-        if (key === "tiposReservas") {
-          spaceData.append(key, JSON.stringify(value));
-        } else if (key === "selectedServices") {
+        if (key === "selectedServices") {
           value.forEach((service) => spaceData.append("servicios", service));
         } else if (key === "selectedSpacesType") {
           value.forEach((spaceType) =>
@@ -384,43 +353,6 @@ const EditSpace = () => {
             </div>
           )}
         </div>
-
-        <div className="mb-3">
-          <label htmlFor="aceptaReservas" className="form-label">
-            ¿Acepta reservas?
-          </label>
-          <input
-            type="checkbox"
-            id="aceptaReservas"
-            name="aceptaReservas"
-            checked={formData.aceptaReservas}
-            onChange={handleChange}
-            className="form-check-input"
-          />
-        </div>
-
-        {formData.aceptaReservas && (
-          <div className="mb-3">
-            <label className="form-label">Tipos de reservas</label>
-            <div>
-              {["hora", "dia", "mes", "anual"].map((tipo) => (
-                <div key={tipo} className="form-check">
-                  <input
-                    type="checkbox"
-                    id={`tipo-${tipo}`}
-                    name={tipo}
-                    checked={formData.tiposReservas[tipo]}
-                    onChange={handleChange}
-                    className="form-check-input"
-                  />
-                  <label htmlFor={`tipo-${tipo}`} className="form-check-label">
-                    {tipo.charAt(0).toUpperCase() + tipo.slice(1)}
-                  </label>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
 
         <div className="mb-3">
           <label htmlFor="imagen" className="form-label">
