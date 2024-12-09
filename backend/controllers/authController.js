@@ -123,7 +123,7 @@ export const resetPasswordRequest = async (req, res) => {
             to: email,
             subject: 'Restablecer contraseña',
             text: `Por favor haz clic en el siguiente enlace para restablecer tu contraseña:
-                   http://localhost:3002/reset-password/${token}`,
+                   https://api-nomad.onrender.com/reset-password/${token}`,
         };
 
         await transporter.sendMail(mailOptions);
