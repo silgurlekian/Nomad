@@ -46,6 +46,12 @@ const spaceSchema = new mongoose.Schema(
         ref: "Service",
       },
     ],
+    spacesType: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "SpaceType",
+      },
+    ],
     imagen: {
       type: String,
     },

@@ -10,14 +10,16 @@ const EditSpace = () => {
     website: "",
     precio: "",
     selectedServices: [],
+    selectedSpacesType: [], // Ensure this is initialized as an empty array
     aceptaReservas: false,
     tiposReservas: { hora: false, dia: false, mes: false, anual: false },
   });
   const [allServices, setAllServices] = useState([]);
+  const [allSpacesType, setAllSpacesType] = useState([]);
   const [imagen, setImagen] = useState(null);
   const [errors, setErrors] = useState({});
   const [globalError, setGlobalError] = useState(null);
-  const [imagenPreview, setImagenPreview] = useState(null); // Para la vista previa de la imagen
+  const [imagenPreview, setImagenPreview] = useState(null);
 
   const navigate = useNavigate();
   const { id } = useParams();
@@ -39,12 +41,23 @@ const EditSpace = () => {
 
     const fetchServices = async () => {
       try {
-        const response = await axios.get(
-          "http://localhost:3000/api/services"
-        );
+        const response = await axios.get("http://localhost:3000/api/services");
         setAllServices(response.data);
       } catch (error) {
         setGlobalError("Error al cargar los servicios: " + error.message);
+      }
+    };
+
+    const fetchSpacesType = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:3000/api/spacesType"
+        );
+        setAllSpacesType(response.data);
+      } catch (error) {
+        setGlobalError(
+          "Error al cargar los tipos de espacio: " + error.message
+        );
       }
     };
 
@@ -62,6 +75,9 @@ const EditSpace = () => {
           selectedServices: response.data.servicios.map(
             (service) => service._id
           ),
+          selectedSpacesType: response.data.spacesType
+            ? response.data.spacesType.map((spaceType) => spaceType._id)
+            : [], // Add a fallback to empty array
           aceptaReservas: response.data.aceptaReservas,
           tiposReservas: response.data.tiposReservas.reduce(
             (acc, tipo) => {
@@ -83,6 +99,7 @@ const EditSpace = () => {
     };
 
     fetchServices();
+    fetchSpacesType();
     fetchSpaceData();
   }, [id, navigate]);
 
@@ -129,7 +146,14 @@ const EditSpace = () => {
   };
 
   const validateForm = () => {
-    const { nombre, direccion, ciudad, precio, selectedServices } = formData;
+    const {
+      nombre,
+      direccion,
+      ciudad,
+      precio,
+      selectedServices,
+      selectedSpacesType,
+    } = formData;
     const newErrors = {};
     if (!nombre.trim()) newErrors.nombre = "El nombre es obligatorio.";
     if (!direccion.trim()) newErrors.direccion = "La dirección es obligatoria.";
@@ -138,6 +162,8 @@ const EditSpace = () => {
       newErrors.precio = "El precio debe ser mayor que cero.";
     if (selectedServices.length === 0)
       newErrors.selectedServices = "Los servicios son obligatorios.";
+    if (selectedSpacesType.length === 0)
+      newErrors.selectedSpacesType = "Los tipos de espacio son obligatorios.";
     return newErrors;
   };
 
@@ -163,6 +189,10 @@ const EditSpace = () => {
           spaceData.append(key, JSON.stringify(value));
         } else if (key === "selectedServices") {
           value.forEach((service) => spaceData.append("servicios", service));
+        } else if (key === "selectedSpacesType") {
+          value.forEach((spaceType) =>
+            spaceData.append("spacesType", spaceType)
+          );
         } else {
           spaceData.append(key, value);
         }
@@ -185,6 +215,43 @@ const EditSpace = () => {
       <h2>Editar espacio</h2>
       {globalError && <div className="alert alert-danger">{globalError}</div>}
       <form onSubmit={handleSubmit}>
+        <div className="mb-3">
+          <label htmlFor="tipoEspacio" className="form-label">
+            Tipo de Espacio
+          </label>
+          <select
+            id="tipoEspacio"
+            name="selectedSpacesType"
+            value={formData.selectedSpacesType}
+            onChange={(e) => {
+              const value = e.target.value;
+              setFormData((prev) => ({
+                ...prev,
+                selectedSpacesType: value ? [value] : [], // Permite seleccionar solo un tipo
+              }));
+            }}
+            className={`form-control ${
+              errors.selectedSpacesType ? "is-invalid" : ""
+            }`}
+          >
+            <option value="">Seleccione un tipo de espacio</option>
+            {allSpacesType.length > 0 ? (
+              allSpacesType.map((spaceType) => (
+                <option key={spaceType._id} value={spaceType._id}>
+                  {spaceType.name}
+                </option>
+              ))
+            ) : (
+              <option disabled>Cargando tipos de espacio...</option>
+            )}
+          </select>
+          {errors.selectedSpacesType && (
+            <div className="invalid-feedback d-block">
+              {errors.selectedSpacesType}
+            </div>
+          )}
+        </div>
+
         <div className="mb-3">
           <label htmlFor="nombre" className="form-label">
             Nombre

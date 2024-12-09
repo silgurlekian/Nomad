@@ -2,6 +2,7 @@ import Space from "../models/SpaceModel.js";
 import multer from "multer";
 import path from "path";
 
+// Configuración de almacenamiento de Multer
 const storage = multer.diskStorage({
   destination: "uploads/",
   filename: (req, file, cb) => {
@@ -22,95 +23,112 @@ const upload = multer({
 
 export const uploadSpaceImage = upload.single("imagen");
 
+// Obtener todos los espacios
 export const getSpaces = async (req, res) => {
   try {
-    const spaces = await Space.find().populate("servicios", "name");
-    res.json(spaces);
-  } catch (err) {
-    res
-      .status(500)
-      .json({ message: "Error al obtener los espacios", error: err.message });
+    const spaces = await Space.find()
+      .populate({ path: "servicios", select: "name" }) // Poblamos los servicios, seleccionando solo el nombre
+      .populate({ path: "spacesType", select: "name" }) // Poblamos los tipos de espacio, seleccionando solo el nombre
+      .lean(); // Esto devuelve solo los datos planos (sin instancias de mongoose)
+
+    console.log("Spaces with populated data:", spaces); // Verificamos los datos poblados
+
+    res.status(200).json(spaces);
+  } catch (error) {
+    res.status(400).json({ error: "Error al obtener los espacios." });
   }
 };
 
+// Obtener detalles de un espacio por ID
 export const getSpaceById = async (req, res) => {
   try {
-    const space = await Space.findById(req.params.id).populate(
-      "servicios",
-      "name"
-    );
-    space
-      ? res.json(space)
-      : res.status(404).json({ message: "Espacio no encontrado" });
-  } catch (err) {
-    res
-      .status(500)
-      .json({ message: "Error al obtener el espacio", error: err.message });
+    const space = await Space.findById(req.params.id).populate([
+      { path: "servicios", select: "name" },
+      { path: "spacesType", select: "name" },
+    ]);
+    if (!space) {
+      return res.status(404).json({ error: "Espacio no encontrado." });
+    }
+    res.status(200).json(space);
+  } catch (error) {
+    res.status(400).json({ error: "Error al obtener el espacio." });
   }
 };
 
+// Crear un nuevo espacio
 export const createSpace = async (req, res) => {
   try {
-    const tiposReservas = JSON.parse(req.body.tiposReservas || "{}");
+    // Validación de campos requeridos
+    if (
+      !req.body.nombre ||
+      !req.body.direccion ||
+      !req.body.ciudad ||
+      !req.body.precio
+    ) {
+      return res.status(400).json({ message: "Todos los campos son obligatorios" });
+    }
+
+    // Validación y parseo de tiposReservas
+    const tiposReservas = req.body.tiposReservas ? JSON.parse(req.body.tiposReservas) : [];
+
+    // Creación del nuevo espacio
     const newSpace = new Space({
       ...req.body,
       servicios: req.body.servicios || [],
-      imagen: req.file?.path || null,
-      tiposReservas: Object.keys(tiposReservas).filter(
-        (key) => tiposReservas[key]
-      ),
+      spacesType: req.body.spacesType || [],
+      imagen: req.file ? req.file.path : null, // Asegurar que se guarde la ruta de la imagen correctamente
+      tiposReservas: Array.isArray(tiposReservas) ? tiposReservas.filter((key) => key) : [],
     });
 
     const savedSpace = await newSpace.save();
     res.status(201).json(savedSpace);
   } catch (err) {
-    res
-      .status(500)
-      .json({ message: "Error al crear el espacio", error: err.message });
+    res.status(500).json({ message: "Error al crear el espacio", error: err.message });
   }
 };
 
+// Actualizar un espacio existente
 export const updateSpace = async (req, res) => {
   try {
-    const space = await Space.findById(req.params.id);
+    const { id } = req.params;
 
-    if (!space) {
-      return res.status(404).json({ message: "Espacio no encontrado" });
+    // Validación de campos requeridos
+    if (
+      !req.body.nombre ||
+      !req.body.direccion ||
+      !req.body.ciudad ||
+      !req.body.precio
+    ) {
+      return res.status(400).json({ message: "Todos los campos son obligatorios" });
     }
 
-    const tiposReservas = JSON.parse(req.body.tiposReservas || "{}");
+    // Validación y parseo de tiposReservas
+    const tiposReservas = req.body.tiposReservas ? JSON.parse(req.body.tiposReservas) : [];
 
-    const updatedData = {
-      nombre: req.body.nombre || space.nombre,
-      direccion: req.body.direccion || space.direccion,
-      ciudad: req.body.ciudad || space.ciudad,
-      website: req.body.website || space.website,
-      precio: req.body.precio || space.precio,
-      servicios: req.body.servicios || space.servicios,
-      aceptaReservas:
-        req.body.aceptaReservas !== undefined
-          ? req.body.aceptaReservas
-          : space.aceptaReservas,
-      tiposReservas: Object.keys(tiposReservas).filter(
-        (key) => tiposReservas[key]
-      ),
-      imagen: req.file ? req.file.path : space.imagen,
-    };
-
+    // Buscar el espacio por ID y actualizarlo
     const updatedSpace = await Space.findByIdAndUpdate(
-      req.params.id,
-      updatedData,
-      { new: true }
+      id,
+      {
+        ...req.body,
+        servicios: req.body.servicios || [],
+        spacesType: req.body.spacesType || [],
+        imagen: req.file ? req.file.path : undefined, // Solo actualizar la imagen si se proporciona una nueva
+        tiposReservas: Array.isArray(tiposReservas) ? tiposReservas.filter((key) => key) : [],
+      },
+      { new: true } // Devuelve el documento actualizado
     );
 
-    res.json(updatedSpace);
+    if (!updatedSpace) {
+      return res.status(404).json({ error: "Espacio no encontrado." });
+    }
+
+    res.status(200).json(updatedSpace);
   } catch (err) {
-    res
-      .status(500)
-      .json({ message: "Error al actualizar el espacio", error: err.message });
+    res.status(500).json({ message: "Error al actualizar el espacio", error: err.message });
   }
 };
 
+// Eliminar un espacio
 export const deleteSpace = async (req, res) => {
   try {
     const { id } = req.params;
@@ -122,8 +140,6 @@ export const deleteSpace = async (req, res) => {
 
     res.json({ message: "Espacio eliminado con éxito", deletedSpace });
   } catch (err) {
-    res
-      .status(500)
-      .json({ message: "Error al eliminar el espacio", error: err.message });
+    res.status(500).json({ message: "Error al eliminar el espacio", error: err.message });
   }
 };

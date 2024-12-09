@@ -7,7 +7,7 @@ const SpacesList = () => {
   const [error, setError] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [showModal, setShowModal] = useState(false); // Estado para mostrar el modal
-  const [selectedSpace, setSelectedSpace] = useState(null); 
+  const [selectedSpace, setSelectedSpace] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -16,25 +16,17 @@ const SpacesList = () => {
         const token = localStorage.getItem("token");
         const user = JSON.parse(localStorage.getItem("user"));
 
-        if (!token) {
-          setError("Debes estar logueado para visualizar el portal.");
-          return;
-        }
-
-        if (user && user.role === "admin") {
-          setIsAdmin(true);
-        } else {
+        if (!token || !user || user.role !== "admin") {
           setError(
-            "Debes ser administrador para poder visualizar esta sección."
+            "Debes estar logueado como administrador para poder visualizar esta sección."
           );
           return;
         }
 
+        setIsAdmin(true);
+        
         const config = { headers: { Authorization: `Bearer ${token}` } };
-        const response = await axios.get(
-          "http://localhost:3000/api/spaces",
-          config
-        );
+        const response = await axios.get("http://localhost:3000/api/spaces", config);
         setSpaces(response.data);
       } catch (error) {
         setError("Error al obtener los espacios: " + error.message);
@@ -155,9 +147,7 @@ const SpacesList = () => {
                   type="button"
                   className="btn-close"
                   onClick={() => setShowModal(false)}
-                >
-                  .
-                </button>
+                >.</button>
               </div>
               <div className="modal-body">
                 <p>
