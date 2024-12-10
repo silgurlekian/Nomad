@@ -43,7 +43,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/spaces", spaceRoutes);
 app.use("/api/services", serviceRoutes);
 app.use("/api/spacesType", spaceTypeRoutes);
-app.use("/api/reservas", reservationRoutes);
+app.use("/api/reservations", reservationRoutes);
 
 // Servir archivos estáticos desde la carpeta 'uploads'
 const __filename = fileURLToPath(import.meta.url);
