@@ -142,7 +142,7 @@ export const resetPasswordRequest = async (req, res) => {
             to: email,
             subject: 'Restablecer contraseña',
             text: `Por favor haz clic en el siguiente enlace para restablecer tu contraseña: 
-                   https://pwa.nomad.com.ar/reset-password/${token}`, 
+                   https://nomad.com.ar/pwa/reset-password/${token}`, 
         };
 
         await transporter.sendMail(mailOptions);
