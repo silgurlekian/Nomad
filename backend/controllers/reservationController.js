@@ -67,3 +67,26 @@ export const createReservation = async (req, res) => {
     });
   }
 };
+
+// Eliminar una reserva por su ID
+export const deleteReservation = async (req, res) => {
+  try {
+    const reservationId = req.params.id; // Obtener el ID de la reserva desde los parámetros
+
+    // Buscar y eliminar la reserva
+    const reservation = await Reservation.findByIdAndDelete(reservationId);
+
+    if (!reservation) {
+      return res.status(404).json({ message: "Reserva no encontrada" });
+    }
+
+    res.status(200).json({ message: "Reserva eliminada con éxito" });
+  } catch (error) {
+    console.error("Error al eliminar la reserva:", error);
+    res.status(500).json({
+      message: "Error al eliminar la reserva",
+      error: error.message,
+    });
+  }
+};
+

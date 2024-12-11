@@ -3,6 +3,7 @@ import {
   createReservation,
   getAllReservations,
   getReservationsByUser,
+  deleteReservation,  // Importa la nueva función
 } from "../controllers/reservationController.js";
 
 const router = express.Router();
@@ -15,5 +16,8 @@ router.get("/user", getReservationsByUser);
 
 // Crear una nueva reserva
 router.post("/", createReservation);
+
+// Eliminar una reserva por su ID
+router.delete("/:id", deleteReservation);  // Ruta DELETE para eliminar una reserva
 
 export default router;
