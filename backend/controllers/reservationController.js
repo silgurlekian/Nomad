@@ -4,7 +4,10 @@ import jwt from "jsonwebtoken";
 // Obtener todas las reservas
 export const getAllReservations = async (req, res) => {
   try {
-    const reservations = await Reservation.find().populate("userId", "fullName"); // Puedes cambiar los campos a mostrar del usuario si lo deseas
+    const reservations = await Reservation.find().populate(
+      "userId",
+      "fullName"
+    ); // Puedes cambiar los campos a mostrar del usuario si lo deseas
     res.status(200).json(reservations);
   } catch (error) {
     console.error("Error obteniendo las reservas:", error);
@@ -20,14 +23,19 @@ export const getReservationsByUser = async (req, res) => {
   try {
     const token = req.headers.authorization.split(" ")[1]; // Obtener el token del header Authorization
     if (!token) {
-      return res.status(401).json({ message: "No se proporcionó token de autenticación" });
+      return res
+        .status(401)
+        .json({ message: "No se proporcionó token de autenticación" });
     }
 
     // Verificar el token y extraer el userId
     const decoded = jwt.verify(token, process.env.JWT_SECRET); // Decodificar el token
     const userId = decoded.id; // El ID del usuario extraído del token
 
-    const reservations = await Reservation.find({ userId }).populate("userId", "fullName");
+    const reservations = await Reservation.find({ userId }).populate(
+      "userId",
+      "fullName"
+    );
     res.status(200).json(reservations);
   } catch (error) {
     console.error("Error obteniendo las reservas del usuario:", error);
@@ -41,20 +49,36 @@ export const getReservationsByUser = async (req, res) => {
 // Crear una nueva reserva
 export const createReservation = async (req, res) => {
   try {
-    // Verificar el token JWT
     const token = req.headers.authorization.split(" ")[1]; // Obtener el token del header Authorization
     if (!token) {
-      return res.status(401).json({ message: "No se proporcionó token de autenticación" });
+      return res
+        .status(401)
+        .json({ message: "No se proporcionó token de autenticación" });
     }
 
-    // Verificar el token y extraer el userId
     const decoded = jwt.verify(token, process.env.JWT_SECRET); // Decodificar el token
     const userId = decoded.id; // El ID del usuario extraído del token
 
-    // Crear la nueva reserva con los datos recibidos
+    const {
+      spaceId,
+      fullName,
+      date,
+      startTime,
+      endTime,
+      numberOfPlaces,
+      additionalNotes,
+    } = req.body;
+
+    // Crear la nueva reserva con los datos recibidos, incluyendo el espacio reservado
     const newReservation = new Reservation({
-      ...req.body,
-      userId, // Añadir el userId extraído del token
+      userId,
+      spaceId, // Guardar el ID del espacio reservado
+      fullName,
+      date,
+      startTime,
+      endTime,
+      numberOfPlaces,
+      additionalNotes,
     });
 
     await newReservation.save();
@@ -89,4 +113,3 @@ export const deleteReservation = async (req, res) => {
     });
   }
 };
-
