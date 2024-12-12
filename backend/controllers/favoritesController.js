@@ -32,10 +32,11 @@ export const getFavorites = async (req, res) => {
 };
 
 export const removeFavorite = async (req, res) => {
-  const userId = req.user.id;
-  const favoriteId = req.params.favoriteId;
+  const userId = req.user.id; 
+  const favoriteId = req.params.favoriteId; 
 
   try {
+    // Verifica si el fav ya existe
     const favorite = await Favorite.findById(favoriteId);
 
     if (!favorite) {
@@ -48,9 +49,15 @@ export const removeFavorite = async (req, res) => {
         .json({ message: "No autorizado a eliminar este favorito" });
     }
 
+    // Elimina el fav de la base
     await favorite.remove();
-    res.status(200).json({ message: "Favorito eliminado correctamente" });
+    return res
+      .status(200)
+      .json({ message: "Favorito eliminado correctamente" });
   } catch (error) {
-    res.status(500).json({ message: "Error al eliminar el favorito", error });
+    console.error("Error al eliminar el favorito:", error);
+    return res
+      .status(500)
+      .json({ message: "Error al eliminar el favorito", error: error.message });
   }
 };
