@@ -83,14 +83,13 @@ export const deleteFavorite = async (req, res) => {
   try {
     const favoriteId = req.params.id; // Obtener el ID del favorito desde los parámetros
 
-    // Verificar si el favorito existe
-    const favorite = await Favorite.findById(favoriteId);
+    // Eliminar el favorito directamente usando findByIdAndDelete
+    const favorite = await Favorite.findByIdAndDelete(favoriteId);
+
     if (!favorite) {
       return res.status(404).json({ message: "Favorito no encontrado" });
     }
 
-    // Eliminar el favorito
-    await favorite.remove();
     res.status(200).json({ message: "Favorito eliminado con éxito" });
   } catch (error) {
     console.error("Error al eliminar el favorito:", error);
