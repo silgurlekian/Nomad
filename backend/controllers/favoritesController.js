@@ -1,22 +1,4 @@
 import Favorites from "../models/FavoriteModel.js";
-import jwt from "jsonwebtoken";
-
-const verifyToken = (req, res, next) => {
-  try {
-    const token = req.headers.authorization.split(" ")[1]; // Obtener el token del header Authorization
-    if (!token) {
-      return res
-        .status(401)
-        .json({ message: "No se proporcionó token de autenticación" });
-    }
-
-    const decoded = jwt.verify(token, process.env.JWT_SECRET); // Decodificar el token
-    req.userId = decoded.id; // Guardar el userId en la request para usarlo en otras funciones
-    next();
-  } catch (error) {
-    return res.status(401).json({ message: "Token no válido", error: error.message });
-  }
-};
 
 // Obtener todos los favoritos
 export const getAllFavorites = async (req, res) => {
