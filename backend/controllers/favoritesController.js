@@ -34,13 +34,46 @@ export const getFavoritesByUser = async (req, res) => {
 
 // Crear un nuevo favorito
 export const createFavorite = async (req, res) => {
-  const userId = req.user.id;
-  const { espacioId } = req.body;
+  const userId = req.user.id; // ID del usuario
+  const { espacioId } = req.body; // ID del espacio
+
   try {
-    const favorite = await Favorite.create({ userId, espacioId });
-    res.status(201).json(favorite);
+    if (!espacioId || !userId) {
+      return res.status(400).json({
+        message: "Faltan datos necesarios (espacioId o userId).",
+      });
+    }
+
+    // Verificar si el favorito ya existe
+    const existingFavorite = await Favorites.findOne({
+      userId,
+      espacioId,
+    });
+
+    if (existingFavorite) {
+      return res.status(400).json({
+        message: "Este espacio ya está en tus favoritos.",
+      });
+    }
+
+    // Crear el nuevo favorito
+    const nuevoFavorito = new Favorites({
+      userId,
+      espacioId,
+    });
+
+    await nuevoFavorito.save();
+
+    return res.status(201).json({
+      message: "Favorito agregado exitosamente.",
+      favorite: nuevoFavorito,
+    });
   } catch (error) {
-    res.status(500).json({ message: "Error al añadir a favoritos", error });
+    console.error("Error creando el favorito:", error);
+    res.status(500).json({
+      message: "Error al agregar el favorito.",
+      error: error.message,
+    });
   }
 };
 
