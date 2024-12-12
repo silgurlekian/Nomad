@@ -1,13 +1,27 @@
 import Favorites from "../models/FavoriteModel.js";
 import jwt from "jsonwebtoken";
 
-// Obtener todas los favorites
+const verifyToken = (req, res, next) => {
+  try {
+    const token = req.headers.authorization.split(" ")[1]; // Obtener el token del header Authorization
+    if (!token) {
+      return res
+        .status(401)
+        .json({ message: "No se proporcionó token de autenticación" });
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET); // Decodificar el token
+    req.userId = decoded.id; // Guardar el userId en la request para usarlo en otras funciones
+    next();
+  } catch (error) {
+    return res.status(401).json({ message: "Token no válido", error: error.message });
+  }
+};
+
+// Obtener todos los favoritos
 export const getAllFavorites = async (req, res) => {
   try {
-    const favorites = await Favorite.find().populate(
-      "userId",
-      "fullName"
-    ); 
+    const favorites = await Favorites.find().populate("userId", "fullName"); 
     res.status(200).json(favorites);
   } catch (error) {
     console.error("Error obteniendo los favoritos:", error);
@@ -21,21 +35,8 @@ export const getAllFavorites = async (req, res) => {
 // Obtener los favoritos de un usuario
 export const getFavoritesByUser = async (req, res) => {
   try {
-    const token = req.headers.authorization.split(" ")[1]; // Obtener el token del header Authorization
-    if (!token) {
-      return res
-        .status(401)
-        .json({ message: "No se proporcionó token de autenticación" });
-    }
-
-    // Verificar el token y extraer el userId
-    const decoded = jwt.verify(token, process.env.JWT_SECRET); // Decodificar el token
-    const userId = decoded.id; // El ID del usuario extraído del token
-
-    const favorites = await Favorite.find({ userId }).populate(
-      "userId",
-      "spaceId"
-    );
+    const { userId } = req; // Usamos el userId que se estableció en el middleware de verificación de token
+    const favorites = await Favorites.find({ userId }).populate("userId", "fullName");
     res.status(200).json(favorites);
   } catch (error) {
     console.error("Error obteniendo los favoritos del usuario:", error);
@@ -49,24 +50,12 @@ export const getFavoritesByUser = async (req, res) => {
 // Crear un nuevo favorito
 export const createFavorite = async (req, res) => {
   try {
-    const token = req.headers.authorization.split(" ")[1]; // Obtener el token del header Authorization
-    if (!token) {
-      return res
-        .status(401)
-        .json({ message: "No se proporcionó token de autenticación" });
-    }
+    const { userId } = req; // Usamos el userId que se estableció en el middleware de verificación de token
+    const { spaceId } = req.body;
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET); // Decodificar el token
-    const userId = decoded.id; // El ID del usuario extraído del token
-
-    const {
-      spaceId,
-    } = req.body;
-
-    // Crear nuevo favorito con los datos recibidos, incluyendo el espacio agregado
-    const newFavorite = new Favorite({
+    const newFavorite = new Favorites({
       userId,
-      spaceId
+      spaceId,
     });
 
     await newFavorite.save();
@@ -85,7 +74,7 @@ export const deleteFavorite = async (req, res) => {
   try {
     const favoriteId = req.params.id; 
 
-    const favorite = await Favorite.findByIdAndDelete(favoriteId);
+    const favorite = await Favorites.findByIdAndDelete(favoriteId);
 
     if (!favorite) {
       return res.status(404).json({ message: "Favorito no encontrado" });
