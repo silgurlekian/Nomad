@@ -7,7 +7,7 @@ export const getAllReservations = async (req, res) => {
     const reservations = await Reservation.find().populate(
       "userId",
       "fullName"
-    ); // Puedes cambiar los campos a mostrar del usuario si lo deseas
+    ); 
     res.status(200).json(reservations);
   } catch (error) {
     console.error("Error obteniendo las reservas:", error);
