@@ -1,99 +1,46 @@
-import Favorites from "../models/FavoriteModel.js";
+import Favorite from "../models/FavoriteModel.js";
 
-// Obtener todos los favoritos
-export const getAllFavorites = async (req, res) => {
+export const addFavorite = async (req, res) => {
+  const userId = req.user.id;
+  const { espacioId } = req.body;
+
   try {
-    const favorites = await Favorites.find().populate("userId", "spaceId");
-    res.status(200).json(favorites);
+    const favorite = await Favorite.create({ userId, espacioId });
+    res.status(201).json(favorite);
   } catch (error) {
-    console.error("Error obteniendo los favoritos:", error);
-    res.status(500).json({
-      message: "Error al obtener los favoritos",
-      error: error.message,
-    });
+    res.status(500).json({ message: "Error al añadir a favoritos", error });
   }
 };
 
-// Obtener los favoritos de un usuario
-export const getFavoritesByUser = async (req, res) => {
+export const getFavorites = async (req, res) => {
+  const userId = req.user.id;
+
   try {
-    const { userId } = req; // Usamos el userId que se estableció en el middleware de verificación de token
-    const favorites = await Favorites.find({ userId }).populate(
-      "userId",
-      "spaceId"
-    );
-    res.status(200).json(favorites);
+    const favorites = await Favorite.find({ userId }).populate("espacioId");
+    res.json(favorites);
   } catch (error) {
-    console.error("Error obteniendo los favoritos del usuario:", error);
-    res.status(500).json({
-      message: "Error al obtener los favoritos del usuario",
-      error: error.message,
-    });
+    res.status(500).json({ message: "Error al obtener favoritos", error });
   }
 };
 
-// Crear un nuevo favorito
-export const createFavorite = async (req, res) => {
-  const userId = req.user.id; // ID del usuario
-  const { espacioId } = req.body; // ID del espacio
-
-  try {
-    if (!espacioId || !userId) {
-      return res.status(400).json({
-        message: "Faltan datos necesarios (espacioId o userId).",
-      });
+export const removeFavorite = async (req, res) => {
+    const userId = req.user.id;
+    const favoriteId = req.params.favoriteId;
+  
+    try {
+      const favorite = await Favorite.findById(favoriteId);
+  
+      if (!favorite) {
+        return res.status(404).json({ message: "Favorito no encontrado" });
+      }
+  
+      if (favorite.userId.toString() !== userId) {
+        return res.status(403).json({ message: "No autorizado a eliminar este favorito" });
+      }
+  
+      await favorite.remove();
+      res.status(200).json({ message: "Favorito eliminado correctamente" });
+    } catch (error) {
+      res.status(500).json({ message: "Error al eliminar el favorito", error });
     }
-
-    // Verificar si el favorito ya existe
-    const existingFavorite = await Favorites.findOne({
-      userId,
-      espacioId,
-    });
-
-    if (existingFavorite) {
-      return res.status(400).json({
-        message: "Este espacio ya está en tus favoritos.",
-      });
-    }
-
-    // Crear el nuevo favorito
-    const nuevoFavorito = new Favorites({
-      userId,
-      espacioId,
-    });
-
-    await nuevoFavorito.save();
-
-    return res.status(201).json({
-      message: "Favorito agregado exitosamente.",
-      favorite: nuevoFavorito,
-    });
-  } catch (error) {
-    console.error("Error creando el favorito:", error);
-    res.status(500).json({
-      message: "Error al agregar el favorito.",
-      error: error.message,
-    });
-  }
-};
-
-// Eliminar un favorito por su ID
-export const deleteFavorite = async (req, res) => {
-  try {
-    const favoriteId = req.params.id;
-
-    const favorite = await Favorites.findByIdAndDelete(favoriteId);
-
-    if (!favorite) {
-      return res.status(404).json({ message: "Favorito no encontrado" });
-    }
-
-    res.status(200).json({ message: "Favorito eliminado con éxito" });
-  } catch (error) {
-    console.error("Error al eliminar el favorito:", error);
-    res.status(500).json({
-      message: "Error al eliminar el favorito",
-      error: error.message,
-    });
-  }
-};
+  };
