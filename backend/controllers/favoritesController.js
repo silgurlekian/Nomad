@@ -3,7 +3,7 @@ import Favorites from "../models/FavoriteModel.js";
 // Obtener todos los favoritos
 export const getAllFavorites = async (req, res) => {
   try {
-    const favorites = await Favorites.find().populate("userId", "fullName"); 
+    const favorites = await Favorites.find().populate("userId", "spaceId");
     res.status(200).json(favorites);
   } catch (error) {
     console.error("Error obteniendo los favoritos:", error);
@@ -18,7 +18,10 @@ export const getAllFavorites = async (req, res) => {
 export const getFavoritesByUser = async (req, res) => {
   try {
     const { userId } = req; // Usamos el userId que se estableció en el middleware de verificación de token
-    const favorites = await Favorites.find({ userId }).populate("userId", "fullName");
+    const favorites = await Favorites.find({ userId }).populate(
+      "userId",
+      "spaceId"
+    );
     res.status(200).json(favorites);
   } catch (error) {
     console.error("Error obteniendo los favoritos del usuario:", error);
@@ -31,30 +34,20 @@ export const getFavoritesByUser = async (req, res) => {
 
 // Crear un nuevo favorito
 export const createFavorite = async (req, res) => {
+  const userId = req.user.id;
+  const { espacioId } = req.body;
   try {
-    const { userId } = req; // Usamos el userId que se estableció en el middleware de verificación de token
-    const { spaceId } = req.body;
-
-    const newFavorite = new Favorites({
-      userId,
-      spaceId,
-    });
-
-    await newFavorite.save();
-    res.status(201).json(newFavorite); 
+    const favorite = await Favorite.create({ userId, espacioId });
+    res.status(201).json(favorite);
   } catch (error) {
-    console.error("Error creando el favorito:", error);
-    res.status(500).json({
-      message: "Error al crear el favorito",
-      error: error.message,
-    });
+    res.status(500).json({ message: "Error al añadir a favoritos", error });
   }
 };
 
 // Eliminar un favorito por su ID
 export const deleteFavorite = async (req, res) => {
   try {
-    const favoriteId = req.params.id; 
+    const favoriteId = req.params.id;
 
     const favorite = await Favorites.findByIdAndDelete(favoriteId);
 
