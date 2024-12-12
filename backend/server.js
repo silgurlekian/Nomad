@@ -7,6 +7,7 @@ import spaceRoutes from "./routes/spaceRoutes.js";
 import serviceRoutes from "./routes/serviceRoutes.js";
 import spaceTypeRoutes from "./routes/spaceTypeRoutes.js";
 import reservationRoutes from './routes/reservationRoutes.js';
+import favoritesRoutes from './routes/favoritesRoutes.js';
 import path from "path";
 import { fileURLToPath } from "url";
 
@@ -45,6 +46,7 @@ app.use("/api/spaces", spaceRoutes);
 app.use("/api/services", serviceRoutes);
 app.use("/api/spacesType", spaceTypeRoutes);
 app.use("/api/reservations", reservationRoutes);
+app.use("/api/favorites", favoritesRoutes);
 
 // Servir archivos estáticos desde la carpeta 'uploads'
 const __filename = fileURLToPath(import.meta.url);

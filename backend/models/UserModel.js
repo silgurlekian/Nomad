@@ -8,6 +8,8 @@ const userSchema = new mongoose.Schema({
     role: { type: String, default: 'user' },
     resetPasswordToken: { type: String }, // Campo para el token
     resetPasswordExpires: { type: Date }, // Campo para la fecha de expiración
+    favoritos: [{ type: mongoose.Schema.Types.ObjectId, ref: "Space" }]
+
 }, { timestamps: true });
 
 // Método para encriptar la contraseña antes de guardar
