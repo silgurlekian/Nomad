@@ -1,3 +1,4 @@
+// favoritesRoutes.js
 import express from "express";
 import {
   createFavorite,
