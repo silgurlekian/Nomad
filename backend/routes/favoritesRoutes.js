@@ -1,11 +1,23 @@
 import express from "express";
-import { addFavorite, getFavorites, removeFavorite } from "../controllers/favoritesController.js"; 
-import { protect } from "../middleware/authMiddleware.js";
+import {
+  createFavorite,
+  getAllFavorites,
+  getFavoritesByUser,
+  deleteFavorite, 
+} from "../controllers/favoritesController.js";
 
 const router = express.Router();
 
-router.post("/", protect, addFavorite);
-router.get("/", protect, getFavorites);
-router.delete("/:favoriteId", protect, removeFavorite);  
+// Obtener todos los favoritos
+router.get("/", getAllFavorites);
+
+// Obtener los favoritos de un usuario
+router.get("/user", getFavoritesByUser);
+
+// Crear un nuevo favorito
+router.post("/", createFavorite);
+
+// Eliminar un favorito por su ID
+router.delete("/:id", deleteFavorite); 
 
 export default router;
