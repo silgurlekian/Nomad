@@ -21,7 +21,7 @@ const DeleteService = ({ serviceId, onServiceDeleted }) => {
       console.log("Eliminando servicio con ID:", serviceId); // Verifica que el ID sea correcto
 
       await axios.delete(
-        `https://api-nomad.onrender.com/api/services/${encodeURIComponent(serviceId)}`,
+        `https://nomad-j3w6.onrender.com/api/services/${encodeURIComponent(serviceId)}`,
         config
       );
 

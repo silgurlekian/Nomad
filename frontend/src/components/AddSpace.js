@@ -43,7 +43,7 @@ const AddSpace = () => {
 
     const fetchServices = async () => {
       try {
-        const response = await axios.get("https://api-nomad.onrender.com/api/services");
+        const response = await axios.get("https://nomad-j3w6.onrender.com/api/services");
         setAllServices(response.data);
       } catch (error) {
         setGlobalError("Error al cargar los servicios: " + error.message);
@@ -53,7 +53,7 @@ const AddSpace = () => {
     const fetchSpacesType = async () => {
       try {
         const response = await axios.get(
-          "https://api-nomad.onrender.com/api/spacesType"
+          "https://nomad-j3w6.onrender.com/api/spacesType"
         );
         setAllSpacesType(response.data);
       } catch (error) {
@@ -182,7 +182,7 @@ const AddSpace = () => {
 
       if (imagen) spaceData.append("imagen", imagen);
 
-      await axios.post("https://api-nomad.onrender.com/api/spaces", spaceData, config);
+      await axios.post("https://nomad-j3w6.onrender.com/api/spaces", spaceData, config);
       navigate("/SpacesList");
     } catch (error) {
       setGlobalError("Error al agregar el espacio: " + error.message);
