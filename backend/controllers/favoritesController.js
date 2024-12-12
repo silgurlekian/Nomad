@@ -80,22 +80,32 @@ export const createFavorite = async (req, res) => {
 
 // Eliminar un favorito por su ID
 export const deleteFavorite = async (req, res) => {
-  try {
-    const favoriteId = req.params.id; // Obtener el ID del favorito desde los parámetros
-
-    // Eliminar el favorito directamente usando findByIdAndDelete
-    const favorite = await Favorite.findByIdAndDelete(favoriteId);
-
-    if (!favorite) {
-      return res.status(404).json({ message: "Favorito no encontrado" });
+    try {
+      const favoriteId = req.params.id;
+      const token = req.headers.authorization.split(" ")[1];
+      if (!token) {
+        return res.status(401).json({ message: "No se proporcionó token de autenticación" });
+      }
+  
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      const userId = decoded.id;
+  
+      // Buscar el favorito y verificar que pertenezca al usuario
+      const favorite = await Favorite.findOneAndDelete({ 
+        _id: favoriteId, 
+        userId: userId 
+      });
+  
+      if (!favorite) {
+        return res.status(404).json({ message: "Favorito no encontrado o no autorizado" });
+      }
+  
+      res.status(200).json({ message: "Favorito eliminado con éxito" });
+    } catch (error) {
+      console.error("Error al eliminar el favorito:", error);
+      res.status(500).json({
+        message: "Error al eliminar el favorito",
+        error: error.message,
+      });
     }
-
-    res.status(200).json({ message: "Favorito eliminado con éxito" });
-  } catch (error) {
-    console.error("Error al eliminar el favorito:", error);
-    res.status(500).json({
-      message: "Error al eliminar el favorito",
-      error: error.message,
-    });
-  }
-};
+  };
