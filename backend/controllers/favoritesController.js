@@ -4,10 +4,7 @@ import jwt from "jsonwebtoken";
 // Obtener todas los favoritos
 export const getAllFavorites = async (req, res) => {
   try {
-    const Favorites = await Favorite.find().populate(
-      "userId",
-      "spaceId"
-    ); 
+    const Favorites = await Favorite.find().populate("userId", "spaceId");
     res.status(200).json(Favorites);
   } catch (error) {
     console.error("Error obteniendo los favoritos:", error);
@@ -59,14 +56,12 @@ export const createFavorite = async (req, res) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET); // Decodificar el token
     const userId = decoded.id; // El ID del usuario extraído del token
 
-    const {
-      spaceId,
-    } = req.body;
+    const { spaceId } = req.body;
 
     // Crear la nueva favorito con los datos recibidos, incluyendo el espacio favoritodo
     const newFavorite = new Favorite({
       userId,
-      spaceId, 
+      spaceId,
     });
 
     await newFavorite.save();
@@ -80,19 +75,18 @@ export const createFavorite = async (req, res) => {
   }
 };
 
-// Eliminar una favorito por su ID
+// Eliminar un favorito por su ID
 export const deleteFavorite = async (req, res) => {
   try {
-    const favoriteId = req.params.id; // Obtener el ID de el favorito desde los parámetros
+    const favoriteId = req.params.id; // Obtener el ID del favorito desde los parámetros
 
     // Buscar y eliminar el favorito
-    const Favorite = await Favorite.findByIdAndDelete(favoriteId);
-
-    if (!Favorite) {
-      return res.status(404).json({ message: "favorito no encontrada" });
+    const favorite = await Favorite.findByIdAndDelete(favoriteId); 
+    if (!favorite) {
+      return res.status(404).json({ message: "Favorito no encontrado" }); 
     }
 
-    res.status(200).json({ message: "favorito eliminada con éxito" });
+    res.status(200).json({ message: "Favorito eliminado con éxito" });
   } catch (error) {
     console.error("Error al eliminar el favorito:", error);
     res.status(500).json({
