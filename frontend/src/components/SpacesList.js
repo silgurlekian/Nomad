@@ -27,7 +27,7 @@ const SpacesList = () => {
 
         const config = { headers: { Authorization: `Bearer ${token}` } };
         const response = await axios.get(
-          "https://nomad-j3w6.onrender.com/api/spaces",
+          "https://nomad-739samscb-silgurlekians-projects.vercel.app/api/spaces",
           config
         );
         setSpaces(response.data);
@@ -57,7 +57,7 @@ const SpacesList = () => {
       const config = { headers: { Authorization: `Bearer ${token}` } };
 
       await axios.delete(
-        `https://nomad-j3w6.onrender.com/api/spaces/${selectedSpace._id}`,
+        `https://nomad-739samscb-silgurlekians-projects.vercel.app/api/spaces/${selectedSpace._id}`,
         config
       );
 
@@ -100,7 +100,7 @@ const SpacesList = () => {
               <td>
                 {space.imagen && (
                   <img
-                    src={`https://nomad-j3w6.onrender.com/${space.imagen}`}
+                    src={`https://nomad-739samscb-silgurlekians-projects.vercel.app/${space.imagen}`}
                     alt={space.nombre}
                     className="space-image"
                   />

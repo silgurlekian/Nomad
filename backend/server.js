@@ -25,7 +25,7 @@ const corsOptions = {
     // "https://pwa.nomad.com.ar",
     "https://nomad.com.ar/pwa/",
     "http://localhost:3000",
-    "https://nomad-j3w6.onrender.com", 
+    "https://nomad-739samscb-silgurlekians-projects.vercel.app", 
   ],
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true,

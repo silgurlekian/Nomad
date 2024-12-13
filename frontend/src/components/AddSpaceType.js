@@ -60,7 +60,7 @@ const AddSpaceType = () => {
       const newSpaceType = { name };
 
       await axios.post(
-        "https://nomad-j3w6.onrender.com/api/spacesType",
+        "https://nomad-739samscb-silgurlekians-projects.vercel.app/api/spacesType",
         newSpaceType,
         config
       );

@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "homepage": "/portal",
-  "proxy": "https://nomad-j3w6.onrender.com",
+  "proxy": "https://nomad-739samscb-silgurlekians-projects.vercel.app",
   "dependencies": {
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
