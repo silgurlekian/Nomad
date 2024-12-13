@@ -35,7 +35,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 // Manejo de solicitudes preflight (OPTIONS)
-app.options("*", cors(corsOptions));  // Asegura que se manejen las solicitudes OPTIONS
+app.options("*", cors(corsOptions)); 
 
 // Middleware
 app.use(express.json());
