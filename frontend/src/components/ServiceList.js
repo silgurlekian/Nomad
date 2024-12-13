@@ -32,7 +32,7 @@ const ServiceList = () => {
         }
 
         const response = await axios.get(
-          "https://nomad-739samscb-silgurlekians-projects.vercel.app/api/services",
+          "https://nomad-vzpq.onrender.com/api/services",
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -57,7 +57,7 @@ const ServiceList = () => {
       const config = { headers: { Authorization: `Bearer ${token}` } };
 
       await axios.delete(
-        `https://nomad-739samscb-silgurlekians-projects.vercel.app/api/services/${selectedService._id}`,
+        `https://nomad-vzpq.onrender.com/api/services/${selectedService._id}`,
         config
       );
 

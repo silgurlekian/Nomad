@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // URL base para la API
-const apiUrl = "https://nomad-739samscb-silgurlekians-projects.vercel.app/api";
+const apiUrl = "https://nomad-vzpq.onrender.com/api";
 
 export const registerUser = async ({ nombre, email, password }) => {
   try {

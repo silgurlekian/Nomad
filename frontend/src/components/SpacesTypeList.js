@@ -32,7 +32,7 @@ const SpaceTypeList = () => {
         }
 
         const response = await axios.get(
-          "https://nomad-739samscb-silgurlekians-projects.vercel.app/api/spacesType",
+          "https://nomad-vzpq.onrender.com/api/spacesType",
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -57,7 +57,7 @@ const SpaceTypeList = () => {
       const config = { headers: { Authorization: `Bearer ${token}` } };
 
       await axios.delete(
-        `https://nomad-739samscb-silgurlekians-projects.vercel.app/api/spacesType/${selectedSpaceType._id}`,
+        `https://nomad-vzpq.onrender.com/api/spacesType/${selectedSpaceType._id}`,
         config
       );
 

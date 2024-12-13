@@ -27,7 +27,7 @@ const EditService = () => {
 
     const fetchService = async () => {
       try {
-        const response = await axios.get(`https://nomad-739samscb-silgurlekians-projects.vercel.app/api/services/${id}`);
+        const response = await axios.get(`https://nomad-vzpq.onrender.com/api/services/${id}`);
         const { name } = response.data;
         setName(name);
       } catch (error) {
@@ -55,7 +55,7 @@ const EditService = () => {
 
     try {
       const updatedService = { name };
-      await axios.put(`https://nomad-739samscb-silgurlekians-projects.vercel.app/api/services/${id}`, updatedService);
+      await axios.put(`https://nomad-vzpq.onrender.com/api/services/${id}`, updatedService);
       navigate("/ServiceList"); 
     } catch (error) {
       setError("Error al actualizar el servicio: " + error.message);

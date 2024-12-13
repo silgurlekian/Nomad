@@ -56,7 +56,7 @@ const AddService = () => {
       const newService = { name };
 
       await axios.post(
-        "https://nomad-739samscb-silgurlekians-projects.vercel.app/api/services",
+        "https://nomad-vzpq.onrender.com/api/services",
         newService,
         config
       );
