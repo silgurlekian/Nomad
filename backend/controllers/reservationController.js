@@ -1,5 +1,6 @@
 import Reservation from "../models/ReservationModel.js";
 import jwt from "jsonwebtoken";
+const sendReservationEmail = require('./sendReservationEmail');
 
 // Obtener todas las reservas
 export const getAllReservations = async (req, res) => {
@@ -83,6 +84,13 @@ export const createReservation = async (req, res) => {
       code,
     });
 
+    await sendReservationEmail(reservationData);
+
+    res.status(200).json({
+      message: 'Reserva creada exitosamente y correo enviado.',
+      reservationData,
+    });
+    
     await newReservation.save();
     res.status(201).json(newReservation); // Enviar la reserva creada como respuesta
   } catch (error) {
