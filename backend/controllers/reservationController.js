@@ -1,6 +1,5 @@
 import Reservation from "../models/ReservationModel.js";
 import jwt from "jsonwebtoken";
-import nodemailer from "nodemailer";
 
 // Obtener todas las reservas
 export const getAllReservations = async (req, res) => {
@@ -85,20 +84,6 @@ export const createReservation = async (req, res) => {
     });
 
     await newReservation.save();
-
-    // Detalles de la reserva
-    const reservationDetails = {
-      spaceName: "Nombre del espacio", // Aquí puedes incluir el nombre real del espacio
-      date,
-      startTime,
-      endTime,
-      numberOfPlaces,
-      code,
-    };
-
-    // Enviar el correo de confirmación
-    sendConfirmationEmail(fullName, req.body.email, reservationDetails);
-
     res.status(201).json(newReservation); // Enviar la reserva creada como respuesta
   } catch (error) {
     console.error("Error creando la reserva:", error);
@@ -129,51 +114,4 @@ export const deleteReservation = async (req, res) => {
       error: error.message,
     });
   }
-};
-
-// Configuración de Nodemailer para enviar correos electrónicos
-const transporter = nodemailer.createTransport({
-  service: "gmail", // Puedes usar el servicio que prefieras (Ejemplo: Gmail)
-  auth: {
-    user: process.env.EMAIL_USER, // Tu correo electrónico
-    pass: process.env.EMAIL_PASS, // Tu contraseña o un App Password
-  },
-});
-
-// Función para enviar correo electrónico
-const sendConfirmationEmail = (email, fullName, reservationDetails) => {
-  const mailOptions = {
-    from: process.env.EMAIL_USER, // Dirección de correo electrónico desde la cual se envía el correo
-    to: email, // Dirección de correo electrónico del destinatario
-    subject: `Confirmación de reserva - ${fullName}`,
-    text: `
-      Hola ${fullName},
-
-      Gracias por realizar tu reserva. Aquí están los detalles:
-
-      Espacio: ${reservationDetails.spaceName}
-      Fecha: ${reservationDetails.date}
-      Hora de inicio: ${reservationDetails.startTime}
-      Hora de fin: ${reservationDetails.endTime}
-      Número de lugares: ${reservationDetails.numberOfPlaces}
-      
-      Código de reserva: ${reservationDetails.code}
-
-      Si tienes alguna pregunta o necesitas realizar algún cambio, no dudes en contactarnos.
-
-      ¡Te esperamos!
-
-      Saludos,
-      El equipo de Nomad
-    `,
-  };
-
-  // Enviar el correo
-  transporter.sendMail(mailOptions, (error, info) => {
-    if (error) {
-      console.log("Error enviando correo: ", error);
-    } else {
-      console.log("Correo enviado: " + info.response);
-    }
-  });
 };
