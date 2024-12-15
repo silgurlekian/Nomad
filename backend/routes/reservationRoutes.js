@@ -4,7 +4,6 @@ import {
   getAllReservations,
   getReservationsByUser,
   deleteReservation, 
-  sendReservationEmail,
 } from "../controllers/reservationController.js";
 
 const router = express.Router();
@@ -20,7 +19,5 @@ router.post("/", createReservation);
 
 // Eliminar una reserva por su ID
 router.delete("/:id", deleteReservation); 
-
-router.post('/send-reservation-email', sendReservationEmail);
 
 export default router;
