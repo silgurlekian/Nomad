@@ -8,7 +8,7 @@ const AddSpace = () => {
     direccion: "",
     ciudad: "",
     website: "",
-    precio: "",
+    precio: "0",
     selectedServices: [],
     selectedSpacesType: "",
     aceptaReservas: false,
