@@ -1,6 +1,5 @@
 import Reservation from "../models/ReservationModel.js";
 import jwt from "jsonwebtoken";
-import sendReservationEmail from "../services/sendReservationEmail.js";
 
 // Obtener todas las reservas
 export const getAllReservations = async (req, res) => {
@@ -50,17 +49,15 @@ export const getReservationsByUser = async (req, res) => {
 // Crear una nueva reserva
 export const createReservation = async (req, res) => {
   try {
-    console.log("Received reservation data:", req.body); // Log incoming data
-
-    const token = req.headers.authorization.split(" ")[1];
+    const token = req.headers.authorization.split(" ")[1]; // Obtener el token del header Authorization
     if (!token) {
       return res
         .status(401)
         .json({ message: "No se proporcionó token de autenticación" });
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const userId = decoded.id;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET); // Decodificar el token
+    const userId = decoded.id; // El ID del usuario extraído del token
 
     const {
       spaceId,
@@ -72,11 +69,11 @@ export const createReservation = async (req, res) => {
       additionalNotes,
       code,
     } = req.body;
-    console.log("Decoded user ID:", userId); // Log decoded user ID
 
+    // Crear la nueva reserva con los datos recibidos, incluyendo el espacio reservado
     const newReservation = new Reservation({
       userId,
-      spaceId,
+      spaceId, // Guardar el ID del espacio reservado
       fullName,
       date,
       startTime,
@@ -86,14 +83,10 @@ export const createReservation = async (req, res) => {
       code,
     });
 
-    await sendReservationEmail(req.body); // Pass full request body to email function
-
     await newReservation.save();
-    console.log("Reservation created:", newReservation); // Log the created reservation
-
-    res.status(201).json(newReservation); // Return the created reservation
+    res.status(201).json(newReservation); // Enviar la reserva creada como respuesta
   } catch (error) {
-    console.error("Error creating reservation:", error); // Log error details
+    console.error("Error creando la reserva:", error);
     res.status(500).json({
       message: "Error al crear la reserva",
       error: error.message,
