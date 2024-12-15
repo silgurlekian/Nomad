@@ -4,6 +4,7 @@ import {
   getAllReservations,
   getReservationsByUser,
   deleteReservation, 
+  sendReservationEmail,
 } from "../controllers/reservationController.js";
 
 const router = express.Router();
