@@ -1,11 +1,11 @@
-const nodemailer = require('nodemailer');
+import nodemailer from 'nodemailer';
 
-const sendReservationEmail = async (reservationData) => {
+export default async function sendReservationEmail(reservationData) {
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
       user: 'sgurlekian@gmail.com',
-      pass: 'scgo zwwd cegx jzpn',
+      pass: 'scgo zwwd cegx jzpn', // Be cautious with sensitive information like passwords
     },
   });
 
@@ -37,6 +37,4 @@ const sendReservationEmail = async (reservationData) => {
   } catch (error) {
     console.log('Error al enviar el correo de reserva:', error);
   }
-};
-
-module.exports = sendReservationEmail;
+}
