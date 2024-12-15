@@ -1,6 +1,6 @@
 import Reservation from "../models/ReservationModel.js";
 import jwt from "jsonwebtoken";
-import sendReservationEmail from './sendReservationEmail.js';
+import sendReservationEmail from '../services/sendReservationEmail.js';
 
 // Obtener todas las reservas
 export const getAllReservations = async (req, res) => {
