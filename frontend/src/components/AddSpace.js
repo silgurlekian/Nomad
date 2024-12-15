@@ -117,7 +117,6 @@ const AddSpace = () => {
       nombre,
       direccion,
       ciudad,
-      precio,
       selectedServices,
       selectedSpacesType,
       aceptaReservas,
@@ -128,8 +127,6 @@ const AddSpace = () => {
     if (!nombre.trim()) newErrors.nombre = "El nombre es obligatorio.";
     if (!direccion.trim()) newErrors.direccion = "La dirección es obligatoria.";
     if (!ciudad.trim()) newErrors.ciudad = "La ciudad es obligatoria.";
-    if (!precio || precio <= 0)
-      newErrors.precio = "El precio debe ser mayor que cero.";
     if (selectedServices.length === 0)
       newErrors.selectedServices = "Los servicios son obligatorios.";
     if (!selectedSpacesType)
