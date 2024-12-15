@@ -90,8 +90,7 @@ export const createSpace = async (req, res) => {
       aceptaReservas: aceptaReservas,
       servicios: req.body.servicios || [],
       spacesType: req.body.spacesType || [],
-      imagen: req.file ? req.file.path : null,
-      // Garantizar que tiposReservas esté vacío si aceptaReservas es false
+      imagen: req.file ? `/uploads/${req.file.filename}` : null, 
       tiposReservas: aceptaReservas ? req.body.tiposReservas : [],
     });
 
@@ -143,11 +142,10 @@ export const updateSpace = async (req, res) => {
         aceptaReservas: aceptaReservas,
         servicios: req.body.servicios || [],
         spacesType: req.body.spacesType || [],
-        imagen: req.file ? req.file.path : undefined, // Solo actualizar la imagen si se proporciona una nueva
-        // Garantizar que tiposReservas esté vacío si aceptaReservas es false
+        imagen: req.file ? `/uploads/${req.file.filename}` : undefined, 
         tiposReservas: aceptaReservas ? req.body.tiposReservas : [],
       },
-      { new: true, runValidators: true } // Añadimos runValidators para asegurar validaciones
+      { new: true, runValidators: true }
     );
 
     if (!updatedSpace) {
