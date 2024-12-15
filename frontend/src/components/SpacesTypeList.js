@@ -32,7 +32,7 @@ const SpaceTypeList = () => {
         }
 
         const response = await axios.get(
-          "https://nomad-vzpq.onrender.com/api/spacesType",
+          "https://nomad-znm2.onrender.com/api/spacesType",
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -57,7 +57,7 @@ const SpaceTypeList = () => {
       const config = { headers: { Authorization: `Bearer ${token}` } };
 
       await axios.delete(
-        `https://nomad-vzpq.onrender.com/api/spacesType/${selectedSpaceType._id}`,
+        `https://nomad-znm2.onrender.com/api/spacesType/${selectedSpaceType._id}`,
         config
       );
 

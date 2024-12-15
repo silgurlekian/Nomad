@@ -21,7 +21,7 @@ const DeleteSpaceType = ({ spaceTypeId, onSpaceTypeDeleted }) => {
       console.log("Eliminando tipo de espacio con ID:", spaceTypeId); // Verifica que el ID sea correcto
 
       await axios.delete(
-        `https://nomad-vzpq.onrender.com/api/spacesType/${encodeURIComponent(spaceTypeId)}`,
+        `https://nomad-znm2.onrender.com/api/spacesType/${encodeURIComponent(spaceTypeId)}`,
         config
       );
 

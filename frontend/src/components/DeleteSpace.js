@@ -18,7 +18,7 @@ const DeleteSpace = ({ spaceId, onSpaceDeleted }) => {
                 },
             };
 
-            await axios.delete(`https://nomad-vzpq.onrender.com/api/spaces/${spaceId}`, config);
+            await axios.delete(`https://nomad-znm2.onrender.com/api/spaces/${spaceId}`, config);
             onSpaceDeleted(spaceId);
         } catch (error) {
             setError('Error al eliminar el espacio: ' + error.message);

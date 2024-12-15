@@ -27,7 +27,7 @@ const SpacesList = () => {
 
         const config = { headers: { Authorization: `Bearer ${token}` } };
         const response = await axios.get(
-          "https://nomad-vzpq.onrender.com/api/spaces",
+          "https://nomad-znm2.onrender.com/api/spaces",
           config
         );
         setSpaces(response.data);
@@ -57,7 +57,7 @@ const SpacesList = () => {
       const config = { headers: { Authorization: `Bearer ${token}` } };
 
       await axios.delete(
-        `https://nomad-vzpq.onrender.com/api/spaces/${selectedSpace._id}`,
+        `https://nomad-znm2.onrender.com/api/spaces/${selectedSpace._id}`,
         config
       );
 
@@ -100,7 +100,7 @@ const SpacesList = () => {
               <td>
                 {space.imagen && (
                   <img
-                    src={`https://nomad-vzpq.onrender.com/${space.imagen}`}
+                    src={`https://nomad-znm2.onrender.com/${space.imagen}`}
                     alt={space.nombre}
                     className="space-image"
                   />

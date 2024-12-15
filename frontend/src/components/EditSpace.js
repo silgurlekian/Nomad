@@ -49,9 +49,9 @@ const EditSpace = () => {
       try {
         const [servicesResponse, spaceTypesResponse, spaceResponse] =
           await Promise.all([
-            axios.get("https://nomad-vzpq.onrender.com/api/services"),
-            axios.get("https://nomad-vzpq.onrender.com/api/spacesType"),
-            axios.get(`https://nomad-vzpq.onrender.com/api/spaces/${id}`, {
+            axios.get("https://nomad-znm2.onrender.com/api/services"),
+            axios.get("https://nomad-znm2.onrender.com/api/spacesType"),
+            axios.get(`https://nomad-znm2.onrender.com/api/spaces/${id}`, {
               headers: { Authorization: `Bearer ${token}` },
             }),
           ]);
@@ -205,7 +205,7 @@ const EditSpace = () => {
       if (imagen) spaceData.append("imagen", imagen);
 
       await axios.put(
-        `https://nomad-vzpq.onrender.com/api/spaces/${id}`,
+        `https://nomad-znm2.onrender.com/api/spaces/${id}`,
         spaceData,
         config
       );

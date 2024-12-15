@@ -27,7 +27,7 @@ const EditSpaceType = () => {
 
     const fetchSpaceType = async () => {
       try {
-        const response = await axios.get(`https://nomad-vzpq.onrender.com/api/spacesType/${id}`);
+        const response = await axios.get(`https://nomad-znm2.onrender.com/api/spacesType/${id}`);
         const { name } = response.data;
         setName(name);
       } catch (error) {
@@ -55,7 +55,7 @@ const EditSpaceType = () => {
 
     try {
       const updatedSpaceType = { name };
-      await axios.put(`https://nomad-vzpq.onrender.com/api/spacesType/${id}`, updatedSpaceType);
+      await axios.put(`https://nomad-znm2.onrender.com/api/spacesType/${id}`, updatedSpaceType);
       navigate("/SpacesTypeList"); 
     } catch (error) {
       setError("Error al actualizar el tipo de espacio: " + error.message);
