@@ -20,4 +20,6 @@ router.post("/", createReservation);
 // Eliminar una reserva por su ID
 router.delete("/:id", deleteReservation); 
 
+router.post('/send-reservation-email', sendReservationEmail);
+
 export default router;
