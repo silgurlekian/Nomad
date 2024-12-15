@@ -1,5 +1,6 @@
 import Reservation from "../models/ReservationModel.js";
 import jwt from "jsonwebtoken";
+import nodemailer from "nodemailer";
 
 // Obtener todas las reservas
 export const getAllReservations = async (req, res) => {
@@ -7,7 +8,7 @@ export const getAllReservations = async (req, res) => {
     const reservations = await Reservation.find().populate(
       "userId",
       "fullName"
-    ); 
+    );
     res.status(200).json(reservations);
   } catch (error) {
     console.error("Error obteniendo las reservas:", error);
@@ -113,5 +114,34 @@ export const deleteReservation = async (req, res) => {
       message: "Error al eliminar la reserva",
       error: error.message,
     });
+  }
+};
+
+export const sendReservationEmail = async (req, res) => {
+  const { reservationData, userEmail } = req.body;
+
+  // Configuración del transportador de nodemailer
+  const transporter = nodemailer.createTransport({
+    service: "gmail", // O el servicio que estés utilizando
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS,
+    },
+  });
+
+  // Configuración del correo
+  const mailOptions = {
+    from: process.env.EMAIL_USER,
+    to: userEmail,
+    subject: "Confirmación de Reserva",
+    text: `Hola ${reservationData.fullName},\n\nTu reserva ha sido confirmada.\nDetalles:\nFecha: ${reservationData.date}\nHora de inicio: ${reservationData.startTime}\nHora de fin: ${reservationData.endTime}\nCantidad de lugares: ${reservationData.numberOfPlaces}\n\nGracias por elegirnos!`,
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+    res.status(200).send({ message: "Correo enviado exitosamente" });
+  } catch (error) {
+    console.error("Error al enviar el correo:", error);
+    res.status(500).send({ message: "Error al enviar el correo" });
   }
 };
