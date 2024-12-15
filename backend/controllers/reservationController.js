@@ -67,6 +67,7 @@ export const createReservation = async (req, res) => {
       endTime,
       numberOfPlaces,
       additionalNotes,
+      code,
     } = req.body;
 
     // Crear la nueva reserva con los datos recibidos, incluyendo el espacio reservado
@@ -79,6 +80,7 @@ export const createReservation = async (req, res) => {
       endTime,
       numberOfPlaces,
       additionalNotes,
+      code,
     });
 
     await newReservation.save();

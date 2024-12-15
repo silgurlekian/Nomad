@@ -37,6 +37,10 @@ const reservationSchema = new mongoose.Schema(
       ref: "Space", // Relación con el modelo de espacio
       required: true,
     },
+    code: {
+      type: String,
+      required: true
+    },
   },
   { timestamps: true }
 );
