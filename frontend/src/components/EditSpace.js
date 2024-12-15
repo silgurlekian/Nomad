@@ -24,6 +24,8 @@ const EditSpace = () => {
   const [imagen, setImagen] = useState(null);
   const [errors, setErrors] = useState({});
   const [globalError, setGlobalError] = useState(null);
+  const [existingImageUrl, setExistingImageUrl] = useState(null);
+
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
   const { id } = useParams();
@@ -58,6 +60,7 @@ const EditSpace = () => {
 
         setAllServices(servicesResponse.data);
         setAllSpacesType(spaceTypesResponse.data);
+        setExistingImageUrl(spaceResponse.data.imagen);
 
         const space = spaceResponse.data;
         setFormData({
@@ -453,6 +456,17 @@ const EditSpace = () => {
             className="form-control"
           />
         </div>
+        {existingImageUrl && (
+          <div className="mb-3">
+            <p className="form-label">Imagen actual</p>
+            <img
+              src={`https://nomad-znm2.onrender.com/${existingImageUrl}`}
+              alt="Imagen del espacio"
+              className="img-fluid mb-2"
+              style={{ maxHeight: "200px" }}
+            />
+          </div>
+        )}
 
         <button type="submit" className="btn btn-primary">
           Guardar cambios
