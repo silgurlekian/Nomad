@@ -1,12 +1,24 @@
 import Space from "../models/SpaceModel.js";
 import multer from "multer";
 import path from "path";
+import fs from "fs";
 
-// Configuración de almacenamiento de Multer
+// Ensure uploads directory exists
+const uploadDir = path.join(process.cwd(), "uploads");
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
+
 const storage = multer.diskStorage({
-  destination: "uploads/",
+  destination: (req, file, cb) => {
+    cb(null, uploadDir);
+  },
   filename: (req, file, cb) => {
-    cb(null, `${Date.now()}${path.extname(file.originalname)}`);
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(
+      null,
+      file.fieldname + "-" + uniqueSuffix + path.extname(file.originalname)
+    );
   },
 });
 
@@ -14,10 +26,23 @@ const upload = multer({
   storage,
   fileFilter: (req, file, cb) => {
     const validTypes = /jpeg|jpg|png|gif/;
-    const isValid =
-      validTypes.test(file.mimetype) &&
-      validTypes.test(path.extname(file.originalname).toLowerCase());
-    isValid ? cb(null, true) : cb(new Error("Solo se permiten imágenes."));
+    const extname = validTypes.test(
+      path.extname(file.originalname).toLowerCase()
+    );
+    const mimetype = validTypes.test(file.mimetype);
+
+    if (extname && mimetype) {
+      return cb(null, true);
+    } else {
+      cb(
+        new Error(
+          "Solo se permiten imágenes con extensiones jpeg, jpg, png o gif"
+        )
+      );
+    }
+  },
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5MB limit
   },
 });
 
@@ -27,11 +52,11 @@ export const uploadSpaceImage = upload.single("imagen");
 export const getSpaces = async (req, res) => {
   try {
     const spaces = await Space.find()
-      .populate({ path: "servicios", select: "name" }) 
-      .populate({ path: "spacesType", select: "name" }) 
+      .populate({ path: "servicios", select: "name" })
+      .populate({ path: "spacesType", select: "name" })
       .lean(); // Esto devuelve solo los datos planos (sin instancias de mongoose)
 
-    console.log("Spaces with populated data:", spaces); 
+    console.log("Spaces with populated data:", spaces);
 
     res.status(200).json(spaces);
   } catch (error) {
@@ -84,13 +109,15 @@ export const createSpace = async (req, res) => {
       });
     }
 
+    console.log("Uploaded file:", req.file);
+
     // Creación del nuevo espacio
     const newSpace = new Space({
       ...req.body,
       aceptaReservas: aceptaReservas,
       servicios: req.body.servicios || [],
       spacesType: req.body.spacesType || [],
-      imagen: req.file ? `/portal/uploads/${req.file.filename}` : null, 
+      imagen: req.file ? `/uploads/${req.file.filename}` : null,
       tiposReservas: aceptaReservas ? req.body.tiposReservas : [],
     });
 
@@ -142,7 +169,7 @@ export const updateSpace = async (req, res) => {
         aceptaReservas: aceptaReservas,
         servicios: req.body.servicios || [],
         spacesType: req.body.spacesType || [],
-        imagen: req.file ? `/portal/uploads/${req.file.filename}` : undefined, 
+        imagen: req.file ? `/uploads/${req.file.filename}` : null,
         tiposReservas: aceptaReservas ? req.body.tiposReservas : [],
       },
       { new: true, runValidators: true }
@@ -168,6 +195,13 @@ export const deleteSpace = async (req, res) => {
 
     if (!deletedSpace) {
       return res.status(404).json({ message: "Espacio no encontrado" });
+    }
+
+    // Eliminar archivo asociado si existe
+    if (space.imagen) {
+      fs.unlink(path.resolve(`.${space.imagen}`), (err) => {
+        if (err) console.error("Error al eliminar la imagen:", err);
+      });
     }
 
     res.json({ message: "Espacio eliminado con éxito", deletedSpace });

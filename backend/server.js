@@ -51,7 +51,8 @@ app.use("/api/favorites", favoritesRoutes);
 // Servir archivos estáticos desde la carpeta 'uploads'
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-app.use('https://nomad-znm2.onrender.com/portal/uploads', express.static(path.join(__dirname, 'uploads')));
+
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Ruta de archivos estáticos (CSS, imágenes, etc.)
 app.use(express.static(path.join(__dirname, "views")));
