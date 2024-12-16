@@ -52,7 +52,7 @@ app.use("/api/favorites", favoritesRoutes);
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-app.use('/uploads', express.static('uploads'));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Ruta de archivos estáticos (CSS, imágenes, etc.)
 app.use(express.static(path.join(__dirname, "views")));

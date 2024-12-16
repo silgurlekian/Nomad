@@ -3,29 +3,37 @@ import multer from "multer";
 import path from "path";
 import fs from "fs";
 
-// Ensure uploads directory exists
 const uploadDir = path.join(process.cwd(), "uploads");
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
 
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'uploads/'); 
+  destination: function (req, file, cb) {
+    cb(null, "uploads/");
   },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname)); 
-  }
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + path.extname(file.originalname));
+  },
 });
 
-const upload = multer({ storage: storage });
-
-// Middleware para subir la imagen
-app.post('/api/spaces', upload.single('imagen'), (req, res) => {
-  const imageUrl = `uploads/${req.file.filename}`;
-  // Aquí podrías continuar con el proceso de guardar el resto de la información
-  // junto con la URL de la imagen, o el path de la imagen para usarlo más tarde.
-  res.json({ message: 'Espacio agregado correctamente', imageUrl });
+const upload = multer({
+  dest: "uploads/",
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5 MB máximo
+  },
+  fileFilter: (req, file, cb) => {
+    const filetypes = /jpeg|jpg|png|webp/;
+    const mimetype = filetypes.test(file.mimetype);
+    const extname = filetypes.test(
+      path.extname(file.originalname).toLowerCase()
+    );
+    if (mimetype && extname) {
+      return cb(null, true);
+    } else {
+      return cb(new Error("Solo se permiten imágenes JPEG, PNG o GIF"));
+    }
+  },
 });
 
 export const uploadSpaceImage = upload.single("imagen");
@@ -180,8 +188,8 @@ export const deleteSpace = async (req, res) => {
     }
 
     // Eliminar archivo asociado si existe
-    if (space.imagen) {
-      fs.unlink(path.resolve(`.${space.imagen}`), (err) => {
+    if (deletedSpace.imagen) {
+      fs.unlink(path.resolve(`.${deletedSpace.imagen}`), (err) => {
         if (err) console.error("Error al eliminar la imagen:", err);
       });
     }
