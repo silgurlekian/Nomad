@@ -11,39 +11,21 @@ if (!fs.existsSync(uploadDir)) {
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, uploadDir);
+    cb(null, 'uploads/'); 
   },
   filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    cb(
-      null,
-      file.fieldname + "-" + uniqueSuffix + path.extname(file.originalname)
-    );
-  },
+    cb(null, Date.now() + path.extname(file.originalname)); 
+  }
 });
 
-const upload = multer({
-  storage,
-  fileFilter: (req, file, cb) => {
-    const validTypes = /jpeg|jpg|png|gif/;
-    const extname = validTypes.test(
-      path.extname(file.originalname).toLowerCase()
-    );
-    const mimetype = validTypes.test(file.mimetype);
+const upload = multer({ storage: storage });
 
-    if (extname && mimetype) {
-      return cb(null, true);
-    } else {
-      cb(
-        new Error(
-          "Solo se permiten imágenes con extensiones jpeg, jpg, png o gif"
-        )
-      );
-    }
-  },
-  limits: {
-    fileSize: 5 * 1024 * 1024, // 5MB limit
-  },
+// Middleware para subir la imagen
+app.post('/api/spaces', upload.single('imagen'), (req, res) => {
+  const imageUrl = `uploads/${req.file.filename}`;
+  // Aquí podrías continuar con el proceso de guardar el resto de la información
+  // junto con la URL de la imagen, o el path de la imagen para usarlo más tarde.
+  res.json({ message: 'Espacio agregado correctamente', imageUrl });
 });
 
 export const uploadSpaceImage = upload.single("imagen");
