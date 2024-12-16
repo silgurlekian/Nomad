@@ -109,7 +109,9 @@ const SpacesList = () => {
               <td className="align-middle">{space.nombre}</td>
               <td className="align-middle">{space.direccion}</td>
               <td className="align-middle">{space.ciudad}</td>
-              <td className="align-middle" style={{ whiteSpace: "nowrap" }}>$ {space.precio}</td>
+              <td className="align-middle" style={{ whiteSpace: "nowrap" }}>
+                $ {space.precio}
+              </td>
               <td className="align-middle">
                 {space.servicios && Array.isArray(space.servicios)
                   ? space.servicios.map((service) => service.name).join(", ")
@@ -120,7 +122,7 @@ const SpacesList = () => {
                   space.spacesType.map((type) => {
                     const colorMap = {
                       Coworking: "bg-primary",
-                      "Oficina privada": "bg-success", 
+                      "Oficina privada": "bg-success",
                       Hotel: "bg-success",
                       Hostel: "bg-info",
                       Cafetería: "bg-warning",
