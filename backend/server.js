@@ -22,7 +22,7 @@ const corsOptions = {
     "http://localhost:3001", 
     "http://localhost:3002", 
     "https://nomad.com.ar",
-    "https://nomad.com.ar/portal",
+    "https://nomad.com.ar/portal/",
     "https://nomad.com.ar/pwa/",
     "http://localhost:3000",
     "https://nomad-znm2.onrender.com", 
