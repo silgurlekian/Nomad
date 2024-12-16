@@ -68,7 +68,7 @@ const EditSpace = () => {
           direccion: space.direccion || "",
           ciudad: space.ciudad || "",
           website: space.website || "",
-          precio: space.precio || "",
+          precio: space.precio || 0,
           selectedServices: space.servicios.map((service) => service._id),
           selectedSpacesType: space.spacesType[0]?._id || "",
           aceptaReservas: space.aceptaReservas || false,
@@ -331,6 +331,7 @@ const EditSpace = () => {
             id="precio"
             name="precio"
             value={formData.precio}
+            min="0"
             onChange={handleChange}
             placeholder="Ingrese el precio por hora"
             className={`form-control ${errors.precio ? "is-invalid" : ""}`}

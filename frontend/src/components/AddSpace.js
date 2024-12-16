@@ -303,6 +303,7 @@ const AddSpace = () => {
             id="precio"
             name="precio"
             value={formData.precio}
+            min="0"
             onChange={handleChange}
             placeholder="Ingrese el precio por hora"
             className={`form-control ${errors.precio ? "is-invalid" : ""}`}
