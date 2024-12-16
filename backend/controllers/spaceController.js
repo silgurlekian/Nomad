@@ -107,7 +107,7 @@ export const createSpace = async (req, res) => {
       aceptaReservas: aceptaReservas,
       servicios: req.body.servicios || [],
       spacesType: req.body.spacesType || [],
-      imagen: req.file ? `/uploads/${req.file.filename}` : null,
+      imagen: req.file ? `https://nomad-znm2.onrender.com/uploads/${req.file.filename}` : null,
       tiposReservas: aceptaReservas ? req.body.tiposReservas : [],
     });
     console.log('Archivo subido:', req.file); 
@@ -160,7 +160,7 @@ export const updateSpace = async (req, res) => {
         aceptaReservas: aceptaReservas,
         servicios: req.body.servicios || [],
         spacesType: req.body.spacesType || [],
-        imagen: req.file ? `/uploads/${req.file.filename}` : null,
+        imagen: req.file ? `https://nomad-znm2.onrender.com/uploads/${req.file.filename}` : null,
         tiposReservas: aceptaReservas ? req.body.tiposReservas : [],
       },
       { new: true, runValidators: true }
