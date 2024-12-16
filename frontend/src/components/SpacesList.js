@@ -100,7 +100,7 @@ const SpacesList = () => {
               <td>
                 {space.imagen && (
                   <img
-                    src={`${space.imagen}`}
+                    src={`https://nomad-znm2.onrender.com${space.imagen}`}
                     alt={space.nombre}
                     className="space-image"
                   />
