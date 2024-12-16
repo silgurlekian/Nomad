@@ -144,6 +144,7 @@ const EditSpace = () => {
       ciudad,
       selectedServices,
       selectedSpacesType,
+      precio,
       aceptaReservas,
       tiposReservas,
     } = formData;
@@ -156,6 +157,11 @@ const EditSpace = () => {
       newErrors.selectedServices = "Los servicios son obligatorios.";
     if (!selectedSpacesType)
       newErrors.selectedSpacesType = "Los tipos de espacio son obligatorios.";
+    // Validación de precio para evitar números negativos
+    const precioNumerico = parseFloat(precio);
+    if (isNaN(precioNumerico) || precioNumerico < 0) {
+      newErrors.precio = "El precio debe ser un número mayor o igual a cero.";
+    }
 
     // Si se aceptan reservas, se debe seleccionar al menos un tipo de reserva
     if (aceptaReservas && !Object.values(tiposReservas).some((val) => val)) {
