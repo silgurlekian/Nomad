@@ -457,7 +457,7 @@ const EditSpace = () => {
           <div className="mb-3">
             <p className="form-label">Imagen actual</p>
             <img
-              src={`https://nomad-znm2.onrender.com/${existingImageUrl}`}
+              src={`${existingImageUrl}`}
               alt="Imagen del espacio"
               className="img-fluid mb-2"
               style={{ maxHeight: "200px" }}
