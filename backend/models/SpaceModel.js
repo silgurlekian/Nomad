@@ -52,19 +52,17 @@ const spaceSchema = new mongoose.Schema(
         ref: "SpaceType",
       },
     ],
-    imagen: {
-      type: String,
-    },
+    imagen: { type: String },
     aceptaReservas: {
       type: Boolean,
-      default: false
+      default: false,
     },
     tiposReservas: [
       {
         type: String,
-        enum: ['porHora', 'porDia', 'porMes', 'porAno']
-      }
-    ]
+        enum: ["porHora", "porDia", "porMes", "porAno"],
+      },
+    ],
   },
   {
     timestamps: true,
@@ -72,7 +70,7 @@ const spaceSchema = new mongoose.Schema(
 );
 
 // borrar tiposReservas cuando aceptaReservas es falso
-spaceSchema.pre('save', function(next) {
+spaceSchema.pre("save", function (next) {
   if (!this.aceptaReservas) {
     this.tiposReservas = []; // borrar tiposReservas array
   }

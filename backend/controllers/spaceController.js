@@ -73,51 +73,49 @@ export const getSpaceById = async (req, res) => {
 // Crear un nuevo espacio
 export const createSpace = async (req, res) => {
   try {
-    // Validación de campos requeridos
-    if (
-      !req.body.nombre ||
-      !req.body.direccion ||
-      !req.body.ciudad ||
-      !req.body.precio
-    ) {
-      return res
-        .status(400)
-        .json({ message: "Todos los campos son obligatorios" });
+    const {
+      nombre,
+      direccion,
+      ciudad,
+      website,
+      precio,
+      servicios,
+      spacesType,
+      aceptaReservas,
+      tiposReservas,
+    } = req.body;
+
+    let imagenBase64 = null;
+    if (req.file) {
+      // Leer el archivo y convertirlo a Base64
+      const filePath = req.file.path;
+      const fileData = fs.readFileSync(filePath);
+      imagenBase64 = fileData.toString("base64");
+
+      // Elimina el archivo temporal
+      fs.unlinkSync(filePath);
     }
 
-    // Validar tiposReservas solo si aceptaReservas es true
-    const aceptaReservas =
-      req.body.aceptaReservas === true || req.body.aceptaReservas === "true";
-
-    if (
-      aceptaReservas &&
-      (!req.body.tiposReservas || req.body.tiposReservas.length === 0)
-    ) {
-      return res.status(400).json({
-        message:
-          "Si aceptaReservas es true, debe incluir al menos un tipo de reserva",
-      });
-    }
-
-    console.log("Uploaded file:", req.file);
-
-    // Creación del nuevo espacio
     const newSpace = new Space({
-      ...req.body,
-      aceptaReservas: aceptaReservas,
-      servicios: req.body.servicios || [],
-      spacesType: req.body.spacesType || [],
-      imagen: req.file ? `https://nomad-znm2.onrender.com/uploads/${req.file.filename}` : null,
-      tiposReservas: aceptaReservas ? req.body.tiposReservas : [],
+      nombre,
+      direccion,
+      ciudad,
+      website,
+      precio,
+      servicios: servicios ? JSON.parse(servicios) : [],
+      spacesType,
+      aceptaReservas: aceptaReservas === "true",
+      tiposReservas: tiposReservas ? JSON.parse(tiposReservas) : [],
+      imagen: imagenBase64, // Guardar la imagen en Base64
     });
-    console.log('Archivo subido:', req.file); 
 
-    const savedSpace = await newSpace.save();
-    res.status(201).json(savedSpace);
-  } catch (err) {
+    await newSpace.save();
     res
-      .status(500)
-      .json({ message: "Error al crear el espacio", error: err.message });
+      .status(201)
+      .json({ message: "Espacio creado con éxito", space: newSpace });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al crear el espacio", error });
   }
 };
 
@@ -160,7 +158,9 @@ export const updateSpace = async (req, res) => {
         aceptaReservas: aceptaReservas,
         servicios: req.body.servicios || [],
         spacesType: req.body.spacesType || [],
-        imagen: req.file ? `https://nomad-znm2.onrender.com/uploads/${req.file.filename}` : null,
+        imagen: req.file
+          ? `https://nomad-znm2.onrender.com/uploads/${req.file.filename}`
+          : null,
         tiposReservas: aceptaReservas ? req.body.tiposReservas : [],
       },
       { new: true, runValidators: true }
