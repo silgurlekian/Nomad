@@ -110,6 +110,7 @@ export const createSpace = async (req, res) => {
       imagen: req.file ? `/uploads/${req.file.filename}` : null,
       tiposReservas: aceptaReservas ? req.body.tiposReservas : [],
     });
+    console.log('Archivo subido:', req.file); 
 
     const savedSpace = await newSpace.save();
     res.status(201).json(savedSpace);
