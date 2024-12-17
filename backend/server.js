@@ -62,6 +62,9 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "views", "index.html"));
 });
 
+const compression = require("compression");
+app.use(compression());
+
 // Verificar que las variables de entorno esenciales están configuradas
 if (!process.env.MONGODB_URI) {
   console.error(
