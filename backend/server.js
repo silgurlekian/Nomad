@@ -10,6 +10,7 @@ import reservationRoutes from './routes/reservationRoutes.js';
 import favoritesRoutes from './routes/favoritesRoutes.js';
 import path from "path";
 import { fileURLToPath } from "url";
+import compression from "compression";
 
 // Cargar variables de entorno
 dotenv.config();
@@ -57,13 +58,12 @@ app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 // Ruta de archivos estáticos (CSS, imágenes, etc.)
 app.use(express.static(path.join(__dirname, "views")));
 
+app.use(compression());
+
 // Ruta de la página principal
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "views", "index.html"));
 });
-
-const compression = require("compression");
-app.use(compression());
 
 // Verificar que las variables de entorno esenciales están configuradas
 if (!process.env.MONGODB_URI) {
