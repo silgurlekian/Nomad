@@ -26,7 +26,7 @@ const Header = () => {
             style={{ width: "150px", height: "auto" }}
           />
         </Link>
-        <h1 style={{ visibility: "hidden" }}>Bienvenido a nomad</h1>
+        <h1 style={{ visibility: "hidden" }}>nomad</h1>
 
         <nav>
           <ul className="d-flex align-items-center list-unstyled m-0">
