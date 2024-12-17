@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import Loading from "../components/Loading";
 
 const ServiceList = () => {
   const [services, setServices] = useState([]);
@@ -8,11 +9,14 @@ const ServiceList = () => {
   const [isAdmin, setIsAdmin] = useState(false); // Estado para verificar si es admin
   const [showModal, setShowModal] = useState(false); // Controla el modal
   const [selectedService, setSelectedService] = useState(null); // Servicio seleccionado para eliminar
+  const [cargando, setLoading] = useState(true);
+
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchServices = async () => {
       try {
+        setLoading(true);
         const token = localStorage.getItem("token");
         const user = JSON.parse(localStorage.getItem("user")); // Obtener datos del usuario
 
@@ -40,6 +44,8 @@ const ServiceList = () => {
         setServices(response.data);
       } catch (error) {
         setError("Error al obtener los servicios: " + error.message);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -71,12 +77,14 @@ const ServiceList = () => {
     }
   };
 
+  if (cargando) return <Loading />;
+
   return (
     <div className="container bkg-container mt-4">
       {error && <div className="alert alert-danger">{error}</div>}
       <div className="d-flex justify-content-between">
         <h2>Lista de Servicios</h2>
-        
+
         {/* Mostrar botón solo si es admin */}
         {isAdmin && (
           <button
@@ -132,7 +140,9 @@ const ServiceList = () => {
                   type="button"
                   className="btn-close"
                   onClick={() => setShowModal(false)}
-                >.</button>
+                >
+                  .
+                </button>
               </div>
               <div className="modal-body">
                 <p>

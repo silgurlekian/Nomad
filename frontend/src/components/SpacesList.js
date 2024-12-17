@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import Loading from "../components/Loading";
 
 const SpacesList = () => {
   const [spaces, setSpaces] = useState([]);
@@ -8,11 +9,15 @@ const SpacesList = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [showModal, setShowModal] = useState(false); // Estado para mostrar el modal
   const [selectedSpace, setSelectedSpace] = useState(null);
+  const [cargando, setLoading] = useState(true);
+
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchSpaces = async () => {
       try {
+        setLoading(true);
+
         const token = localStorage.getItem("token");
         const user = JSON.parse(localStorage.getItem("user"));
 
@@ -27,17 +32,19 @@ const SpacesList = () => {
 
         const config = { headers: { Authorization: `Bearer ${token}` } };
         const response = await axios.get(
-          "https://nomad-znm2.onrender.com/api/spaces",
+          "https://nomad-znm2.onrender.com/api/spaces?page=1&limit=5",
           config
         );
         setSpaces(response.data);
       } catch (error) {
         setError("Error al obtener los espacios: " + error.message);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchSpaces();
-  }, [navigate]);
+  }, []);
 
   const handleSpaceDeleted = (spaceId) => {
     setSpaces(spaces.filter((space) => space._id !== spaceId));
@@ -66,6 +73,8 @@ const SpacesList = () => {
       setError("Error al eliminar el espacio: " + error.message);
     }
   };
+
+  if (cargando) return <Loading />;
 
   return (
     <div className="container bkg-container mt-4">
@@ -101,6 +110,7 @@ const SpacesList = () => {
                 {space.imagen && (
                   <img
                     src={`${space.imagen}`}
+                    loading="lazy"
                     alt={space.nombre}
                     className="space-image"
                   />

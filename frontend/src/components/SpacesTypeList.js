@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import Loading from "../components/Loading";
 
 const SpaceTypeList = () => {
   const [spacesType, setSpacesType] = useState([]);
@@ -8,11 +9,14 @@ const SpaceTypeList = () => {
   const [isAdmin, setIsAdmin] = useState(false); // Estado para verificar si es admin
   const [showModal, setShowModal] = useState(false); // Estado para controlar el modal
   const [selectedSpaceType, setSelectedSpaceType] = useState(null); // Estado para el tipo de espacio seleccionado
+  const [cargando, setLoading] = useState(true);
+
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchSpacesType = async () => {
       try {
+        setLoading(true);
         const token = localStorage.getItem("token");
         const user = JSON.parse(localStorage.getItem("user")); // Obtener datos del usuario
 
@@ -40,6 +44,8 @@ const SpaceTypeList = () => {
         setSpacesType(response.data);
       } catch (error) {
         setError("Error al obtener los tipos de espacio: " + error.message);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -63,7 +69,9 @@ const SpaceTypeList = () => {
 
       // Actualizar la lista
       setSpacesType(
-        spacesType.filter((spaceType) => spaceType._id !== selectedSpaceType._id)
+        spacesType.filter(
+          (spaceType) => spaceType._id !== selectedSpaceType._id
+        )
       );
       setShowModal(false); // Cerrar el modal
     } catch (error) {
@@ -71,12 +79,14 @@ const SpaceTypeList = () => {
     }
   };
 
+  if (cargando) return <Loading />;
+
   return (
     <div className="container bkg-container mt-4">
       {error && <div className="alert alert-danger">{error}</div>}
       <div className="d-flex justify-content-between">
         <h2>Lista de tipos de espacios</h2>
-        
+
         {/* Mostrar botón solo si es admin */}
         {isAdmin && (
           <button
@@ -132,7 +142,9 @@ const SpaceTypeList = () => {
                   type="button"
                   className="btn-close"
                   onClick={() => setShowModal(false)}
-                >.</button>
+                >
+                  .
+                </button>
               </div>
               <div className="modal-body">
                 <p>
