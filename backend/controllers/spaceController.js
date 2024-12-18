@@ -3,17 +3,28 @@ import multer from "multer";
 import path from "path";
 import fs from "fs";
 import cloudinary from "cloudinary";
-import { v2 as cloudinaryV2 } from "cloudinary";
 
-// Configura Cloudinary
-cloudinaryV2.config({
+const { v2: cloudinaryV2 } = cloudinary;
+
+cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-// Usa la configuración de almacenamiento de Cloudinary con multer
-const upload = multer({ storage });
+// Función para subir la imagen a Cloudinary
+const uploadToCloudinary = (filePath) => {
+  return new Promise((resolve, reject) => {
+    cloudinaryV2.uploader.upload(
+      filePath,
+      { folder: "spaces" },
+      (error, result) => {
+        if (error) reject(error);
+        else resolve(result.secure_url);
+      }
+    );
+  });
+};
 
 // Obtener todos los espacios
 export const getSpaces = async (req, res) => {
@@ -21,10 +32,9 @@ export const getSpaces = async (req, res) => {
     const spaces = await Space.find()
       .populate({ path: "servicios", select: "name" })
       .populate({ path: "spacesType", select: "name" })
-      .lean(); 
+      .lean();
 
     console.log("Spaces with populated data:", spaces);
-
     res.status(200).json(spaces);
   } catch (error) {
     res.status(400).json({ error: "Error al obtener los espacios." });
@@ -47,9 +57,9 @@ export const getSpaceById = async (req, res) => {
   }
 };
 
+// Crear un nuevo espacio
 export const createSpace = async (req, res) => {
   try {
-    // Validación de campos requeridos
     if (
       !req.body.nombre ||
       !req.body.direccion ||
@@ -61,39 +71,39 @@ export const createSpace = async (req, res) => {
         .json({ message: "Todos los campos son obligatorios" });
     }
 
-    // Validar tiposReservas solo si aceptaReservas es true
     const aceptaReservas =
       req.body.aceptaReservas === true || req.body.aceptaReservas === "true";
-
     if (
       aceptaReservas &&
       (!req.body.tiposReservas || req.body.tiposReservas.length === 0)
     ) {
-      return res.status(400).json({
-        message:
-          "Si aceptaReservas es true, debe incluir al menos un tipo de reserva",
-      });
+      return res
+        .status(400)
+        .json({
+          message:
+            "Debe incluir al menos un tipo de reserva si acepta reservas",
+        });
     }
 
-    // Subir imagen a Cloudinary si existe
+    // Subir la imagen a Cloudinary si existe
     let imageUrl = null;
     if (req.file) {
-      const result = await cloudinary.v2.uploader.upload(req.file.path, {
-        folder: 'spaces', // Optional: upload images to a specific folder in Cloudinary
-      });
-      imageUrl = result.secure_url;  // Get the secure URL of the uploaded image
+      const result = await uploadToCloudinary(req.file.path);
+      imageUrl = result; // Obtener la URL segura de la imagen subida
 
       // Eliminar el archivo temporal después de subirlo
-      fs.unlinkSync(req.file.path);
+      if (fs.existsSync(req.file.path)) {
+        fs.unlinkSync(req.file.path);
+      }
     }
 
     // Creación del nuevo espacio
     const newSpace = new Space({
       ...req.body,
-      aceptaReservas: aceptaReservas,
+      aceptaReservas,
       servicios: req.body.servicios || [],
       spacesType: req.body.spacesType || [],
-      imagen: imageUrl, // Store the Cloudinary URL instead of base64
+      imagen: imageUrl, // Guardar la URL de la imagen en Cloudinary
       tiposReservas: aceptaReservas ? req.body.tiposReservas : [],
     });
 
@@ -106,11 +116,10 @@ export const createSpace = async (req, res) => {
   }
 };
 
+// Actualizar un espacio
 export const updateSpace = async (req, res) => {
   try {
     const { id } = req.params;
-
-    // Validación de campos requeridos
     if (
       !req.body.nombre ||
       !req.body.direccion ||
@@ -122,30 +131,30 @@ export const updateSpace = async (req, res) => {
         .json({ message: "Todos los campos son obligatorios" });
     }
 
-    // Validar tiposReservas solo si aceptaReservas es true
     const aceptaReservas =
       req.body.aceptaReservas === true || req.body.aceptaReservas === "true";
-
     if (
       aceptaReservas &&
       (!req.body.tiposReservas || req.body.tiposReservas.length === 0)
     ) {
-      return res.status(400).json({
-        message:
-          "Si aceptaReservas es true, debe incluir al menos un tipo de reserva",
-      });
+      return res
+        .status(400)
+        .json({
+          message:
+            "Debe incluir al menos un tipo de reserva si acepta reservas",
+        });
     }
 
     // Subir nueva imagen a Cloudinary si existe
     let imageUrl = null;
     if (req.file) {
-      const result = await cloudinary.v2.uploader.upload(req.file.path, {
-        folder: 'spaces', // Optional: upload images to a specific folder in Cloudinary
-      });
-      imageUrl = result.secure_url;  // Get the secure URL of the uploaded image
+      const result = await uploadToCloudinary(req.file.path);
+      imageUrl = result; // Obtener la URL segura de la imagen subida
 
       // Eliminar el archivo temporal después de subirlo
-      fs.unlinkSync(req.file.path);
+      if (fs.existsSync(req.file.path)) {
+        fs.unlinkSync(req.file.path);
+      }
     }
 
     // Buscar el espacio por ID y actualizarlo
@@ -153,10 +162,10 @@ export const updateSpace = async (req, res) => {
       id,
       {
         ...req.body,
-        aceptaReservas: aceptaReservas,
+        aceptaReservas,
         servicios: req.body.servicios || [],
         spacesType: req.body.spacesType || [],
-        imagen: imageUrl, // Store the Cloudinary URL
+        imagen: imageUrl, // Guardar la URL de la imagen en Cloudinary
         tiposReservas: aceptaReservas ? req.body.tiposReservas : [],
       },
       { new: true, runValidators: true }
