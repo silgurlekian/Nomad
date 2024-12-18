@@ -1,10 +1,11 @@
 import Space from "../models/SpaceModel.js";
-import cloudinary from '../config/cloudinaryConfig.js'; // Adjust path as needed
+import cloudinary from '../services/cloudinaryConfig.js'; // Ajusta el path según sea necesario
 import fs from 'fs';
 
+// Función para subir la imagen a Cloudinary
 const uploadImage = async (file) => {
   try {
-    // Validate file type and size
+    // Validación del tipo de archivo y tamaño
     const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
     const maxSize = 5 * 1024 * 1024; // 5MB
 
@@ -231,4 +232,4 @@ export const deleteSpace = async (req, res) => {
   }
 };
 
-export { uploadImage }; 
+export { uploadImage };

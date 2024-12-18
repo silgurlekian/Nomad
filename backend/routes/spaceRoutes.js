@@ -37,10 +37,10 @@ router.get("/:id", getSpaceById);
 router.use(protect);
 
 // Crear un nuevo espacio con imagen
-router.post("/", upload.single("imagen"), createSpace);
+router.post("/", upload.single('imagen'), createSpace);
 
-// Actualizar un espacio existente con imagen
-router.put("/:id", upload.single("imagen"), updateSpace);
+// Actualizar un espacio
+router.put("/:id", upload.single('imagen'), updateSpace);
 
 // Eliminar un espacio
 router.delete("/:id", deleteSpace);
