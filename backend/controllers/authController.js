@@ -19,7 +19,7 @@ export const registerUser = async (req, res) => {
     try {
         const existeUsuario = await User.findOne({ email });
         if (existeUsuario) {
-            return res.status(400).json({ message: "El usuario ya existe" });
+            return res.status(400).json({ message: "El correo electrónico ya se encuentra registrado." });
         }
 
         // Crear usuario con rol 'user'
