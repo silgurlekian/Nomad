@@ -1,7 +1,7 @@
 import Space from "../models/SpaceModel.js";
 import multer from "multer";
 import { CloudinaryStorage } from "multer-storage-cloudinary";
-import cloudinary from "../config/cloudinaryConfig.js";
+import cloudinary from "../services/cloudinaryConfig.js";
 import path from "path";
 
 // Configuración de Cloudinary Storage
