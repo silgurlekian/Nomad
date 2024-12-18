@@ -1,7 +1,7 @@
 import Space from "../models/SpaceModel.js";
 import multer from "multer";
 import { CloudinaryStorage } from "multer-storage-cloudinary";
-import cloudinary from "../services/cloudinaryConfig.js";
+import cloudinary from "../config/cloudinaryConfig.js";
 import path from "path";
 
 // Configuración de Cloudinary Storage
@@ -38,6 +38,56 @@ const upload = multer({
 });
 
 export const uploadSpaceImage = upload.single("imagen");
+
+// Obtener todos los espacios
+export const getSpaces = async (req, res) => {
+  try {
+    const spaces = await Space.find()
+      .populate({ path: "servicios", select: "name" })
+      .populate({ path: "spacesType", select: "name" })
+      .lean();
+
+    console.log("Spaces with populated data:", spaces);
+
+    res.status(200).json(spaces);
+  } catch (error) {
+    res.status(400).json({ error: "Error al obtener los espacios." });
+  }
+};
+
+// Obtener detalles de un espacio por ID
+export const getSpaceById = async (req, res) => {
+  try {
+    const space = await Space.findById(req.params.id).populate([
+      { path: "servicios", select: "name" },
+      { path: "spacesType", select: "name" },
+    ]);
+    if (!space) {
+      return res.status(404).json({ error: "Espacio no encontrado." });
+    }
+    res.status(200).json(space);
+  } catch (error) {
+    res.status(400).json({ error: "Error al obtener el espacio." });
+  }
+};
+
+// Función para subir la imagen a Cloudinary
+const uploadImageToCloudinary = (filePath) => {
+  return new Promise((resolve, reject) => {
+    cloudinary.v2.uploader.upload(
+      filePath,
+      {
+        folder: "spaces", // Puedes organizar las imágenes en una carpeta
+      },
+      (error, result) => {
+        if (error) {
+          return reject(error);
+        }
+        resolve(result.secure_url); // Devuelve la URL segura de la imagen
+      }
+    );
+  });
+};
 
 // Crear un nuevo espacio
 export const createSpace = async (req, res) => {
