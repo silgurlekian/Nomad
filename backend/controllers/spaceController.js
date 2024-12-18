@@ -7,9 +7,9 @@ import cloudinary from "cloudinary";
 const { v2: cloudinaryV2 } = cloudinary;
 
 cloudinary.v2.config({
-  cloud_name: "dxgluqkei",
-  api_key: "714649912575964",
-  api_secret: "YvxXxpZNUi2r6H7hgM-k-8_Z1qU",
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
   secure: true,
 });
 
