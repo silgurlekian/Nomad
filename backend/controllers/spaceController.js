@@ -8,8 +8,6 @@ if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
 
-export const uploadSpaceImage = upload.single("imagen");
-
 // Obtener todos los espacios
 export const getSpaces = async (req, res) => {
   try {
