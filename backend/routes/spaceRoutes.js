@@ -1,5 +1,4 @@
 import express from "express";
-import multer from 'multer';
 import {
   getSpaces,
   getSpaceById,
@@ -7,29 +6,14 @@ import {
   updateSpace,
   deleteSpace,
 } from "../controllers/spaceController.js";
-import { protect } from "../middleware/authMiddleware.js"; 
+import { protect } from "../middleware/authMiddleware.js"; // Middleware de protección
+import multer from "multer";
 
 const router = express.Router();
-
-// Configuración de multer para manejar archivos temporales
-const upload = multer({ 
-  dest: 'uploads/', // Directorio temporal para subir archivos
-  limits: {
-    fileSize: 5 * 1024 * 1024 // Límite de 5MB
-  },
-  fileFilter: (req, file, cb) => {
-    const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-    if (allowedTypes.includes(file.mimetype)) {
-      cb(null, true);
-    } else {
-      cb(new Error('Tipo de archivo no permitido. Solo se aceptan imágenes.'), false);
-    }
-  }
-});
+const upload = multer({ dest: "uploads/" });
 
 // Ruta pública para obtener todos los espacios
 router.get("/", getSpaces); 
-
 // Obtener un espacio por ID
 router.get("/:id", getSpaceById);
 
@@ -37,10 +21,10 @@ router.get("/:id", getSpaceById);
 router.use(protect);
 
 // Crear un nuevo espacio con imagen
-router.post("/", upload.single('imagen'), createSpace);
+router.post("/", upload.single("imagen"), createSpace);
 
-// Actualizar un espacio
-router.put("/:id", upload.single('imagen'), updateSpace);
+// Actualizar un espacio existente con imagen
+router.put("/:id", upload.single("imagen"), updateSpace);
 
 // Eliminar un espacio
 router.delete("/:id", deleteSpace);
