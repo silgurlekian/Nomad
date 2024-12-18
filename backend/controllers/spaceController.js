@@ -4,7 +4,6 @@ import path from "path";
 import fs from "fs";
 import cloudinary from "cloudinary";
 import { v2 as cloudinaryV2 } from "cloudinary";
-import cloudinary from "../services/cloudinaryConfig.js"; 
 
 // Configura Cloudinary
 cloudinaryV2.config({
