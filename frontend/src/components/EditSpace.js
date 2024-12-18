@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
+import Loading from "../components/Loading";
 
 const EditSpace = () => {
   const [formData, setFormData] = useState({
@@ -25,8 +26,8 @@ const EditSpace = () => {
   const [errors, setErrors] = useState({});
   const [globalError, setGlobalError] = useState(null);
   const [existingImageUrl, setExistingImageUrl] = useState(null);
+  const [cargando, setLoading] = useState(true);
 
-  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
   const { id } = useParams();
 
@@ -36,19 +37,18 @@ const EditSpace = () => {
 
     if (!token) {
       setGlobalError("Debes estar logueado para realizar esta acción.");
-      setIsLoading(false);
       return;
     }
 
     if (user && user.role !== "admin") {
       setGlobalError("Debes ser administrador para editar espacios.");
       navigate("/SpacesList");
-      setIsLoading(false);
       return;
     }
 
     const fetchData = async () => {
       try {
+        setLoading(true);
         const [servicesResponse, spaceTypesResponse, spaceResponse] =
           await Promise.all([
             axios.get("https://nomad-znm2.onrender.com/api/services"),
@@ -80,12 +80,12 @@ const EditSpace = () => {
           },
         });
 
-        setIsLoading(false);
       } catch (error) {
         setGlobalError(
           "Error al cargar los datos del espacio: " + error.message
         );
-        setIsLoading(false);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -221,9 +221,7 @@ const EditSpace = () => {
     }
   };
 
-  if (isLoading) {
-    return <div className="container mt-4">Cargando...</div>;
-  }
+  if (cargando) return <Loading />;
 
   return (
     <div className="container bkg-container mt-4">
