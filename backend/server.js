@@ -3,7 +3,6 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cors from "cors";
 import path from "path";
-import fileUpload from "express-fileupload";
 import compression from "compression";
 import authRoutes from "./routes/authRoutes.js";
 import spaceRoutes from "./routes/spaceRoutes.js";
@@ -53,13 +52,6 @@ app.use("/api/favorites", favoritesRoutes);
 app.use(express.static(path.join(__dirname, "views")));
 
 app.use(compression());
-
-app.use(
-  fileUpload({
-    useTempFiles: true,
-    tempFileDir: "./uploads",
-  })
-);
 
 // Ruta de la página principal
 app.get("/", (req, res) => {

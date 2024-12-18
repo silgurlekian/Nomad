@@ -1,7 +1,40 @@
 import Space from "../models/SpaceModel.js";
-import path from "path";
-import fs from "fs";
-import cloudinary from "../services/cloudinaryConfig.js";
+import cloudinary from '../config/cloudinaryConfig.js'; // Adjust path as needed
+import fs from 'fs';
+
+const uploadImage = async (file) => {
+  try {
+    // Validate file type and size
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+    const maxSize = 5 * 1024 * 1024; // 5MB
+
+    if (!allowedTypes.includes(file.mimetype)) {
+      throw new Error('Tipo de archivo no permitido. Solo se aceptan imágenes.');
+    }
+
+    if (file.size > maxSize) {
+      throw new Error('El tamaño de la imagen no puede superar 5MB.');
+    }
+
+    // Subir imagen a Cloudinary con transformaciones opcionales
+    const result = await cloudinary.uploader.upload(file.tempFilePath, {
+      folder: "spaces", // Carpeta en Cloudinary
+      resource_type: "image", // Especificar solo imágenes
+      transformation: [
+        { width: 800, height: 600, crop: "limit" }, // Redimensionar si es muy grande
+        { quality: "auto" } // Optimizar calidad
+      ]
+    });
+
+    // Eliminar archivo temporal
+    fs.unlinkSync(file.tempFilePath);
+
+    return result.secure_url; // URL segura de la imagen
+  } catch (error) {
+    console.error("Error al subir imagen a Cloudinary:", error);
+    throw new Error("Error al subir la imagen: " + error.message);
+  }
+};
 
 // Obtener todos los espacios
 export const getSpaces = async (req, res) => {
@@ -63,7 +96,15 @@ export const createSpace = async (req, res) => {
       });
     }
 
-    console.log(req.files);
+    // Si se subió una imagen
+    let imagenUrl = "";
+    if (req.files && req.files.imagen) {
+      try {
+        imagenUrl = await uploadImage(req.files.imagen);
+      } catch (error) {
+        return res.status(500).json({ error: error.message });
+      }
+    }
 
     // Creación del nuevo espacio
     const newSpace = new Space({
@@ -71,18 +112,9 @@ export const createSpace = async (req, res) => {
       aceptaReservas: aceptaReservas,
       servicios: req.body.servicios || [],
       spacesType: req.body.spacesType || [],
-      imagen: imageUrl,
       tiposReservas: aceptaReservas ? req.body.tiposReservas : [],
+      imagenUrl
     });
-
-    if (req.files?.image) {
-      const result = await uploadImage(req.files.image.tempFilePath);
-      newProduct.image = {
-        public_id: result.public_id,
-        secure_url: result.secure_url,
-      };
-      await fs.unlink(req.files.image.tempFilePath);
-    }
 
     const savedSpace = await newSpace.save();
     res.status(201).json(savedSpace);
@@ -124,13 +156,24 @@ export const updateSpace = async (req, res) => {
       });
     }
 
-    // Subir la imagen a Cloudinary si existe
-    let imageUrl = null;
-    if (req.files) {
-      const result = await cloudinary.uploader.upload(req.files.path, {
-        folder: "spaces", // Nombre de la carpeta donde se almacenará la imagen
-      });
-      imageUrl = result.secure_url; // Obtener la URL segura de la imagen
+    // Buscar el espacio existente para manejar la imagen
+    const existingSpace = await Space.findById(id);
+    let imagenUrl = existingSpace.imagenUrl;
+
+    // Si se sube una nueva imagen
+    if (req.files && req.files.imagen) {
+      try {
+        // Eliminar imagen anterior de Cloudinary si existe
+        if (imagenUrl) {
+          const publicId = imagenUrl.split('/').pop().split('.')[0];
+          await cloudinary.uploader.destroy(`spaces/${publicId}`);
+        }
+
+        // Subir nueva imagen
+        imagenUrl = await uploadImage(req.files.imagen);
+      } catch (error) {
+        return res.status(500).json({ error: error.message });
+      }
     }
 
     // Buscar el espacio por ID y actualizarlo
@@ -141,8 +184,8 @@ export const updateSpace = async (req, res) => {
         aceptaReservas: aceptaReservas,
         servicios: req.body.servicios || [],
         spacesType: req.body.spacesType || [],
-        imagen: imageUrl || req.body.imagen, // Usar la URL de Cloudinary o mantener la URL existente
         tiposReservas: aceptaReservas ? req.body.tiposReservas : [],
+        imagenUrl
       },
       { new: true, runValidators: true }
     );
@@ -163,11 +206,22 @@ export const updateSpace = async (req, res) => {
 export const deleteSpace = async (req, res) => {
   try {
     const { id } = req.params;
-    const deletedSpace = await Space.findByIdAndDelete(id);
-
-    if (!deletedSpace) {
+    
+    // Buscar el espacio para obtener la URL de la imagen
+    const spaceToDelete = await Space.findById(id);
+    
+    if (!spaceToDelete) {
       return res.status(404).json({ message: "Espacio no encontrado" });
     }
+
+    // Eliminar imagen de Cloudinary si existe
+    if (spaceToDelete.imagenUrl) {
+      const publicId = spaceToDelete.imagenUrl.split('/').pop().split('.')[0];
+      await cloudinary.uploader.destroy(`spaces/${publicId}`);
+    }
+
+    // Eliminar espacio de la base de datos
+    const deletedSpace = await Space.findByIdAndDelete(id);
 
     res.json({ message: "Espacio eliminado con éxito", deletedSpace });
   } catch (err) {
@@ -176,3 +230,5 @@ export const deleteSpace = async (req, res) => {
       .json({ message: "Error al eliminar el espacio", error: err.message });
   }
 };
+
+export { uploadImage }; 
