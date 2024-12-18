@@ -2,15 +2,15 @@ import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cors from "cors";
+import path from "path";
+import fileUpload from "express-fileupload";
+import compression from "compression";
 import authRoutes from "./routes/authRoutes.js";
 import spaceRoutes from "./routes/spaceRoutes.js";
 import serviceRoutes from "./routes/serviceRoutes.js";
 import spaceTypeRoutes from "./routes/spaceTypeRoutes.js";
-import reservationRoutes from './routes/reservationRoutes.js';
-import favoritesRoutes from './routes/favoritesRoutes.js';
-import path from "path";
-import { fileURLToPath } from "url";
-import compression from "compression";
+import reservationRoutes from "./routes/reservationRoutes.js";
+import favoritesRoutes from "./routes/favoritesRoutes.js";
 
 // Cargar variables de entorno
 dotenv.config();
@@ -20,13 +20,13 @@ const app = express();
 // Configuración de CORS
 const corsOptions = {
   origin: [
-    "http://localhost:3001", 
-    "http://localhost:3002", 
+    "http://localhost:3001",
+    "http://localhost:3002",
     "https://nomad.com.ar",
     "https://nomad.com.ar/portal/",
     "https://nomad.com.ar/pwa/",
     "http://localhost:3000",
-    "https://nomad-znm2.onrender.com", 
+    "https://nomad-znm2.onrender.com",
   ],
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true,
@@ -36,7 +36,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 // Manejo de solicitudes preflight (OPTIONS)
-app.options("*", cors(corsOptions)); 
+app.options("*", cors(corsOptions));
 
 // Middleware
 app.use(express.json());
@@ -49,16 +49,17 @@ app.use("/api/spacesType", spaceTypeRoutes);
 app.use("/api/reservations", reservationRoutes);
 app.use("/api/favorites", favoritesRoutes);
 
-// Servir archivos estáticos desde la carpeta 'uploads'
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
-
 // Ruta de archivos estáticos (CSS, imágenes, etc.)
 app.use(express.static(path.join(__dirname, "views")));
 
 app.use(compression());
+
+app.use(
+  fileUpload({
+    useTempFiles: true,
+    tempFileDir: "./uploads",
+  })
+);
 
 // Ruta de la página principal
 app.get("/", (req, res) => {
@@ -87,7 +88,9 @@ mongoose
   .then(() => {
     console.log("Conectado a MongoDB");
     app.listen(process.env.PORT || 3000, () => {
-      console.log(`Servidor corriendo en el puerto ${process.env.PORT || 3000}`);
+      console.log(
+        `Servidor corriendo en el puerto ${process.env.PORT || 3000}`
+      );
     });
   })
   .catch((error) => {

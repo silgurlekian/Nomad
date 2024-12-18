@@ -6,7 +6,8 @@ import {
   updateSpace,
   deleteSpace,
 } from "../controllers/spaceController.js";
-import { protect } from "../middleware/authMiddleware.js"; // Middleware de protección
+import fileUpload from "express-fileupload";
+import { protect } from "../middleware/authMiddleware.js"; 
 
 const router = express.Router();
 
@@ -18,13 +19,11 @@ router.get("/:id", getSpaceById);
 // Rutas protegidas (requieren autenticación)
 router.use(protect);
 
-// Crear un nuevo espacio con imagen
-router.post("/", upload.single("imagen"), createSpace);
-
-// Actualizar un espacio existente con imagen
-router.put("/:id", upload.single("imagen"), updateSpace);
-
-// Eliminar un espacio
+router.post("/",fileUpload({
+    useTempFiles: true,
+    tempFileDir: "./uploads",
+}), createSpace);
+router.put("/:id", updateSpace);
 router.delete("/:id", deleteSpace);
 
 export default router;

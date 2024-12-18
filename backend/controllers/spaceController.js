@@ -3,18 +3,13 @@ import path from "path";
 import fs from "fs";
 import cloudinary from "../services/cloudinaryConfig.js";
 
-const uploadDir = path.join(process.cwd(), "uploads");
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
-}
-
 // Obtener todos los espacios
 export const getSpaces = async (req, res) => {
   try {
     const spaces = await Space.find()
       .populate({ path: "servicios", select: "name" })
       .populate({ path: "spacesType", select: "name" })
-      .lean(); 
+      .lean();
 
     console.log("Spaces with populated data:", spaces);
 
@@ -43,7 +38,6 @@ export const getSpaceById = async (req, res) => {
 // Crear un nuevo espacio
 export const createSpace = async (req, res) => {
   try {
-    // Validación de campos requeridos
     if (
       !req.body.nombre ||
       !req.body.direccion ||
@@ -69,14 +63,7 @@ export const createSpace = async (req, res) => {
       });
     }
 
-    // Subir la imagen a Cloudinary si existe
-    let imageUrl = null;
-    if (req.file) {
-      const result = await cloudinary.uploader.upload(req.file.path, {
-        folder: 'spaces',  // Nombre de la carpeta donde se almacenará la imagen
-      });
-      imageUrl = result.secure_url;  // Obtener la URL segura de la imagen
-    }
+    console.log(req.files);
 
     // Creación del nuevo espacio
     const newSpace = new Space({
@@ -84,9 +71,18 @@ export const createSpace = async (req, res) => {
       aceptaReservas: aceptaReservas,
       servicios: req.body.servicios || [],
       spacesType: req.body.spacesType || [],
-      imagen: imageUrl, // Usar la URL de la imagen de Cloudinary
+      imagen: imageUrl,
       tiposReservas: aceptaReservas ? req.body.tiposReservas : [],
     });
+
+    if (req.files?.image) {
+      const result = await uploadImage(req.files.image.tempFilePath);
+      newProduct.image = {
+        public_id: result.public_id,
+        secure_url: result.secure_url,
+      };
+      await fs.unlink(req.files.image.tempFilePath);
+    }
 
     const savedSpace = await newSpace.save();
     res.status(201).json(savedSpace);
@@ -130,11 +126,11 @@ export const updateSpace = async (req, res) => {
 
     // Subir la imagen a Cloudinary si existe
     let imageUrl = null;
-    if (req.file) {
-      const result = await cloudinary.uploader.upload(req.file.path, {
-        folder: 'spaces',  // Nombre de la carpeta donde se almacenará la imagen
+    if (req.files) {
+      const result = await cloudinary.uploader.upload(req.files.path, {
+        folder: "spaces", // Nombre de la carpeta donde se almacenará la imagen
       });
-      imageUrl = result.secure_url;  // Obtener la URL segura de la imagen
+      imageUrl = result.secure_url; // Obtener la URL segura de la imagen
     }
 
     // Buscar el espacio por ID y actualizarlo

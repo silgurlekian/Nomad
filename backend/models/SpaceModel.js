@@ -52,7 +52,10 @@ const spaceSchema = new mongoose.Schema(
         ref: "SpaceType",
       },
     ],
-    imagen: { type: String },
+    imagen: { 
+      public_id: String,
+      secure_url: String 
+    },
     aceptaReservas: {
       type: Boolean,
       default: false,
