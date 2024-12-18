@@ -11,11 +11,11 @@ import { protect } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-// Rutas públicas
+// Public routes
 router.get("/", getSpaces);
 router.get("/:id", getSpaceById);
 
-// Rutas protegidas
+// Protected routes
 router.use(protect);
 router.post("/", uploadSpaceImage, createSpace);
 router.put("/:id", uploadSpaceImage, updateSpace);
