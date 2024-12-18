@@ -3,41 +3,26 @@ import multer from "multer";
 import { CloudinaryStorage } from "multer-storage-cloudinary";
 import cloudinary from "../services/cloudinaryConfig.js";
 import path from "path";
+import fs from "fs";
 
-// Configuración de Cloudinary Storage
-const storage = new CloudinaryStorage({
-  cloudinary: cloudinary,
-  params: {
-    folder: 'nomad-spaces', // Carpeta en Cloudinary donde se guardarán las imágenes
-    allowed_formats: ['jpeg', 'png', 'jpg', 'webp'],
-    transformation: [{ width: 1000, height: 1000, crop: 'limit' }],
-    public_id: (req, file) => {
-      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-      return `space-${uniqueSuffix}`;
-    }
+// Función para subir imagen a Cloudinary
+const uploadToCloudinary = async (filePath) => {
+  try {
+    // Subir imagen a Cloudinary
+    const result = await cloudinary.v2.uploader.upload(filePath, {
+      folder: 'nomad-spaces',
+      transformation: [{ width: 1000, height: 1000, crop: 'limit' }]
+    });
+
+    // Eliminar archivo temporal
+    fs.unlinkSync(filePath);
+
+    return result.secure_url;
+  } catch (error) {
+    console.error('Error uploading to Cloudinary:', error);
+    throw new Error('Error al subir la imagen');
   }
-});
-
-const upload = multer({
-  storage: storage,
-  limits: {
-    fileSize: 5 * 1024 * 1024, // 5 MB máximo
-  },
-  fileFilter: (req, file, cb) => {
-    const filetypes = /jpeg|jpg|png|webp/;
-    const mimetype = filetypes.test(file.mimetype);
-    const extname = filetypes.test(
-      path.extname(file.originalname).toLowerCase()
-    );
-    if (mimetype && extname) {
-      return cb(null, true);
-    } else {
-      return cb(new Error("Solo se permiten imágenes JPEG, PNG o WebP"));
-    }
-  },
-});
-
-export const uploadSpaceImage = upload.single("imagen");
+};
 
 // Obtener todos los espacios
 export const getSpaces = async (req, res) => {
@@ -71,24 +56,6 @@ export const getSpaceById = async (req, res) => {
   }
 };
 
-// Función para subir la imagen a Cloudinary
-const uploadImageToCloudinary = (filePath) => {
-  return new Promise((resolve, reject) => {
-    cloudinary.v2.uploader.upload(
-      filePath,
-      {
-        folder: "spaces", // Puedes organizar las imágenes en una carpeta
-      },
-      (error, result) => {
-        if (error) {
-          return reject(error);
-        }
-        resolve(result.secure_url); // Devuelve la URL segura de la imagen
-      }
-    );
-  });
-};
-
 // Crear un nuevo espacio
 export const createSpace = async (req, res) => {
   try {
@@ -118,8 +85,18 @@ export const createSpace = async (req, res) => {
       });
     }
 
-    // Usar URL de Cloudinary si se subió una imagen
-    const imageUrl = req.file ? req.file.path : null;
+    // Manejar subida de imagen
+    let imageUrl = null;
+    if (req.file) {
+      try {
+        imageUrl = await uploadToCloudinary(req.file.path);
+      } catch (uploadError) {
+        return res.status(500).json({ 
+          message: "Error al subir la imagen", 
+          error: uploadError.message 
+        });
+      }
+    }
 
     // Creación del nuevo espacio
     const newSpace = new Space({
@@ -139,7 +116,6 @@ export const createSpace = async (req, res) => {
       .json({ message: "Error al crear el espacio", error: err.message });
   }
 };
-
 // Actualizar un espacio existente
 export const updateSpace = async (req, res) => {
   try {
@@ -171,8 +147,25 @@ export const updateSpace = async (req, res) => {
       });
     }
 
-    // Usar URL de Cloudinary si se subió una imagen
-    const imageUrl = req.file ? req.file.path : req.body.imagen;
+    // Manejar subida de imagen
+    let imageUrl = req.body.imagen; // Mantener imagen existente por defecto
+    if (req.file) {
+      try {
+        // Si hay una imagen antigua en Cloudinary, eliminarla
+        if (imageUrl && imageUrl.includes('cloudinary.com')) {
+          const publicId = imageUrl.split('/').pop().split('.')[0];
+          await cloudinary.v2.uploader.destroy(`nomad-spaces/${publicId}`);
+        }
+
+        // Subir nueva imagen
+        imageUrl = await uploadToCloudinary(req.file.path);
+      } catch (uploadError) {
+        return res.status(500).json({ 
+          message: "Error al actualizar la imagen", 
+          error: uploadError.message 
+        });
+      }
+    }
 
     // Buscar el espacio por ID y actualizarlo
     const updatedSpace = await Space.findByIdAndUpdate(
