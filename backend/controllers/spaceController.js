@@ -12,13 +12,6 @@ cloudinaryV2.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-// Configura multer para usar Cloudinary como almacenamiento
-const storage = multerStorageCloudinary({
-  cloudinary: cloudinaryV2,
-  allowedFormats: ['jpeg', 'jpg', 'png', 'webp'],
-  transformation: [{ width: 500, height: 500, crop: "limit" }] // Redimensiona la imagen si es necesario
-});
-
 // Usa la configuración de almacenamiento de Cloudinary con multer
 const upload = multer({ storage });
 
