@@ -6,16 +6,15 @@ import {
   updateSpace,
   deleteSpace,
 } from "../controllers/spaceController.js";
-import { protect } from "../middleware/authMiddleware.js"; // Middleware de protección
+import { protect } from "../middleware/authMiddleware.js";
 import multer from "multer";
-import multerStorageCloudinary from "multer-storage-cloudinary";
 import cloudinary from "cloudinary";
 
 // Configura Cloudinary
 const storage = multerStorageCloudinary({
   cloudinary: cloudinary.v2,
   allowedFormats: ['jpeg', 'jpg', 'png', 'webp'],
-  transformation: [{ width: 500, height: 500, crop: "limit" }] // Redimensiona la imagen
+  transformation: [{ width: 500, height: 500, crop: "limit" }] 
 });
 
 const upload = multer({ storage });
