@@ -8,9 +8,19 @@ import {
 } from "../controllers/spaceController.js";
 import { protect } from "../middleware/authMiddleware.js"; // Middleware de protección
 import multer from "multer";
+import multerStorageCloudinary from "multer-storage-cloudinary";
+import cloudinary from "cloudinary";
+
+// Configura Cloudinary
+const storage = multerStorageCloudinary({
+  cloudinary: cloudinary.v2,
+  allowedFormats: ['jpeg', 'jpg', 'png', 'webp'],
+  transformation: [{ width: 500, height: 500, crop: "limit" }] // Redimensiona la imagen
+});
+
+const upload = multer({ storage });
 
 const router = express.Router();
-const upload = multer({ dest: "uploads/" });
 
 // Ruta pública para obtener todos los espacios
 router.get("/", getSpaces); 

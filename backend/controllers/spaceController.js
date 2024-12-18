@@ -2,76 +2,26 @@ import Space from "../models/SpaceModel.js";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
+import cloudinary from "cloudinary";
+import { v2 as cloudinaryV2 } from "cloudinary";
+import multerStorageCloudinary from "multer-storage-cloudinary";
 
-const uploadDir = path.join(process.cwd(), "uploads");
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
-}
-
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "uploads/");
-  },
-  filename: function (req, file, cb) {
-    cb(null, Date.now() + path.extname(file.originalname));
-  },
+// Configura Cloudinary
+cloudinaryV2.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-const upload = multer({
-  dest: "uploads/",
-  limits: {
-    fileSize: 5 * 1024 * 1024, // 5 MB máximo
-  },
-  fileFilter: (req, file, cb) => {
-    const filetypes = /jpeg|jpg|png|webp/;
-    const mimetype = filetypes.test(file.mimetype);
-    const extname = filetypes.test(
-      path.extname(file.originalname).toLowerCase()
-    );
-    if (mimetype && extname) {
-      return cb(null, true);
-    } else {
-      return cb(new Error("Solo se permiten imágenes JPEG, PNG o WebP"));
-    }
-  },
+// Configura multer para usar Cloudinary como almacenamiento
+const storage = multerStorageCloudinary({
+  cloudinary: cloudinaryV2,
+  allowedFormats: ['jpeg', 'jpg', 'png', 'webp'],
+  transformation: [{ width: 500, height: 500, crop: "limit" }] // Redimensiona la imagen si es necesario
 });
 
-export const uploadSpaceImage = upload.single("imagen");
-
-// Función para convertir imagen a base64
-const convertImageToBase64 = (filePath) => {
-  try {
-    // Leer el archivo de imagen
-    const imageBuffer = fs.readFileSync(filePath);
-    
-    // Convertir a base64
-    const base64Image = imageBuffer.toString('base64');
-    
-    // Determinar el tipo MIME basado en la extensión del archivo
-    const mimeType = getMimeType(path.extname(filePath));
-    
-    // Formatear como data URL
-    return `data:${mimeType};base64,${base64Image}`;
-  } catch (error) {
-    console.error('Error convirtiendo imagen a base64:', error);
-    return null;
-  }
-};
-
-// Función auxiliar para obtener el tipo MIME
-const getMimeType = (ext) => {
-  switch(ext.toLowerCase()) {
-    case '.jpg':
-    case '.jpeg':
-      return 'image/jpeg';
-    case '.png':
-      return 'image/png';
-    case '.webp':
-      return 'image/webp';
-    default:
-      return 'application/octet-stream';
-  }
-};
+// Usa la configuración de almacenamiento de Cloudinary con multer
+const upload = multer({ storage });
 
 // Obtener todos los espacios
 export const getSpaces = async (req, res) => {
@@ -105,7 +55,6 @@ export const getSpaceById = async (req, res) => {
   }
 };
 
-// Crear un nuevo espacio
 export const createSpace = async (req, res) => {
   try {
     // Validación de campos requeridos
@@ -120,7 +69,6 @@ export const createSpace = async (req, res) => {
         .json({ message: "Todos los campos son obligatorios" });
     }
 
-    // Validar tiposReservas solo si aceptaReservas es true
     const aceptaReservas =
       req.body.aceptaReservas === true || req.body.aceptaReservas === "true";
 
@@ -134,13 +82,10 @@ export const createSpace = async (req, res) => {
       });
     }
 
-    // Convertir imagen a base64 si existe
-    let base64Image = null;
+    // Obtén la URL de la imagen desde Cloudinary (si se subió una imagen)
+    let imageUrl = null;
     if (req.file) {
-      base64Image = convertImageToBase64(req.file.path);
-      
-      // Eliminar el archivo temporal después de convertirlo
-      fs.unlinkSync(req.file.path);
+      imageUrl = req.file.path; // La URL de Cloudinary estará en req.file.path
     }
 
     // Creación del nuevo espacio
@@ -149,7 +94,7 @@ export const createSpace = async (req, res) => {
       aceptaReservas: aceptaReservas,
       servicios: req.body.servicios || [],
       spacesType: req.body.spacesType || [],
-      imagen: base64Image,
+      imagen: imageUrl, // Guardar la URL de la imagen en lugar de base64
       tiposReservas: aceptaReservas ? req.body.tiposReservas : [],
     });
 
@@ -162,12 +107,10 @@ export const createSpace = async (req, res) => {
   }
 };
 
-// Actualizar un espacio existente
 export const updateSpace = async (req, res) => {
   try {
     const { id } = req.params;
 
-    // Validación de campos requeridos
     if (
       !req.body.nombre ||
       !req.body.direccion ||
@@ -179,7 +122,6 @@ export const updateSpace = async (req, res) => {
         .json({ message: "Todos los campos son obligatorios" });
     }
 
-    // Validar tiposReservas solo si aceptaReservas es true
     const aceptaReservas =
       req.body.aceptaReservas === true || req.body.aceptaReservas === "true";
 
@@ -193,13 +135,10 @@ export const updateSpace = async (req, res) => {
       });
     }
 
-    // Convertir imagen a base64 si existe
-    let base64Image = null;
+    // Obtén la URL de la imagen desde Cloudinary (si se subió una imagen)
+    let imageUrl = null;
     if (req.file) {
-      base64Image = convertImageToBase64(req.file.path);
-      
-      // Eliminar el archivo temporal después de convertirlo
-      fs.unlinkSync(req.file.path);
+      imageUrl = req.file.path; // La URL de Cloudinary estará en req.file.path
     }
 
     // Buscar el espacio por ID y actualizarlo
@@ -210,7 +149,7 @@ export const updateSpace = async (req, res) => {
         aceptaReservas: aceptaReservas,
         servicios: req.body.servicios || [],
         spacesType: req.body.spacesType || [],
-        imagen: base64Image,
+        imagen: imageUrl, // Guardar la URL de la imagen en lugar de base64
         tiposReservas: aceptaReservas ? req.body.tiposReservas : [],
       },
       { new: true, runValidators: true }
@@ -227,6 +166,7 @@ export const updateSpace = async (req, res) => {
       .json({ message: "Error al actualizar el espacio", error: err.message });
   }
 };
+
 
 // Eliminar un espacio
 export const deleteSpace = async (req, res) => {
