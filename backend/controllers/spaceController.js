@@ -1,77 +1,22 @@
-import Space from "../models/SpaceModel.js";
+import { v2 as cloudinary } from "cloudinary";
+import { CloudinaryStorage } from "multer-storage-cloudinary";
 import multer from "multer";
-import path from "path";
-import fs from "fs";
+import Space from "../models/SpaceModel.js";
 
-const uploadDir = path.join(process.cwd(), "uploads");
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
-}
-
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "uploads/");
-  },
-  filename: function (req, file, cb) {
-    cb(null, Date.now() + path.extname(file.originalname));
+// Configurar almacenamiento en Cloudinary
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: "spaces", // Carpeta en tu cuenta de Cloudinary
+    allowed_formats: ["jpeg", "png", "webp"],
+    transformation: [{ width: 800, height: 600, crop: "limit" }], // Opcional: transformación
   },
 });
 
-const upload = multer({
-  dest: "uploads/",
-  limits: {
-    fileSize: 5 * 1024 * 1024, // 5 MB máximo
-  },
-  fileFilter: (req, file, cb) => {
-    const filetypes = /jpeg|jpg|png|webp/;
-    const mimetype = filetypes.test(file.mimetype);
-    const extname = filetypes.test(
-      path.extname(file.originalname).toLowerCase()
-    );
-    if (mimetype && extname) {
-      return cb(null, true);
-    } else {
-      return cb(new Error("Solo se permiten imágenes JPEG, PNG o WebP"));
-    }
-  },
-});
+// Configurar Multer con CloudinaryStorage
+const upload = multer({ storage });
 
 export const uploadSpaceImage = upload.single("imagen");
-
-// Función para convertir imagen a base64
-const convertImageToBase64 = (filePath) => {
-  try {
-    // Leer el archivo de imagen
-    const imageBuffer = fs.readFileSync(filePath);
-    
-    // Convertir a base64
-    const base64Image = imageBuffer.toString('base64');
-    
-    // Determinar el tipo MIME basado en la extensión del archivo
-    const mimeType = getMimeType(path.extname(filePath));
-    
-    // Formatear como data URL
-    return `data:${mimeType};base64,${base64Image}`;
-  } catch (error) {
-    console.error('Error convirtiendo imagen a base64:', error);
-    return null;
-  }
-};
-
-// Función auxiliar para obtener el tipo MIME
-const getMimeType = (ext) => {
-  switch(ext.toLowerCase()) {
-    case '.jpg':
-    case '.jpeg':
-      return 'image/jpeg';
-    case '.png':
-      return 'image/png';
-    case '.webp':
-      return 'image/webp';
-    default:
-      return 'application/octet-stream';
-  }
-};
 
 // Obtener todos los espacios
 export const getSpaces = async (req, res) => {
@@ -108,57 +53,39 @@ export const getSpaceById = async (req, res) => {
 // Crear un nuevo espacio
 export const createSpace = async (req, res) => {
   try {
-    // Validación de campos requeridos
-    if (
-      !req.body.nombre ||
-      !req.body.direccion ||
-      !req.body.ciudad ||
-      !req.body.precio
-    ) {
-      return res
-        .status(400)
-        .json({ message: "Todos los campos son obligatorios" });
+    const { body } = req;
+
+    // Validación de campos
+    if (!body.nombre || !body.direccion || !body.ciudad || !body.precio) {
+      return res.status(400).json({ message: "Todos los campos son obligatorios" });
     }
 
-    // Validar tiposReservas solo si aceptaReservas es true
-    const aceptaReservas =
-      req.body.aceptaReservas === true || req.body.aceptaReservas === "true";
-
-    if (
-      aceptaReservas &&
-      (!req.body.tiposReservas || req.body.tiposReservas.length === 0)
-    ) {
+    const aceptaReservas = body.aceptaReservas === true || body.aceptaReservas === "true";
+    if (aceptaReservas && (!body.tiposReservas || body.tiposReservas.length === 0)) {
       return res.status(400).json({
-        message:
-          "Si aceptaReservas es true, debe incluir al menos un tipo de reserva",
+        message: "Si aceptaReservas es true, debe incluir al menos un tipo de reserva",
       });
     }
 
-    // Convertir imagen a base64 si existe
-    let base64Image = null;
+    // URL de la imagen subida a Cloudinary
+    let imageUrl = null;
     if (req.file) {
-      base64Image = convertImageToBase64(req.file.path);
-      
-      // Eliminar el archivo temporal después de convertirlo
-      fs.unlinkSync(req.file.path);
+      imageUrl = req.file.path; // URL de la imagen desde Cloudinary
     }
 
-    // Creación del nuevo espacio
     const newSpace = new Space({
-      ...req.body,
-      aceptaReservas: aceptaReservas,
-      servicios: req.body.servicios || [],
-      spacesType: req.body.spacesType || [],
-      imagen: base64Image,
-      tiposReservas: aceptaReservas ? req.body.tiposReservas : [],
+      ...body,
+      aceptaReservas,
+      servicios: body.servicios || [],
+      spacesType: body.spacesType || [],
+      imagen: imageUrl,
+      tiposReservas: aceptaReservas ? body.tiposReservas : [],
     });
 
     const savedSpace = await newSpace.save();
     res.status(201).json(savedSpace);
   } catch (err) {
-    res
-      .status(500)
-      .json({ message: "Error al crear el espacio", error: err.message });
+    res.status(500).json({ message: "Error al crear el espacio", error: err.message });
   }
 };
 
