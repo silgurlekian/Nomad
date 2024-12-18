@@ -30,7 +30,7 @@ const ServiceList = () => {
           setIsAdmin(true); // Establecer que es admin
         } else {
           setError(
-            "Debes ser administrador para poder visualizar esta sección."
+            "Debes estar logueado como administrador para poder visualizar esta sección."
           );
           return; // Salir si no es admin
         }
@@ -82,49 +82,49 @@ const ServiceList = () => {
   return (
     <div className="container bkg-container mt-4">
       {error && <div className="alert alert-danger">{error}</div>}
-      <div className="d-flex justify-content-between">
-        <h2>Lista de Servicios</h2>
+      {isAdmin && (
+        <>
+          <div className="d-flex justify-content-between">
+            <h2>Lista de Servicios</h2>
 
-        {/* Mostrar botón solo si es admin */}
-        {isAdmin && (
-          <button
-            className="btn btn-primary mb-3"
-            onClick={() => navigate("/addService")}
-          >
-            Crear servicio
-          </button>
-        )}
-      </div>
-      <table className="table table-striped mt-4">
-        <thead>
-          <tr>
-            <th className="w-80">Nombre</th>
-            <th className="text-end">Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          {services.map((service) => (
-            <tr key={service._id}>
-              <td>{service.name}</td>
-              <td className="d-flex justify-content-end">
-                <button
-                  className="btn btn-secondary me-2 mt-0"
-                  onClick={() => navigate(`/EditService/${service._id}`)}
-                >
-                  Editar
-                </button>
-                <button
-                  className="btn btn-danger"
-                  onClick={() => handleDeleteClick(service)}
-                >
-                  Eliminar
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-
+            <button
+              className="btn btn-primary mb-3"
+              onClick={() => navigate("/addService")}
+            >
+              Crear servicio
+            </button>
+          </div>
+          <table className="table table-striped mt-4">
+            <thead>
+              <tr>
+                <th className="w-80">Nombre</th>
+                <th className="text-end">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {services.map((service) => (
+                <tr key={service._id}>
+                  <td>{service.name}</td>
+                  <td className="d-flex justify-content-end">
+                    <button
+                      className="btn btn-secondary me-2 mt-0"
+                      onClick={() => navigate(`/EditService/${service._id}`)}
+                    >
+                      Editar
+                    </button>
+                    <button
+                      className="btn btn-danger"
+                      onClick={() => handleDeleteClick(service)}
+                    >
+                      Eliminar
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </>
+      )}
       {/* Modal de confirmación */}
       {showModal && (
         <div

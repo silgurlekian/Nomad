@@ -140,3 +140,25 @@ h2 {
 .form-label {
   font-weight: bold;
 }
+
+.password-input-container {
+  position: relative;
+  width: 100%;
+}
+
+.toggle-password {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+}
+
+.error-message {
+  color: red;
+  font-size: 0.875rem;
+}
+
+.form-control.error {
+  border: 1px solid red;
+}

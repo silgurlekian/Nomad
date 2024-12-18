@@ -6,6 +6,7 @@ import "../App.css";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
 
@@ -45,7 +46,7 @@ const Login = () => {
 
       // Guardar el token y los datos del usuario en localStorage
       localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data)); 
+      localStorage.setItem("user", JSON.stringify(data));
 
       setSuccessMessage("Inicio de sesión exitoso. Bienvenido!");
 
@@ -61,10 +62,7 @@ const Login = () => {
       <h2 className="text-center my-4">Iniciar Sesión</h2>
       <div className="row justify-content-center">
         <div className="col-md-6">
-          <form
-            onSubmit={handleLogin}
-            className="p-4"
-          >
+          <form onSubmit={handleLogin} className="p-4">
             <div className="mb-3">
               <label htmlFor="email" className="form-label">
                 Email
@@ -73,7 +71,7 @@ const Login = () => {
                 type="email"
                 id="email"
                 className={`form-control ${emailError ? "is-invalid" : ""}`}
-                placeholder="Correo electrónico"
+                placeholder="Ingresa tu correo electrónico"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
@@ -86,14 +84,34 @@ const Login = () => {
               <label htmlFor="password" className="form-label">
                 Contraseña
               </label>
-              <input
-                type="password"
-                id="password"
-                className={`form-control ${passwordError ? "is-invalid" : ""}`}
-                placeholder="Contraseña"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
+              <div className="password-input-container">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  id="password"
+                  className={`form-control ${
+                    passwordError ? "is-invalid" : ""
+                  }`}
+                  placeholder="Ingresa tu contraseña"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+                <span
+                  className="toggle-password"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  <img
+                    src={
+                      showPassword
+                        ? "./images/eye-slash.svg"
+                        : "./images/eye.svg"
+                    }
+                    alt={
+                      showPassword ? "Ocultar contraseña" : "Mostrar contraseña"
+                    }
+                    style={{ width: "20px", height: "20px" }}
+                  />
+                </span>
+              </div>
               {passwordError && (
                 <div className="invalid-feedback">{passwordError}</div>
               )}

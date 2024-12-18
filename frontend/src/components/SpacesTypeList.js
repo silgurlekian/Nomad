@@ -30,7 +30,7 @@ const SpaceTypeList = () => {
           setIsAdmin(true); // Establecer que es admin
         } else {
           setError(
-            "Debes ser administrador para poder visualizar esta sección."
+            "Debes estar logueado como administrador para poder visualizar esta sección."
           );
           return; // Salir si no es admin
         }
@@ -84,93 +84,99 @@ const SpaceTypeList = () => {
   return (
     <div className="container bkg-container mt-4">
       {error && <div className="alert alert-danger">{error}</div>}
-      <div className="d-flex justify-content-between">
-        <h2>Lista de tipos de espacios</h2>
+      {isAdmin && (
+        <>
+          <div className="d-flex justify-content-between">
+            <h2>Lista de tipos de espacios</h2>
 
-        {/* Mostrar botón solo si es admin */}
-        {isAdmin && (
-          <button
-            className="btn btn-primary mb-3"
-            onClick={() => navigate("/addSpaceType")}
-          >
-            Crear tipo de espacio
-          </button>
-        )}
-      </div>
-      <table className="table table-striped mt-4">
-        <thead>
-          <tr>
-            <th className="w-80">Nombre</th>
-            <th className="text-end">Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          {spacesType.map((spaceType) => (
-            <tr key={spaceType._id}>
-              <td>{spaceType.name}</td>
-              <td className="d-flex justify-content-end">
-                <button
-                  className="btn btn-secondary me-2 mt-0"
-                  onClick={() => navigate(`/EditSpaceType/${spaceType._id}`)}
-                >
-                  Editar
-                </button>
-                <button
-                  className="btn btn-danger"
-                  onClick={() => handleDeleteClick(spaceType)}
-                >
-                  Eliminar
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+            <button
+              className="btn btn-primary mb-3"
+              onClick={() => navigate("/addSpaceType")}
+            >
+              Crear tipo de espacio
+            </button>
+          </div>
+          <table className="table table-striped mt-4">
+            <thead>
+              <tr>
+                <th className="w-80">Nombre</th>
+                <th className="text-end">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {spacesType.map((spaceType) => (
+                <tr key={spaceType._id}>
+                  <td>{spaceType.name}</td>
+                  <td className="d-flex justify-content-end">
+                    <button
+                      className="btn btn-secondary me-2 mt-0"
+                      onClick={() =>
+                        navigate(`/EditSpaceType/${spaceType._id}`)
+                      }
+                    >
+                      Editar
+                    </button>
+                    <button
+                      className="btn btn-danger"
+                      onClick={() => handleDeleteClick(spaceType)}
+                    >
+                      Eliminar
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
 
-      {/* Modal de confirmación */}
-      {showModal && (
-        <div
-          className="modal fade show"
-          tabIndex="-1"
-          style={{ display: "block", backgroundColor: "rgba(0, 0, 0, 0.5)" }}
-        >
-          <div className="modal-dialog">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title">Confirmar eliminación</h5>
-                <button
-                  type="button"
-                  className="btn-close"
-                  onClick={() => setShowModal(false)}
-                >
-                  .
-                </button>
-              </div>
-              <div className="modal-body">
-                <p>
-                  ¿Estás seguro de que deseas eliminar el tipo de espacio{" "}
-                  <strong>{selectedSpaceType?.name}</strong>?
-                </p>
-              </div>
-              <div className="modal-footer">
-                <button
-                  type="button"
-                  className="btn btn-secondary"
-                  onClick={() => setShowModal(false)}
-                >
-                  Cancelar
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-danger"
-                  onClick={confirmDelete}
-                >
-                  Eliminar
-                </button>
+          {/* Modal de confirmación */}
+          {showModal && (
+            <div
+              className="modal fade show"
+              tabIndex="-1"
+              style={{
+                display: "block",
+                backgroundColor: "rgba(0, 0, 0, 0.5)",
+              }}
+            >
+              <div className="modal-dialog">
+                <div className="modal-content">
+                  <div className="modal-header">
+                    <h5 className="modal-title">Confirmar eliminación</h5>
+                    <button
+                      type="button"
+                      className="btn-close"
+                      onClick={() => setShowModal(false)}
+                    >
+                      .
+                    </button>
+                  </div>
+                  <div className="modal-body">
+                    <p>
+                      ¿Estás seguro de que deseas eliminar el tipo de espacio{" "}
+                      <strong>{selectedSpaceType?.name}</strong>?
+                    </p>
+                  </div>
+                  <div className="modal-footer">
+                    <button
+                      type="button"
+                      className="btn btn-secondary"
+                      onClick={() => setShowModal(false)}
+                    >
+                      Cancelar
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn-danger"
+                      onClick={confirmDelete}
+                    >
+                      Eliminar
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
+          )}
+        </>
       )}
     </div>
   );

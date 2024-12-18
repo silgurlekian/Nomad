@@ -124,128 +124,131 @@ const SpacesList = () => {
   return (
     <div className="container bkg-container mt-4">
       {error && <div className="alert alert-danger">{error}</div>}
-      <div className="d-flex justify-content-between">
-        <h2>Lista de espacios</h2>
-        {isAdmin && (
-          <button
-            className="btn btn-primary mb-3"
-            onClick={() => navigate("/addSpace")}
-          >
-            Crear espacio
-          </button>
-        )}
-      </div>
-
-      <div className="mb-3">
-        <input
-          type="text"
-          className="form-control"
-          placeholder="Buscar espacios..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-      </div>
-
-      <div className="mb-3">
-        {spaceTypes.map((type) => (
-          <div key={type._id} className="form-check form-check-inline">
-            <input
-              className="form-check-input"
-              type="checkbox"
-              value={type.name}
-              id={`checkbox-${type._id}`}
-              onChange={handleCheckboxChange}
-            />
-            <label
-              className="form-check-label"
-              htmlFor={`checkbox-${type._id}`}
+      {isAdmin && (
+        <>
+          <div className="d-flex justify-content-between">
+            <h2>Lista de espacios</h2>
+            <button
+              className="btn btn-primary mb-3"
+              onClick={() => navigate("/addSpace")}
             >
-              {type.name}
-            </label>
+              Crear espacio
+            </button>
           </div>
-        ))}
-      </div>
+          <div className="mb-3">
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Buscar espacios..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
 
-      {filteredSpaces.length > 0 ? (
-        <table className="table table-striped mt-4">
-          <thead>
-            <tr>
-              <th>Imagen</th>
-              <th>Nombre</th>
-              <th>Dirección</th>
-              <th>Ciudad</th>
-              <th>Precio</th>
-              <th>Servicios</th>
-              <th>Tipos de Espacio</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredSpaces.map((space) => (
-              <tr key={space._id}>
-                <td className="align-middle">
-                  {space.imagen && (
-                    <img
-                      src={`${space.imagen}`}
-                      loading="lazy"
-                      alt={space.nombre}
-                      className="space-image"
-                    />
-                  )}
-                </td>
-                <td className="align-middle">{space.nombre}</td>
-                <td className="align-middle">{space.direccion}</td>
-                <td className="align-middle">{space.ciudad}</td>
-                <td className="align-middle">${space.precio}</td>
-                <td className="align-middle">
-                  {space.servicios?.map((service) => service.name).join(", ") ||
-                    "Sin servicios"}
-                </td>
-                <td className="align-middle">
-                  {space.spacesType?.map((type) => (
-                    <span
-                      key={type._id}
-                      className={`badge ${
-                        {
-                          Coworking: "bg-primary",
-                          Cafetería: "bg-warning",
-                          Hotel: "bg-success",
-                        }[type.name] || "bg-light text-dark"
-                      } me-1`}
-                    >
-                      {type.name}
-                    </span>
-                  )) || (
-                    <span className="badge bg-light text-dark">Sin tipos</span>
-                  )}
-                </td>
-                <td className="align-middle">
-                  <div className="d-flex align-items-center">
-                    <button
-                      className="btn btn-secondary me-2"
-                      onClick={() => navigate(`/editSpace/${space._id}`)}
-                    >
-                      Editar
-                    </button>
-                    <button
-                      className="btn btn-danger"
-                      onClick={() => confirmDelete(space)}
-                    >
-                      Eliminar
-                    </button>
-                  </div>
-                </td>
-              </tr>
+          <div className="mb-3">
+            {spaceTypes.map((type) => (
+              <div key={type._id} className="form-check form-check-inline">
+                <input
+                  className="form-check-input"
+                  type="checkbox"
+                  value={type.name}
+                  id={`checkbox-${type._id}`}
+                  onChange={handleCheckboxChange}
+                />
+                <label
+                  className="form-check-label"
+                  htmlFor={`checkbox-${type._id}`}
+                >
+                  {type.name}
+                </label>
+              </div>
             ))}
-          </tbody>
-        </table>
-      ) : (
-        <div className="alert alert-info mt-4" role="alert">
-          No se encontraron resultados para los criterios de búsqueda
-          seleccionados.
-        </div>
-      )}
+          </div>
 
+          {filteredSpaces.length > 0 ? (
+            <table className="table table-striped mt-4">
+              <thead>
+                <tr>
+                  <th>Imagen</th>
+                  <th>Nombre</th>
+                  <th>Dirección</th>
+                  <th>Ciudad</th>
+                  <th>Precio</th>
+                  <th>Servicios</th>
+                  <th>Tipos de Espacio</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredSpaces.map((space) => (
+                  <tr key={space._id}>
+                    <td className="align-middle">
+                      {space.imagen && (
+                        <img
+                          src={`${space.imagen}`}
+                          loading="lazy"
+                          alt={space.nombre}
+                          className="space-image"
+                        />
+                      )}
+                    </td>
+                    <td className="align-middle">{space.nombre}</td>
+                    <td className="align-middle">{space.direccion}</td>
+                    <td className="align-middle">{space.ciudad}</td>
+                    <td className="align-middle">${space.precio}</td>
+                    <td className="align-middle">
+                      {space.servicios
+                        ?.map((service) => service.name)
+                        .join(", ") || "Sin servicios"}
+                    </td>
+                    <td className="align-middle">
+                      {space.spacesType?.map((type) => (
+                        <span
+                          key={type._id}
+                          className={`badge ${
+                            {
+                              Coworking: "bg-primary",
+                              Cafetería: "bg-warning",
+                              Hotel: "bg-success",
+                            }[type.name] || "bg-light text-dark"
+                          } me-1`}
+                        >
+                          {type.name}
+                        </span>
+                      )) || (
+                        <span className="badge bg-light text-dark">
+                          Sin tipos
+                        </span>
+                      )}
+                    </td>
+                    <td className="align-middle">
+                      <div className="d-flex align-items-center">
+                        <button
+                          className="btn btn-secondary me-2"
+                          onClick={() => navigate(`/editSpace/${space._id}`)}
+                        >
+                          Editar
+                        </button>
+                        <button
+                          className="btn btn-danger"
+                          onClick={() => confirmDelete(space)}
+                        >
+                          Eliminar
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <div className="alert alert-info mt-4" role="alert">
+              No se encontraron resultados para los criterios de búsqueda
+              seleccionados.
+            </div>
+          )}
+        </>
+      )}
       {showModal && (
         <div className="modal fade show" style={{ display: "block" }}>
           <div className="modal-dialog">
