@@ -6,21 +6,27 @@ import cloudinary from "cloudinary";
 
 const { v2: cloudinaryV2 } = cloudinary;
 
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
+cloudinary.v2.config({
+  cloud_name: "dxgluqkei",
+  api_key: "714649912575964",
+  api_secret: "YvxXxpZNUi2r6H7hgM-k-8_Z1qU",
+  secure: true,
 });
 
 // Función para subir la imagen a Cloudinary
 const uploadToCloudinary = (filePath) => {
   return new Promise((resolve, reject) => {
-    cloudinaryV2.uploader.upload(
+    cloudinary.v2.uploader.upload(
       filePath,
-      { folder: "spaces" },
+      { folder: "nomad-spaces" },
       (error, result) => {
-        if (error) reject(error);
-        else resolve(result.secure_url);
+        if (error) {
+          reject(
+            new Error(`Error al subir la imagen a Cloudinary: ${error.message}`)
+          );
+        } else {
+          resolve(result.secure_url);
+        }
       }
     );
   });
@@ -77,19 +83,20 @@ export const createSpace = async (req, res) => {
       aceptaReservas &&
       (!req.body.tiposReservas || req.body.tiposReservas.length === 0)
     ) {
-      return res
-        .status(400)
-        .json({
-          message:
-            "Debe incluir al menos un tipo de reserva si acepta reservas",
-        });
+      return res.status(400).json({
+        message: "Debe incluir al menos un tipo de reserva si acepta reservas",
+      });
     }
 
     // Subir la imagen a Cloudinary si existe
     let imageUrl = null;
     if (req.file) {
-      const result = await uploadToCloudinary(req.file.path);
-      imageUrl = result; // Obtener la URL segura de la imagen subida
+      try {
+        const result = await uploadToCloudinary(req.file.path);
+        imageUrl = result; // Obtener la URL segura de la imagen subida
+      } catch (error) {
+        return res.status(500).json({ error: error.message });
+      }
 
       // Eliminar el archivo temporal después de subirlo
       if (fs.existsSync(req.file.path)) {
@@ -137,19 +144,20 @@ export const updateSpace = async (req, res) => {
       aceptaReservas &&
       (!req.body.tiposReservas || req.body.tiposReservas.length === 0)
     ) {
-      return res
-        .status(400)
-        .json({
-          message:
-            "Debe incluir al menos un tipo de reserva si acepta reservas",
-        });
+      return res.status(400).json({
+        message: "Debe incluir al menos un tipo de reserva si acepta reservas",
+      });
     }
 
     // Subir nueva imagen a Cloudinary si existe
     let imageUrl = null;
     if (req.file) {
-      const result = await uploadToCloudinary(req.file.path);
-      imageUrl = result; // Obtener la URL segura de la imagen subida
+      try {
+        const result = await uploadToCloudinary(req.file.path);
+        imageUrl = result; // Obtener la URL segura de la imagen subida
+      } catch (error) {
+        return res.status(500).json({ error: error.message });
+      }
 
       // Eliminar el archivo temporal después de subirlo
       if (fs.existsSync(req.file.path)) {
