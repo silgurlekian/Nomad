@@ -24,7 +24,7 @@ export const getSpaces = async (req, res) => {
     const spaces = await Space.find()
       .populate({ path: "servicios", select: "name" })
       .populate({ path: "spacesType", select: "name" })
-      .lean(); 
+      .lean();
 
     console.log("Spaces with populated data:", spaces);
 
@@ -50,42 +50,78 @@ export const getSpaceById = async (req, res) => {
   }
 };
 
+// Función para subir la imagen a Cloudinary
+const uploadImageToCloudinary = (filePath) => {
+  return new Promise((resolve, reject) => {
+    cloudinary.v2.uploader.upload(
+      filePath,
+      {
+        folder: "spaces", // Puedes organizar las imágenes en una carpeta
+      },
+      (error, result) => {
+        if (error) {
+          return reject(error);
+        }
+        resolve(result.secure_url); // Devuelve la URL segura de la imagen
+      }
+    );
+  });
+};
+
 // Crear un nuevo espacio
 export const createSpace = async (req, res) => {
   try {
-    const { body } = req;
-
-    // Validación de campos
-    if (!body.nombre || !body.direccion || !body.ciudad || !body.precio) {
-      return res.status(400).json({ message: "Todos los campos son obligatorios" });
+    // Validación de campos requeridos
+    if (
+      !req.body.nombre ||
+      !req.body.direccion ||
+      !req.body.ciudad ||
+      !req.body.precio
+    ) {
+      return res
+        .status(400)
+        .json({ message: "Todos los campos son obligatorios" });
     }
 
-    const aceptaReservas = body.aceptaReservas === true || body.aceptaReservas === "true";
-    if (aceptaReservas && (!body.tiposReservas || body.tiposReservas.length === 0)) {
+    // Validar tiposReservas solo si aceptaReservas es true
+    const aceptaReservas =
+      req.body.aceptaReservas === true || req.body.aceptaReservas === "true";
+
+    if (
+      aceptaReservas &&
+      (!req.body.tiposReservas || req.body.tiposReservas.length === 0)
+    ) {
       return res.status(400).json({
-        message: "Si aceptaReservas es true, debe incluir al menos un tipo de reserva",
+        message:
+          "Si aceptaReservas es true, debe incluir al menos un tipo de reserva",
       });
     }
 
-    // URL de la imagen subida a Cloudinary
     let imageUrl = null;
     if (req.file) {
-      imageUrl = req.file.path; // URL de la imagen desde Cloudinary
+      // Subir imagen a Cloudinary
+      imageUrl = await uploadImageToCloudinary(req.file.path);
+
+      // Eliminar archivo temporal después de la carga
+      fs.unlinkSync(req.file.path);
     }
 
+    // Creación del nuevo espacio
     const newSpace = new Space({
-      ...body,
-      aceptaReservas,
-      servicios: body.servicios || [],
-      spacesType: body.spacesType || [],
+      ...req.body,
+      aceptaReservas: aceptaReservas,
+      servicios: req.body.servicios || [],
+      spacesType: req.body.spacesType || [],
       imagen: imageUrl,
-      tiposReservas: aceptaReservas ? body.tiposReservas : [],
+      tiposReservas: aceptaReservas ? req.body.tiposReservas : [],
     });
 
     const savedSpace = await newSpace.save();
     res.status(201).json(savedSpace);
   } catch (err) {
-    res.status(500).json({ message: "Error al crear el espacio", error: err.message });
+    res
+      .status(500)
+      .json({ message: "Error al crear el espacio", error: err.message });
   }
 };
 
@@ -120,12 +156,12 @@ export const updateSpace = async (req, res) => {
       });
     }
 
-    // Convertir imagen a base64 si existe
-    let base64Image = null;
+    let imageUrl = null;
     if (req.file) {
-      base64Image = convertImageToBase64(req.file.path);
-      
-      // Eliminar el archivo temporal después de convertirlo
+      // Subir imagen a Cloudinary
+      imageUrl = await uploadImageToCloudinary(req.file.path);
+
+      // Eliminar archivo temporal después de la carga
       fs.unlinkSync(req.file.path);
     }
 
@@ -137,7 +173,7 @@ export const updateSpace = async (req, res) => {
         aceptaReservas: aceptaReservas,
         servicios: req.body.servicios || [],
         spacesType: req.body.spacesType || [],
-        imagen: base64Image,
+        imagen: imageUrl,
         tiposReservas: aceptaReservas ? req.body.tiposReservas : [],
       },
       { new: true, runValidators: true }
