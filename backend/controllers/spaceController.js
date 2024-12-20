@@ -149,12 +149,18 @@ export const updateSpace = async (req, res) => {
       });
     }
 
+    // Buscar el espacio existente
+    const existingSpace = await Space.findById(id);
+    if (!existingSpace) {
+      return res.status(404).json({ error: "Espacio no encontrado." });
+    }
+
     // Subir nueva imagen a Cloudinary si existe
-    let imageUrl = null;
+    let imageUrl = existingSpace.imagen; // Usar la imagen actual por defecto
     if (req.file) {
       try {
         const result = await uploadToCloudinary(req.file.path);
-        imageUrl = result; // Obtener la URL segura de la imagen subida
+        imageUrl = result; // Actualizar con la URL segura de la nueva imagen
       } catch (error) {
         return res.status(500).json({ error: error.message });
       }
@@ -165,7 +171,7 @@ export const updateSpace = async (req, res) => {
       }
     }
 
-    // Buscar el espacio por ID y actualizarlo
+    // Actualizar el espacio con la imagen existente o nueva
     const updatedSpace = await Space.findByIdAndUpdate(
       id,
       {
@@ -173,7 +179,7 @@ export const updateSpace = async (req, res) => {
         aceptaReservas,
         servicios: req.body.servicios || [],
         spacesType: req.body.spacesType || [],
-        imagen: imageUrl, // Guardar la URL de la imagen en Cloudinary
+        imagen: imageUrl, // Usar la imagen existente si no se sube una nueva
         tiposReservas: aceptaReservas ? req.body.tiposReservas : [],
       },
       { new: true, runValidators: true }
